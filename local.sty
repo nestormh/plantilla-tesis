@@ -233,6 +233,10 @@
   {\autorefs{#1}\vpageref[\unskip]{#1}}
 %%
 % Formato de la portada
+% \def\codirector{sdgs}%
+% \def \codirector {Something that's better to use as a variable}
+\newcommand{\codirector}
+
 \renewcommand*\maketitle{%
   \begin{titlepage}
     \setparsizes{\z@}{\z@}{\z@\@plus 1fil}\par@updaterelative
@@ -250,6 +254,11 @@
       {\titlefont\Huge \@title\par}%
       \vskip 1em
       {\ifx\@subtitle\@empty\else\usekomafont{subtitle}\@subtitle\par\fi}%
+      \vfill\null
+	\begin{flushright} \large
+	\emph{Co-directors:} \\
+	  \codirector{}
+	\end{flushright}
       \vfill\null
       {\Large \lineskip 0.75em
         \begin{tabular}[t]{c}

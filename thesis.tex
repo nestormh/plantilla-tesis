@@ -58,11 +58,31 @@
 \renewcommand*{\captionformat}{\autodot\enskip}
 \setcapindent{0em}
 
+% Comments
+\newcount\Comments  % 0 suppresses notes to selves in text
+\Comments=1   % TODO: set to 0 for final version
+\usepackage{color}
+% \definecolor{darkgreen}{rgb}{0,0.5,0}
+% \definecolor{purple}{rgb}{1,0,1}
+% \kibitz{color}{comment} inserts a colored comment in the text
+\newcommand{\kibitz}[2]{\ifnum\Comments=1\textcolor{#1}{#2}\fi}
+% add yourself here:
+% \newcommand{\comment}[2]{\kibitz{red}      {[#1: #2]}}
+\newcommand{\comment}[1]{\kibitz{red}      {[COMMENT: #1]}}
+\newcommand{\todo}[1]{\kibitz{blue}      {[TODO: #1]}}
+\newcommand{\notsure}[1]{\kibitz{green}      {[ELIMINAR?: #1]}}
+
 % Subfiguras
-\usepackage[caption=false, % Usar los captions de KOMA-script
-            labelformat=simple]{subfig}
-\renewcommand\thesubfigure{(\alph{subfigure})} % Paréntesis en las subfiguras
-\renewcommand\thesubtable{(\alph{subtable})} % Paréntesis en las subtablas
+% \usepackage[caption=false, % Usar los captions de KOMA-script
+%             labelformat=simple]{subfig}
+% \renewcommand\thesubfigure{(\alph{subfigure})} % Paréntesis en las subfiguras
+% \renewcommand\thesubtable{(\alph{subtable})} % Paréntesis en las subtablas
+
+\usepackage{epsfig}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 
 % Tablas
 \usepackage{longtable} % notación
@@ -120,7 +140,7 @@ alfabético por autor. Las referencias con más de un autor aparecen ordenadas
 en base al primero de los mismos.\par\bigskip}
 
 % Referencias
-\usepackage[spanish]{varioref}
+\usepackage[english]{varioref}
 \labelformat{enumi}{(#1)}
 \labelformat{equation}{(#1)}
 
@@ -132,10 +152,10 @@ en base al primero de los mismos.\par\bigskip}
   bookmarksnumbered=true,
   pdfborder={0 0 0},
   pdfdisplaydoctitle=true,
-  pdftitle={T\'itulo de la tesis},
-  pdfauthor={Autor de la tesis},
-  pdfsubject={Memoria de tesis doctoral},
-  pdfkeywords={memoria, tesis, plantilla, latex}
+  pdftitle={Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques},
+  pdfauthor={N\'estor Morales Hern\'andez},
+  pdfsubject={Doctoral Thesis},
+  pdfkeywords={XXX, please, add, the, keywords}
   ]{hyperref}
 
 % Para las páginas apaisadas
@@ -157,45 +177,50 @@ en base al primero de los mismos.\par\bigskip}
 \usepackage[printonlyused,withpage]{acronym}
 \usepackage{local}
 
+%needed for the full-face titlepage
+\usepackage{eso-pic}
+
 % Estructura del documento
 \begin{document}
 
 \frontmatter
 \label{portada}\pdfbookmark{Tesis doctoral}{portada}
-\titlehead{\includegraphics[height=1cm]{unilogo} \\
+\titlehead{
+\includegraphics[height=1cm]{ull}
   \vskip 1em
-  Centro de la Universidad \\
-  Departamento de la Universidad}
-\subject{Tesis doctoral}
-\title{Título de la tesis}
-\author{Autor de la tesis}
-\date{2010}
+  Facultad de F\'isica y Matem\'aticas \\
+  Departamento de Ingenier\'ia de Sistemas y Autom\'atica y Arquitectura y Tecnolog\'ia de Computadores.}
+\subject{Doctoral Thesis}
+\title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
+\author{N\'estor Morales Hern\'andez}
+\renewcommand{\codirector}{Leopoldo Acosta S\'anchez\\Jonay T. Toledo Carrillo}
+\date{2014}
 \maketitle
 
-\input{certificate}
-\input{dedicatory}
-\input{acknowledges}
+% \input{certificate}
+% \input{dedicatory}
+% \input{acknowledges}
 
-\cleardoublepage
-\pdfbookmark{\contentsname}{tableofcontents}
-\tableofcontents
-
-\cleardoublepage
-\pdfbookmark{\listtablename}{listoftables}
-\listoftables
-
-\cleardoublepage
-\pdfbookmark{\listfigurename}{listoffigures}
-\listoffigures
-
-\cleardoublepage
-\pdfbookmark{\listalgorithmname}{listofalgorithms}
-\listofalgorithms
+% \cleardoublepage
+% \pdfbookmark{\contentsname}{tableofcontents}
+% \tableofcontents
+% 
+% \cleardoublepage
+% \pdfbookmark{\listtablename}{listoftables}
+% \listoftables
+% 
+% \cleardoublepage
+% \pdfbookmark{\listfigurename}{listoffigures}
+% \listoffigures
+% 
+% \cleardoublepage
+% \pdfbookmark{\listalgorithmname}{listofalgorithms}
+% \listofalgorithms
 
 \input{acronyms}
-\input{notation}
+% \input{notation}
 
-\input{introduction}
+% \input{introduction}
 
 \mainmatter
 \input{chapter01}
@@ -203,10 +228,10 @@ en base al primero de los mismos.\par\bigskip}
 %\input{capitulo03}
 %\acresetall
 
-\input{conclusions}
+% \input{conclusions}
 
-\appendix
-\input{appendixA}
+% \appendix
+% \input{appendixA}
 %\input{apendiceB}
 
 \backmatter

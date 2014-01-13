@@ -1,13 +1,60 @@
 %%
-%% capitulo01.tex - Memoria de la tesis
+%%  chapter01.tex - Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques
 %%
-%%   Copyright 2009-2010 Jesús Torres <jmtorres@ull.es>
+%%  Copyright 2014 Néstor Morales <nestor@isaatc.ull.es>
 %%
-%% Esta obra está bajo licencia Creative Commons Reconocimiento 3.0 Unported
+%%  This work is licensed under a Creative Commons Attribution 4.0 International License.
 %%
-\chapter{Capítulo 1}\label{ch:capitulo}
 
-\section{Sección 1 del capítulo 1}
+\chapter{Problem Statement}\label{ch:chapter01}
+
+\section{Problem Statement}\label{ch:chapter01_01}
+
+Computer Vision environment understanding targeted at enabling autonomous operation of a robotic platform has been widely studied over the years, leading to the creation of some prototype vehicles \cite{Maurer1996,Pomerleau1996,Broggi1999} which demonstrated that negotiating moderately complex and dynamic situations in real time was possible, albeit challenging. However, it was only with the development effort driven by the DARPA Challenges \cite{Buehler2007, Buehler2009} that the technology required to provide reliable operation both in off-road and urban scenarios proved to be within reach.
+The vehicles that successfully took part to this series of events had to integrate planning and actuation capabilities with a sensing suite capable of coping with harsh environments, heavy traffic and wide temperature ranges, while keeping functional over extended amounts of time. Most competitors relied on high-end active sensors \cite{Urmson2008, Montemerlo2008, Bacha2008, Kammel2008}, with some notable exceptions \cite{Broggi2006, Broggi2010}. 
+\todo{Hablar un poco más de la parte de detección de obstáculos}
+
+As we discover when looking up to the available literature (See next section, \todo{ \ref{XXX} }), there are many methods for the detection and tracking of obstacles in complex environments, like this for which Verdino is intended to be working. In this sense, a very first approach is that inspired on the work by \cite{primdahl2005change},  \cite{diego2011video} or \cite{vallespi2012prior} was developed. This is based on the fact that, in an image, a high percentage of the scene represented usually corresponds to static objects. Based on that, it looks quite straightforward to think that, having an image representing an area without obstacles, it is possible to detect the obstacles in an scene by just comparing it with an image being taken in real time. For that, we obtained a dataset with geo-referenced images from a closed urbanization taken at different times of the day. A description of this database, as well as of the algorithm pipeline used for the comparison between images pairs can be found at section \todo{ \ref{XXX} }.
+
+However, such approach suffers from several drawbacks. First, as we just use one image per frame, we are no able to know the exact position of the obstacle in the real world \comment{(Anyway, we think that the output of the algorithm is a good starting point for a classification method)}. Also, the quality of detection is highly tied to the size of the image database, so in big areas we need a huge dataset, with the related space and throughput problems associated to that. If we consider changes due to weather or light conditions, this dataset grows exponentially. Finally, we don't know the direction where an obstacle is going to. These are challenging problems that have been solved using different approaches, until we reached a final solution, described in section \todo { \ref{XXX} }.
+
+To solve that, we first developed a method that tries to isolate just the tracking problem with the use of static monocular cameras. Instead of registering pairs of images, we segment the image with the use of foreground extraction techniques, distinguishing between background and foreground. Using the silhouette of the objects in the foreground (which are mainly non-rigid objects, like pedestrians or animals), we apply a non-rigid point set registration algorithm in order to track the different parts of the body of the obstacles separately. This method, inspired in works like those by \cite{starck2007surface}, or \cite{letouzey2011scene}, can be also used for the completion of the global map of the vehicle, or even for tasks more related to \acf{HMI}. This approach is extensively described in section \todo{ \ref{XXX}}.
+
+However, this method still makes use of a very rudimentary method for the localization of the obstacles (See section \todo{ \ref{XXX-subsection_localization}}), and it is limited to static cameras. For the application proposed, we need the cameras installed on the top of the moving prototype, so we can not use foreground segmentation methods anymore for the detection of the objects in the road. A simple solution for that is stop using monocular vision, and start using stereo vision. In the last years, a high number of advanced algorithms has become viable for autonomous driving applications. The problem is that performing a quantitative and meaningful comparison of their performance level, however, is not an easy task, mainly because of the difficulty of producing ground truth information. Older datasets are small, and either synthetic or taken in controlled environments (\cite{Scharstein2002}), thus effectively limiting their usefulness as indicators of the actual algorithms ability to cope with outdoor scenarios. Due to that, it is needed to compare the performance level of some state-of-the-art stereovision-based 3D mapping algorithms in automotive scenarios. This evaluation methodology and the associated results is shown in section \todo{ \ref{XXX}}. \comment{PREGUNTAR A LA GENTE DEL VISLAB SI ESTA DE ACUERDO CON QUE USE ESTO EN LA TESIS, POR SI LAS MOSCAS}.
+
+\comment{Este párrafo y la sección asociada dependerá de lo que consiga sacar más adelante.}\notsure{
+Apart from the full-dense 3D reconstruction methods, we also explore the possibility of using a simpler (and faster) reconstruction based on Stixels, like that described by \cite{badino2009stixel}. In particular, we decided to use the implementation by \cite{benenson2012pedestrian}, due to its fast response (about 100 frames per second). The method, described in section \todo{\ref{XXX}}, compares the stixels obtained between frames and tracks the obstacles along the time. This solves all the problems we had: we can use moving cameras, we can locate the obstacles in the map, and also we are able to know the path followed by them.}
+
+Another approach, which makes use of the dense stereo reconstruction algorithms for which we did the evaluation described above, is inspired in the work by \cite{danescu2010particle}, but also from the voxelized world described in \cite{broggi2013}. The key idea is to simplify the 3d reconstructed world into a grid of voxels, each of these representing a certain volume in the world. In this voxelized world, for each voxel above a given occupancy probability threshold, a set of particles part of a particle filter is assigned. Each particle will have a double function: the first, denoting hypotheses (as in the classical particle filter methods); the second, to be used as segmentation criteria in the segmentation of the world into different obstacles. In this way, we consider that two contiguous voxels belong to different obstacles if their obtained direction and sense diverges. A more detailed explanation of the method is found in \todo{\ref{XXX}}.
+
+At this point, we have an acceptable reconstruction of the surroundings of the vehicle, which includes the localization and tracking of the obstacles in the neighborhood of the cart. But the reconstruction of the environment is not the only challenge that an autonomous vehicle has to deal with. Once that a vehicle has an idea of where it is, and where it wants to go, it also needs to know the best way to reach there and, more important, how to avoid the harmful elements it has previously detected using the methods described. This allows a safe trip, both for the pedestrians, cars, etc. in the road, and for the vehicle itself.
+As said, Verdino is intended to travel in pedestrian areas where most of the obstacles are pedestrians, so its behavior must be mainly reactive in order to give priority to the safety of paths against the efficiency of the route. Also, there is not a clear traveling path, like a road. Instead of that, the vehicle will be moving around an unstructured area, so there is not something like a \acf{RNDF} that allows a fast calculation of the paths that the car will use to reach a certain point. Because of that, we must consider two different planning levels:
+\begin{itemize}
+ \item \textbf{Global Planning:}
+ As it is not possible to determine a global trajectory based on a \acs{RNDF}, we must use a method able to deal with changing environments for the calculation of a fast and safe path. The idea is that, having a map of the static obstacles in the environment and with the vehicle properly localized on it \cite{Perea2013mcl}, it will generate a path that will allow reaching this destination as fast as possible. This task, which can be solved easily in static environments using graphs or other similar optimization methods, becomes a little bit more challenging in environments like, for example, a parking lot, in which cars are parking and driving off continuously.
+ In section \todo{ \ref{XXX} }, the way in which we solved this problem is described. It is based on the border between classes, which is obtained after training a \acf{MSVM} (See Appendix \todo {\ref{XXX}} for more information), considering each single obstacle as a separate class. Instead of using this border for classification purposes, as it is usual, we take advantage of the fact that it will be the safest and smoother distance to the obstacles. Taking this into account, it makes sense to apply this separation line as our path. Also, the use of a different class for each obstacle allows ensuring that the path is safe enough, even in complicate scenarios, like in pedestrian areas.
+ 
+ \item \textbf{Local Planning:}
+ In a lower level, we also need a way to make the vehicle know how to follow the generated path. This problem requires a system able to, several times per second, calculate the best steering angle and speed in order to follow the global plan while avoiding the surrounding obstacles. The method, which is inspired in the work of \cite{chu2012local}, receives as input the current position of the vehicle in the map, its orientation, speed and the steering angle. Also, we provide it with the global plan obtained in the upper level. Finally, a map of the dynamic obstacles in the surrounds of the cart is computed and passed to the algorithm.
+ 
+ This dynamic map can be filled with the information provided by sensors like \acp{LIDAR}, among other sensors. But it can can also be computed with the information extracted from cameras, and this is the connection point with the work described in the first part of this Thesis. The detected obstacles are included in the map, so the vehicle is able to avoid them using the calculated steering angle and speed.
+ 
+ The way in which both this map and the speed/steering angle commands is obtained is described in section \ref{XXX}.
+\end{itemize}
+ 
+ The whole pipeline of the application developed for this thesis is shown at figure \ref{fig:cp01_pipeline}. From the images captured in real-time, obstacles are located and passed to the module in charge of the generation of the dynamic costmap. At the same time, the static map is used for the generation of a feasible trajectory. Using the current position and vehicle status, the local planner tries to compute the proper commands in order to follow the global plan while trying to avoid the obstacles included in the dynamic costmap.
+ 
+ \begin{figure}[thb]\label{fig:cp01_pipeline}
+      \centering
+      \includegraphics{pipeline}
+      \caption{Pipeline of the modules described in this Thesis.}
+\end{figure}
+
+ 
+
+
+
+\section{Previous Work}\label{ch:chapter01_02}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum faucibus
 sollicitudin facilisis. Donec sollicitudin augue eu lectus gravida mollis.
 Nunc lacinia imperdiet posuere. Curabitur augue nulla, placerat sit amet
@@ -30,48 +77,3 @@ aliquam nec. In aliquet, mi sit amet fringilla cursus, nisl velit tincidunt
 lacus, in euismod lorem erat sit amet urna. Quisque ultrices luctus odio
 sollicitudin malesuada.
 
-\begin{algorithm}
-\begin{algorithmic}[1]
-\REQUIRE Complejo simplicial $K=\{\sigma_1, \dots, \sigma_n \}$ no vacío. \label{lin:lineaRara}
-\ENSURE \TRUE{} si $K$ es contráctil y \FALSE{} en caso contrario.
-\WHILE {$K \neq \{ \langle v \rangle \}$}
-\STATE Elegir un símplice $\sigma_i$ de $K$ que sea maximal y que contenga una cara libre $\delta\sigma_i$.
-\IF{no hay ningún símplice de esas características}
-\RETURN \FALSE
-\ELSE
-\STATE $K \leftarrow K \setminus \{\sigma_i, \delta\sigma_i\}$
-\ENDIF
-\ENDWHILE
-\RETURN \TRUE
-\end{algorithmic}
-\caption{Contracción de caras libres}\label{alg:algoritmoRaro}
-\end{algorithm}
-
-Ut pretium, eros consequat gravida viverra, purus neque ornare odio, id
-pretium erat mauris ut justo. Cras vel tellus ut arcu faucibus condimentum
-mattis eget justo. Phasellus ornare tellus sed tellus ornare pretium.
-Phasellus non nunc elit, id aliquam leo. Integer tempus ligula at lectus
-laoreet sit amet sollicitudin odio convallis. Donec sodales nisi ac eros
-faucibus eu gravida magna eleifend. Cras in nunc sed massa congue egestas a
-eget massa. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas
-egestas, enim vel faucibus consequat, nulla sapien mattis dui, et lobortis est
-metus nec augue. Quisque rhoncus pellentesque hendrerit. Donec tristique metus
-quis ligula hendrerit hendrerit. Nulla pretium tincidunt sagittis. Nullam
-luctus fermentum nibh venenatis sollicitudin. Nulla sem risus, fringilla id
-sollicitudin sit amet, elementum laoreet nisi. Ut nec mauris ac elit pretium
-congue eget vel ipsum.
-
-In et elit velit. Donec consectetur auctor tortor, et lobortis felis
-sollicitudin dictum. Nunc imperdiet massa et sem eleifend molestie. Nam sed
-nunc vitae orci cursus iaculis. Aenean eu bibendum risus. Vestibulum et ipsum
-arcu. Nam sit amet libero ut enim pellentesque interdum. Suspendisse semper
-rutrum facilisis. Duis auctor, lectus ac dignissim bibendum, sem magna
-adipiscing nunc, sit amet tincidunt ligula leo in lorem. Sed convallis quam et
-felis sagittis ultrices. Nulla lorem dui, consequat ac pulvinar quis, mollis
-et purus. Fusce ullamcorper, turpis quis ornare tincidunt, lorem arcu
-pellentesque odio, et elementum magna velit quis nulla. In non dictum sapien.
-Phasellus placerat, urna dignissim posuere bibendum, turpis nibh porta ante,
-in ultricies leo mauris eu ipsum. Integer pulvinar mattis euismod. Ut sit amet
-orci vulputate nisl malesuada auctor ac aliquet lacus. Curabitur porttitor
-nulla ut augue rhoncus sollicitudin. In ligula nisl, semper vel imperdiet at,
-elementum vel dui.

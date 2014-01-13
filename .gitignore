@@ -1,0 +1,16 @@
+# Latex generated files #
+#########################
+*.aux
+*.bbl
+*.blg
+*.loa
+*.lof
+*.log
+*.lot
+*.out
+*.pdf
+*.toc
+
+# Others #
+#########################
+.directory
