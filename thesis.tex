@@ -13,12 +13,16 @@
 
 % Idioma
 % http://www.tex-tipografia.com/spanish2.html
-\usepackage[spanish,es-noenumerate,es-tabla]{babel}
+% \usepackage[spanish,es-noenumerate,es-tabla]{babel}
+\usepackage[british,UKenglish,USenglish,english,american]{babel}
+\selectlanguage{english}
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 
-\renewcommand*{\spanishcontentsname}{\'Indice}
+\usepackage{float}
+
+% \renewcommand*{\USenglishcontentsname}{\'Indice}
 
 % Fuentes
 \usepackage{mathpazo} % Texto con "Palatino" + fuente matemática "Pazo"
@@ -42,7 +46,7 @@
 %\renewcommand*{\chapterheadendvskip}{\vspace{2.25\baselineskip}}
 
 % Listas
-\spanishsignitems
+% \spanishsignitems
 
 % Notas al pié
 \usepackage[multiple]{footmisc}
@@ -96,7 +100,7 @@
 \newlength{\figuresheight}
 \setlength{\figuresheight}{7cm}
 \setkeys{Gin}{totalheight=\figuresheight,keepaspectratio=true}
-\graphicspath{{./images/bmps/}{./images/vects/}}
+\graphicspath{{./images/bmps/}{./images/vects/}{./images/}}
 \usepackage{ifpdf}
 \ifpdf
   \DeclareGraphicsExtensions{.pdf,.mps,.png,.jpg}
@@ -141,7 +145,7 @@ en base al primero de los mismos.\par\bigskip}
 
 % Matemáticas
 \usepackage{amsmath}
-\unaccentedoperators
+% \unaccentedoperators
 \newcommand{\relphantom}[1]{\mathrel{\phantom{#1}}}
 \newcommand{\func}[1]{\mathnormal{#1}}
 \newcommand{\mat}[1]{\boldsymbol{\mathrm{\MakeUppercase{#1}}}}
@@ -168,12 +172,12 @@ en base al primero de los mismos.\par\bigskip}
 \date{2010}
 \maketitle
 
-\input{certificado}
-\input{dedicatoria}
-\input{agradecimientos}
+\input{certificate}
+\input{dedicatory}
+\input{acknowledges}
 
 \cleardoublepage
-\pdfbookmark{\spanishcontentsname}{tableofcontents}
+\pdfbookmark{\contentsname}{tableofcontents}
 \tableofcontents
 
 \cleardoublepage
@@ -188,21 +192,21 @@ en base al primero de los mismos.\par\bigskip}
 \pdfbookmark{\listalgorithmname}{listofalgorithms}
 \listofalgorithms
 
-\input{acronimos}
-\input{notacion}
+\input{acronyms}
+\input{notation}
 
-\input{introduccion}
+\input{introduction}
 
 \mainmatter
-\input{capitulo01}
+\input{chapter01}
 %\input{capitulo02}
 %\input{capitulo03}
 %\acresetall
 
-\input{conclusiones}
+\input{conclusions}
 
 \appendix
-\input{apendiceA}
+\input{appendixA}
 %\input{apendiceB}
 
 \backmatter
