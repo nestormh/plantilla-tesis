@@ -170,67 +170,67 @@
 \DeclareMathOperator*{\bigo}{\mathcal{O}}
 %%
 % Redefinicion de autoref con plurales y mayúsculas
-\let\orgautoref\autoref
-\providecommand{\Autoref} % Mayúsculas
-  {\def\equationautorefname{La ecuación}%
-   \def\itemautorefname{El elemento}%
-   \def\figureautorefname{La figura}%
-   \def\subfigureautorefname{La figura}%
-   \def\tableautorefname{La tabla}%
-   \def\appendixautorefname{El apéndice}%
-   \def\chapterautorefname{El capítulo}%
-   \def\sectionautorefname{El apartado}%
-   \def\subsectionautorefname{El apartado}%
-   \def\subsubsectionautorefname{El apartado}%
-   \def\algorithmautorefname{El algoritmo}%
-   \orgautoref}
-\providecommand{\Autorefs} % Mayúsculas y plural
-  {\def\equationautorefname{Las ecuaciones}%
-   \def\itemautorefname{Los elementos}%
-   \def\figureautorefname{Las figuras}%
-   \def\subfigureautorefname{Las figuras}%
-   \def\tableautorefname{Las tablas}%
-   \def\appendixautorefname{Los apéndices}%
-   \def\chapterautorefname{Los capítulos}%
-   \def\sectionautorefname{Los apartados}%
-   \def\subsectionautorefname{Los apartados}%
-   \def\subsubsectionautorefname{Los apartados}%
-   \def\algorithmautorefname{Los algoritmos}%
-   \orgautoref}
-\renewcommand{\autoref} % autoref
-  {\def\equationautorefname{la ecuación}%
-   \def\itemautorefname{el elemento}%
-   \def\figureautorefname{la figura}%
-   \def\subfigureautorefname{la figura}%
-   \def\tableautorefname{la tabla}%
-   \def\appendixautorefname{el apéndice}%
-   \def\chapterautorefname{el capítulo}%
-   \def\sectionautorefname{el apartado}%
-   \def\subsectionautorefname{el apartado}%
-   \def\subsubsectionautorefname{el apartado}%
-   \def\algorithmautorefname{el algoritmo}%
-   \orgautoref}
-\providecommand{\autorefs} % plural
-  {\def\equationautorefname{las ecuaciones}%
-   \def\itemautorefname{los elementos}%
-   \def\figureautorefname{las figuras}%
-   \def\subfigureautorefname{las figuras}%
-   \def\tableautorefname{las tablas}%
-   \def\appendixautorefname{los apéndices}%
-   \def\chapterautorefname{los capítulos}%
-   \def\sectionautorefname{los apartados}%
-   \def\subsectionautorefname{los apartados}%
-   \def\subsubsectionautorefname{los apartados}%
-   \def\algorithmautorefname{los algoritmos}%
-   \orgautoref}
-\providecommand{\Vautoref}[1]
-  {\Autoref{#1}\vpageref[\unskip]{#1}}
-\providecommand{\Vautorefs}[1]
-  {\Autorefs{#1}\vpageref[\unskip]{#1}}
-\providecommand{\vautoref}[1]
-  {\autoref{#1}\vpageref[\unskip]{#1}}
-\providecommand{\vautorefs}[1]
-  {\autorefs{#1}\vpageref[\unskip]{#1}}
+% \let\orgautoref\autoref
+% \providecommand{\Autoref} % Mayúsculas
+%   {\def\equationautorefname{La ecuación}%
+%    \def\itemautorefname{El elemento}%
+%    \def\figureautorefname{La figura}%
+%    \def\subfigureautorefname{La figura}%
+%    \def\tableautorefname{La tabla}%
+%    \def\appendixautorefname{El apéndice}%
+%    \def\chapterautorefname{El capítulo}%
+%    \def\sectionautorefname{El apartado}%
+%    \def\subsectionautorefname{El apartado}%
+%    \def\subsubsectionautorefname{El apartado}%
+%    \def\algorithmautorefname{El algoritmo}%
+%    \orgautoref}
+% \providecommand{\Autorefs} % Mayúsculas y plural
+%   {\def\equationautorefname{Las ecuaciones}%
+%    \def\itemautorefname{Los elementos}%
+%    \def\figureautorefname{Las figuras}%
+%    \def\subfigureautorefname{Las figuras}%
+%    \def\tableautorefname{Las tablas}%
+%    \def\appendixautorefname{Los apéndices}%
+%    \def\chapterautorefname{Los capítulos}%
+%    \def\sectionautorefname{Los apartados}%
+%    \def\subsectionautorefname{Los apartados}%
+%    \def\subsubsectionautorefname{Los apartados}%
+%    \def\algorithmautorefname{Los algoritmos}%
+%    \orgautoref}
+% \renewcommand{\autoref} % autoref
+%   {\def\equationautorefname{la ecuación}%
+%    \def\itemautorefname{el elemento}%
+%    \def\figureautorefname{la figura}%
+%    \def\subfigureautorefname{la figura}%
+%    \def\tableautorefname{la tabla}%
+%    \def\appendixautorefname{el apéndice}%
+%    \def\chapterautorefname{el capítulo}%
+%    \def\sectionautorefname{el apartado}%
+%    \def\subsectionautorefname{el apartado}%
+%    \def\subsubsectionautorefname{el apartado}%
+%    \def\algorithmautorefname{el algoritmo}%
+%    \orgautoref}
+% \providecommand{\autorefs} % plural
+%   {\def\equationautorefname{las ecuaciones}%
+%    \def\itemautorefname{los elementos}%
+%    \def\figureautorefname{las figuras}%
+%    \def\subfigureautorefname{las figuras}%
+%    \def\tableautorefname{las tablas}%
+%    \def\appendixautorefname{los apéndices}%
+%    \def\chapterautorefname{los capítulos}%
+%    \def\sectionautorefname{los apartados}%
+%    \def\subsectionautorefname{los apartados}%
+%    \def\subsubsectionautorefname{los apartados}%
+%    \def\algorithmautorefname{los algoritmos}%
+%    \orgautoref}
+% \providecommand{\Vautoref}[1]
+%   {\Autoref{#1}\vpageref[\unskip]{#1}}
+% \providecommand{\Vautorefs}[1]
+%   {\Autorefs{#1}\vpageref[\unskip]{#1}}
+% \providecommand{\vautoref}[1]
+%   {\autoref{#1}\vpageref[\unskip]{#1}}
+% \providecommand{\vautorefs}[1]
+%   {\autorefs{#1}\vpageref[\unskip]{#1}}
 %%
 % Formato de la portada
 % \def\codirector{sdgs}%
