@@ -143,6 +143,8 @@ References with more than one author are ordered based on the first of them.\par
 \labelformat{enumi}{(#1)}
 \labelformat{equation}{(#1)}
 
+\newcommand{\todoref}[1]{\todo{\ref{#1}}}
+
 % PDFTeX
 \pdfimageresolution=300
 \pdfcompresslevel=9
@@ -196,36 +198,35 @@ References with more than one author are ordered based on the first of them.\par
 \date{2014}
 \maketitle
 
-% \input{certificate}
-% \input{dedicatory}
-% \input{acknowledges}
+\input{certificate}
+\input{dedicatory}
+\input{acknowledges}
 
 \cleardoublepage
-% \pdfbookmark{\contentsname}{tableofcontents}
-% \tableofcontents
-% 
-% \cleardoublepage
-% \pdfbookmark{\listtablename}{listoftables}
-% \listoftables
-% 
-% \cleardoublepage
-% \pdfbookmark{\listfigurename}{listoffigures}
-% \listoffigures
-% 
-% \cleardoublepage
-% \pdfbookmark{\listalgorithmname}{listofalgorithms}
-% \listofalgorithms
+\pdfbookmark{\contentsname}{tableofcontents}
+\tableofcontents
+
+\cleardoublepage
+\pdfbookmark{\listtablename}{listoftables}
+\listoftables
+
+\cleardoublepage
+\pdfbookmark{\listfigurename}{listoffigures}
+\listoffigures
+
+\cleardoublepage
+\pdfbookmark{\listalgorithmname}{listofalgorithms}
+\listofalgorithms
 
 \input{acronyms}
-% \input{notation}
+\input{notation}
 
-% \input{introduction}
+\input{introduction}
 
 \mainmatter
 \input{chapter01}
-%\input{capitulo02}
-%\input{capitulo03}
-%\acresetall
+\input{chapter05}
+\acresetall
 
 % \input{conclusions}
 
