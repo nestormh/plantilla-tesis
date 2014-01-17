@@ -111,8 +111,9 @@
   {\lstMakeShortInline[language=Python,basicstyle=\normalsize\ttfamily]#1}
 
 % Algoritmos
-\usepackage{algorithmic}
+% \usepackage{algorithmic}
 \usepackage{algorithm}
+\usepackage{algpseudocode}
 
 % Gráficos
 \usepackage{tikz}
@@ -184,47 +185,47 @@ References with more than one author are ordered based on the first of them.\par
 % Estructura del documento
 \begin{document}
 
-\frontmatter
-\label{frontpage}\pdfbookmark{Doctoral Thesis}{frontpage}
-\titlehead{
-\includegraphics[height=1cm]{ull}
-  \vskip 1em
-  Facultad de F\'isica y Matem\'aticas \\
-  Departamento de Ingenier\'ia de Sistemas y Autom\'atica y Arquitectura y Tecnolog\'ia de Computadores.}
-\subject{Doctoral Thesis}
-\title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
-\author{N\'estor Morales Hern\'andez}
-\renewcommand{\codirector}{Leopoldo Acosta S\'anchez\\Jonay T. Toledo Carrillo}
-\date{2014}
-\maketitle
+% \frontmatter
+% \label{frontpage}\pdfbookmark{Doctoral Thesis}{frontpage}
+% \titlehead{
+% \includegraphics[height=1cm]{ull}
+%   \vskip 1em
+%   Facultad de F\'isica y Matem\'aticas \\
+%   Departamento de Ingenier\'ia de Sistemas y Autom\'atica y Arquitectura y Tecnolog\'ia de Computadores.}
+% \subject{Doctoral Thesis}
+% \title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
+% \author{N\'estor Morales Hern\'andez}
+% \renewcommand{\codirector}{Leopoldo Acosta S\'anchez\\Jonay T. Toledo Carrillo}
+% \date{2014}
+% \maketitle
 
-\input{certificate}
-\input{dedicatory}
-\input{acknowledges}
-
-\cleardoublepage
-\pdfbookmark{\contentsname}{tableofcontents}
-\tableofcontents
-
-\cleardoublepage
-\pdfbookmark{\listtablename}{listoftables}
-\listoftables
-
-\cleardoublepage
-\pdfbookmark{\listfigurename}{listoffigures}
-\listoffigures
-
-\cleardoublepage
-\pdfbookmark{\listalgorithmname}{listofalgorithms}
-\listofalgorithms
+% \input{certificate}
+% \input{dedicatory}
+% \input{acknowledges}
+% 
+% \cleardoublepage
+% \pdfbookmark{\contentsname}{tableofcontents}
+% \tableofcontents
+% 
+% \cleardoublepage
+% \pdfbookmark{\listtablename}{listoftables}
+% \listoftables
+% 
+% \cleardoublepage
+% \pdfbookmark{\listfigurename}{listoffigures}
+% \listoffigures
+% 
+% \cleardoublepage
+% \pdfbookmark{\listalgorithmname}{listofalgorithms}
+% \listofalgorithms
 
 \input{acronyms}
 \input{notation}
 
-\input{introduction}
+% \input{introduction}
 
 \mainmatter
-\input{chapter01}
+% \input{chapter01}
 \input{chapter05}
 \acresetall
 

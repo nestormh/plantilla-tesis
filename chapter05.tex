@@ -67,41 +67,45 @@ If we look again to the charts in section \todoref{fig:cp05_tfs}, we can notice 
 
 Finally, if we look at figure \todoref{XXX-comparacionTiemposELASvsBTSGM} in section \todoref{XXX-polargridresults}, we can see that \emph{ELAS} is much faster than \emph{BT-SGM}, and we require a fast algorithm in order to complete the whole pipeline in real time. \emph{ELAS} is able to work at an average of $17\,Hz$, while \emph{BT-SGM} average is below $5\,Hz$ in the implementation used. Considering this with the fact that the difference between them when looking to other measurements is not so big, we chose to use the \emph{ELAS} algorithm as the base for the point cloud reconstruction.
 
-In figure \ref{fig:cp05_tfs}, we can observe the relation between the point cloud generated and the coordinates frame located in the center of the left camera. In this coordinate system, $X$ axis is pointing to the right, $Y$ is the depth of the scene, and $Z$ the height. The rest of frames are explained in more detail in section \todoref{XXX}.
-
-\subsubsection{Point cloud filtering}\label{ch:chapter05_01_01_01}
-
-Once we have obtained the point cloud, we segment the salient volumes by assuming a flat ground. We remove the points below a plane defined by $XY$, as well as those points that are too far from the origin centered at the left camera to fall inside the voxel grid. This distance is controlled by the resolution parameters and the size of the grid, so
-
-\comment{No estoy muy seguro de que esta ecuación sea necesaria ni de que sea la forma adecuada de expresarla}
-\begin{equation}\label{eq:cp05_filter_limits}
-\begin{cases}
-interval_x = [-(grid.size_x / 2) * resolution_x, (grid.size_x / 2) * resolution_x ], \\
-interval_y = [0, grid.size_y * resolution_y ], \\
-interval_z = [0, grid.size_z * resolution_z ]
-\end{cases}
-\end{equation}
-
-, where, at each dimension $i \in (X,Y,Z)$, $interval_i$ is the interval in meters, $grid.size_i$ is the size of the grid and $resolution_i$ is the resolution of the voxel.
+In figure \ref{fig:cp05_full_filtered_pointcloud}, we can observe the relation between the point cloud generated and the coordinates frame located in the center of the left camera. In this coordinate system, $X$ axis is pointing to the right, $Y$ is the depth of the scene, and $Z$ the height. The rest of frames are explained in more detail in section \todoref{XXX}.
 
 \begin{figure*}[t]
         \centering
         \begin{subfigure}[b]{0.475\textwidth}
                 \centering
                 \caption{Full Point Cloud}
-                \includegraphics[width=\textwidth]{fullPointCloud}
-                \label{fig:cluster1}
+                \includegraphics[width=\textwidth]{fullPointCloud}\label{fig:cp05_full_pointcloud}
         \end{subfigure}%        
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
-          %(or a blank line to force the subfigure onto a new line)
+        ~ 
         \begin{subfigure}[b]{0.475\textwidth}
                 \centering
                 \caption{Filtered Point Cloud}
-                \includegraphics[width=\textwidth]{filteredPointCloud}
-                \label{fig:cluster2}
+                \includegraphics[width=\textwidth]{filteredPointCloud}\label{fig:cp05_filtered_pointcloud}                
         \end{subfigure}%
-        \caption{Comparison of a point cloud obtained using \emph{ELAS}, before and after the filtering.}\label{fig:clusterization_output}
+        \caption{Comparison of a point cloud obtained using \emph{ELAS}, before and after the filtering.}\label{fig:cp05_full_filtered_pointcloud}
 \end{figure*}
+
+\subsubsection{Point cloud filtering}\label{ch:chapter05_01_01_01}
+
+Once we have obtained the point cloud, we segment the salient volumes by assuming a flat ground. We remove the points below a plane defined by $XY$, as well as those points that are too far from the origin centered at the left camera to fall inside the voxel grid. This distance, and the resolution of each voxel, is parameterized for each dimension, and determines the size of the grid, so
+
+\begin{equation}\label{eq:cp05_filter_limits}
+\begin{cases}
+W = (I_{max}(X) - I_{min}(X)) / {DX} \\
+L = (I_{max}(Y) - I_{min}(Y)) / {DY} \\
+H = (I_{max}(Z) - I_{min}(Z)) / {DZ}
+\end{cases}
+\end{equation}
+
+Here, $W$, $L$ and $H$ are the width, length and height of the voxel grid. $DX$, $DY$ and $DZ$, are the parameterized resolutions of each voxel at dimensions $X$, $Y$ and $Z$, respectively. $I_{max}(d)$ and $I_{max}(d)$ represent the maximal and minimal value of the interval taken in consideration at each dimension $d$. As depicted in the diagram at figure \ref{fig:cp05_intervals}, the left camera is in the center of the grid in the $X$ and $Z$ dimensions, and at the minimal depth in the other dimension.
+
+\begin{figure*}[t]
+        \centering
+        \includegraphics[width=\textwidth]{intervals}
+        \caption{Representation of how the voxel grid is computed. Graphical representation of $\{X, Y, Z\}$, $\{DX, DY, DZ\}$, $\{W, L, H\}$ and $\{(I_{min}(n), I_{max}(n))  | n \in \{X, Y, Z\}\}$ are included, for the sake of clarity.}\label{fig:cp05_intervals}
+\end{figure*}
+
+At the end of this process, we will have the filtered point cloud $\mathcal{P}$, which will be the input for the 3D reconstruction stage.
 
 \subsubsection{Using other sensors}\label{ch:chapter05_01_01_02}
 
@@ -113,56 +117,287 @@ By using a point cloud referred to the left camera (or a given sensor), speeds a
 
 In figure \ref{fig:cp05_tfs}, we can see the different positions at which the vehicle has been located at previous frames, as well as the rest of intermediate coordinate frames used in the application.
 
-\begin{figure}[thb]\label{fig:cp05_tfs}
+\begin{figure}[th]
   \centering
   \includegraphics{tfs}
-  \caption{Transformations tree used in our application. \todo{Añadir esquema con los frames arriba a la izquierda de la imagen} }
+  \caption{Transformations tree used in our application. \todo{Añadir esquema con los frames arriba a la izquierda de la imagen} }\label{fig:cp05_tfs}
 \end{figure}
 
 \subsection{Voxelization}\label{ch:chapter05_01_03}
 
-With the point cloud received from
+This is the first stage of the process of the process in charge of the object reconstruction. As said, we have implemented our application in four different processes in order to make it more modular. Three of them have been already described in the previous sections \ref{ch:chapter05_01_01}, \ref{ch:chapter05_01_01_01} and \ref{ch:chapter05_01_02}. This is the fourth.
 
-% Recibimos nube de puntos como entrada
-% Cada punto irá asignado a el voxel correspondiente usando la expresión...
-% Asignacion de probabilidades (en una subseccion)
-% Cada uno de los voxel contiene además información relativa a:
-%   puntos 3d asociados
-%   sigma en cada una de las dimensiones
-%   occupiedProb
-%   occupiedPosteriorProb
-%   density (numero de puntos3d)
-%   vx, vy, vz
-%   partículas asociadas
-%   obstáculo al que pertenece
-% En la imagen XXX podemos ver el resultado de esta etapa, donde cada voxel está representado mediante un color diferente
-  
+As input, this process receives the odometry information obtained from the process described in \ref{ch:chapter05_01_02}, and the point cloud $\mathcal{P}$ obtained in section \ref{ch:chapter05_01_01_01}. This point cloud is processed, assigning each point $p_i = (p_x, p_y, p_z), i=1..N_p$ to the corresponding voxel $g_j=(g_w, g_l, g_h), j=1..N_g$, using the expression
+
+\begin{equation}\label{eq:cp05_point_to_voxel}
+\begin{cases}
+g_w = (p_x - I_{min}(X)) / DX\\
+g_l = (p_y - I_{min}(Y)) / DY\\
+g_h = (p_z - I_{min}(Z)) / DZ
+\end{cases}
+\end{equation}
+
+$N_p$ is the number of points in $\mathcal{P}$, $N_g = W * L * H$ is the total number of voxels in the grid $\mathcal{G}$ and $w$, $l$ and $h$ are the integer coordinates inside the grid at $X$, $Y$ and $Z$ dimensions. The grid is represented in the way that the centroid of the voxel $g_j=(0,0,0)$ is located at position $(I_{min}(X) - (DX/2), I_{min}(Y) - (DY/2), I_{min}(Z) - (DZ/2))$.
+
+On each voxel, we store information related to:
+\begin{itemize}
+ \item The 3D associated points, assigned with the expression at equation \ref{eq:cp05_point_to_voxel}.
+ \item The centroids $c=(c_x, c_y, c_z)$ of each voxel.
+ \item Uncertainty of the stereo reconstruction values $\sigma_{x_{grid}}$, $\sigma_{y_{grid}}$ and $\sigma_{z_{grid}}$, which will be explained at section \ref{ch:chapter05_01_03_01}
+ \item Weights $\omega_{occupied}$ and $\omega_{free}$, described also in the same section.
+ \item Density of 3D points $N_p$.
+ \item Main orientation and speed vectors $v=(v_x, v_y, v_z)$ and their associated yaw $\psi$, pitch $\theta$ and magnitude $\|v\|$.
+ \item Stored particles $q_i = (x, y, z, v_x, v_y, v_z) \in \mathcal{Q}$, with their associated position $x$, $y$, $z$ and velocities $v_x$, $v_y$ and $v_z$.
+ \item Obstacle identifier $o_i \in \mathcal{O}$, referencing the obstacle it belongs to. The process in which this identifier is assigned is described in section \todoref{XXX}.
+\end{itemize}
+
+\subsubsection{Conditional Probabilities Calculation}\label{ch:chapter05_01_03_01}
+
+Both posterior and conditional probabilities of the received measurement are obtained a method similar to that described in \cite{isard1998condensation}, for a three-dimensional case, as that we have. Probabilities are directly related to the existence of not of 3D points in each one of the voxels. These probabilities will help us, in the next stages, to weight the particles.
+
+For each voxel, we need to know the conditional probability of the associated measurements, under the occupied or free asumption. For that, we have to take into account the specificities of each sensor. In our case, we have based our tests on a stereo camera. In this kind of sensors, uncertainties grow while depth is bigger. So, we want to compute this uncertainty for the centroid $c=(c_x, c_y, c_z)$ associated to each voxel. Then, the uncertainty of the distance reconstruction is given by:
+
+\begin{equation}\label{eq:cp05_uncertainty_distance_reconstruction}
+\sigma_{c_y}={{{c_y}^2 \cdot \sigma_d} \over {b \cdot f}}
+\end{equation}
+
+Here, $\sigma_d$ is the error in disparity computation; $b$ is the baseline of the stereo system; and $f$ is the focal distance (in pixels).
+
+Based on equation \ref{eq:cp05_uncertainty_distance_reconstruction}, we can derive the lateral and height positioning error $\sigma_w$ and $\sigma_h$:
+
+\begin{equation}\label{eq:cp05_uncertainty_lateral_and_height_reconstruction}
+\begin{align}
+\sigma_{c_x}={{{c_x} \cdot \sigma_l} \over {c_y}} \\
+\sigma_{c_z}={{{c_z} \cdot \sigma_l} \over {c_y}}
+\end{align}
+\end{equation}
+These errors must be mapped into voxel errors. This is just done by dividing them with the voxel size on each dimension.
+
+\begin{equation}\label{eq:cp05_uncertainty_voxel_errors}
+\begin{align}
+\sigma_w={{\sigma_{c_x}} \over {DX}} \\
+\sigma_l={{\sigma_{c_y}} \over {DY}} \\
+\sigma_h={{\sigma_{c_z}} \over {DZ}}
+\end{align}
+\end{equation}
+
+Based on these errors, the idea is to find an approximation for the conditional probabilities of the measurement voxels under the occupied/free assumption. For that, we count the occupied neighbor voxels in the grid. The distance for which we consider a voxel as neighbor comes from the values of $\sigma_w$, $\sigma_l$ and $\sigma_h$. The total number of occupied neighbors is divided by the total number of voxels explored, obtaining the final value of the conditional probability.
+
+\begin{equation}\label{eq:cp05_conditional_prob}
+p(m(w,l,h)|occupied) = {
+{\sum \limits_{w'=w-\sigma_w}^{w+\sigma_w} \sum \limits_{l'=l-\sigma_l}^{l+\sigma_l} \sum \limits_{h'=h-\sigma_h}^{h+\sigma_h} O(w',l',h')} 
+\over 
+{(2 \cdot \sigma_w + 1) \cdot (2 \cdot \sigma_l + 1) \cdot (2 \cdot \sigma_h + 1)}}
+\end{equation}
+
+, where
+
+\begin{equation}\label{eq:cp05_occupied}
+\begin{align*}
+ O(w', l', h') &=
+  \begin{cases}
+   1        & \text{if } %
+   %
+   {\exists p(x, y, z) \in \mathcal{P} ~|~ p \text{ belongs to } \mathcal{G}(w', l', h')}%
+   \\
+   0        & \text{otherwise}
+  \end{cases}
+\end{align*}
+\end{equation}
+
+The conditional probability of the measurement given the “free” assumption is
+
+\begin{equation}\label{eq:cp05_conditional_prob}
+p(m(w,l,h)|occupied) = 1 - p(m(w,l,h)|free)
+\end{equation}
+
+In figure \ref{fig:cp05_voxelization} the obtained voxels are represented. The occupation probability is represented through the alpha channel of each of them, so the opacity is directly related to this probability, being the most transparent ones those with a low value.
+
+\begin{figure}[th]
+  \centering
+  \includegraphics{voxelization}
+  \caption{Voxelization of a given point cloud. Those voxels with a bigger occupation probability are more opaque.\todo{Poner opacidad en función de la probabilidad} }\label{fig:cp05_voxelization}
+\end{figure}
+
 \subsection{Voxel pose and speed computation}\label{ch:chapter05_01_04}
 
-% El pipeline de esta etapa está representado en la figura XXX. A continuación se describe cada una de las etapas:
+The pipeline of this step is represented in figure \ref{fig:cp05_voxel_pose_speed_computation}. One of the advantages of using a grid of voxels is that most of the computation is performed for each of them separately, making it suitable for a parallel implementation. 
 
-% Predicción
-% ==========
-% 
-% 
-% 
-% Measurement Based Update
-% ========================
-% 
-% 
-% 
-% 
-% Inicialización
-% ==============
-% Sigue un proceso similar al de la fase de inicialización realizado por danescu2012particle, sólo que en este caso empleando las 3 dimensiones
-% Poner como algoritmo:
-% Si la probabilidad de ocupación de uno de los voxels es mayor que un umbral dado y no hay ninguna partícula en la celda, 
-%   inicializamos Nc partículas 
-%   
-% Nc es el número máximo de partículas permitido
-% 
-% Cada partícula es inicializada con una pose (x,y,z) = al centroide del voxel, y una velocidad (vx, vy, vz) aleatoria entre 0 y una velocidad máxima pasada por parámetros para cada una de las dimensiones. 
-% Como estamos incluyendo la posibilidad de incluir velocidad en el eje z, incluimos la posibilidad de realizar movimientos no necesariamente horizontales. Si queremos limitar el tracking a esta situación, basta con poner el parámetro asociado con la dimensión Z a 0
+An explanation of the subtasks of this step is given next:
+
+\begin{figure}[th]
+  \centering
+  \includegraphics{voxelPoseAndSpeedComputation}
+  \caption{Pipeline of the voxel pose and speed computation stage.}\label{fig:cp05_voxel_pose_speed_computation}
+\end{figure}
+
+\subsubsection{Prediction}\label{ch:chapter05_01_04_01}
+
+In this step, we compute the present particle distribution taking into account each particle motion model and the time that has passed between frames. With this new distribution, data will be ready for the next task. In the method developed by \cite{danescu2012particle}, they updated the particle set in a step quite similar to this one. However, in their work, prediction equations used odometric information in order to compensate the ego-motion. In our approach, we do not perform this compensation. This doesn't means that we do not care about our the bias introduced by the vehicle movement, but this movement will be compensated at the end of the process, once we have the orientation and speed of each obstacle. This come with some avantages:
+\begin{itemize}
+ \item We do not need to translate and rotate the whole grid between iterations, as it is moving together with the left camera based frame.
+ \item We just need to apply the motion equations in order to update the particles set.
+\end{itemize}
+
+These advantages allows saving a lot of resources. This is the most computationally expensive of the tasks in the method, which is highly dependent on the parameter $N_g$, that controls the number of particles. If we speed up this step, the system will be able to deal with a larger number of particles, improving the results.
+
+Each of the particles $q_i = (x, y, z, v_x, v_y, v_z) \in \mathcal{Q}$ is updated as follows. First, we need a motion model that allows to transform the particles based on the increment of time $\Delta t$ and the parameters of position and speed of the particle. For this purpose, we introduce the state transition matrix $S$:
+
+\begin{equation}\label{eq:cp05_state_transition_matrix}
+S =
+\left( \begin{array}{cc}
+I_{3\times3} & \Delta t \cdot I_{3\times3} \\
+0_{3x3} & I_{3\times3} \end{array} \right)
+\end{equation}
+
+We also introduce the matrix $\Delta$, which models the stochastic diffusion caused by the uncertainties in the motion model.
+
+\begin{equation}\label{eq:cp05_state_motion_model_uncertainties}
+\Delta =
+\left( \begin{array}{cccccc}
+\delta x & \delta y & \delta z & \delta v_x & \delta v_y & \delta v_z
+\end{array} \right)^T
+\end{equation}
+
+Here, $\delta x$, $\delta y$, $\delta z$, $\delta v_x$, $\delta v_y$ and $\delta z$, are randomly drawn from a Gaussian distribution of zero mean and a covariance matrix Q equivalent to the state transition covariance matrix of a Kalman filter.
+
+So, the new position of each particle is given by the expression
+
+\begin{equation}\label{eq:cp05_particle_update}
+q_{t + 1} = S \cdot q_{t} + \Delta
+\end{equation}
+
+\subsubsection{Weighting and resampling}\label{ch:chapter05_01_04_02}
+
+This step is quite similar to the stage with the same name in the work of \cite{danescu2012particle}, with some minor differences, most of them related to the addition of a new dimension. For optimization reasons, in this stage we also perform the calculation of the main orientation and speed vectors associated to each voxel.
+
+As said before, particles are the base of our system. They are used both as hypotheses and as the building blocks of the different obstacles. From these particles, we are going to calculate the main vectors of each voxel, which will be used in later steps for the reconstruction and segmentation of the final obstacles.
+
+But in this step we are more interested in their role as hypotheses. A particle in a voxel is a hypothesis saying that it is occupied, and that it has the speed equal to the speed of the particle. The more particles in a voxel, the more chances to be occupied. If there are not many particles in the voxel, the hypothesis of the voxel being free is supported. The particles are multiplied or deleted depending on how well the occupied or the free hypotheses of each voxel are supported by the measured data.
+
+This step is composed by two steps: Weighting and Resampling. As said, we also include the main vectors calculation in this section, but it could be easily a separate step which is included here just for optimization reasons.
+
+\paragraph{Main vectors calculation}\label{ch:chapter05_01_04_02_01}
+
+Once the survival particles which fall inside an occupied voxel have been computed, main vectors are obtained. The way in which we do that is through an spherical histogram. The idea, depicted in figure \ref{fig:cp05_spherical_hist}, works at follows:
+\begin{itemize}
+ \item The possible values of yaw $\psi$ that the voxel can take ($[0\dots2\pi]$) is divided in intervals of size $\Delta\psi$; we do the same for the pitch $\theta$, with intervals of size $\Delta\theta$. In our tests, both $\Delta\psi$ and $\Delta\theta$ are set to $5^{\circ}$.
+ \item For each particle, we obtain the corresponding value of $\psi$ and $\theta$, and the corresponding bin is increased in one unit. Each bin stores, also, the average of the speeds related to each particle.
+ \item The speed and orientation will be given by the bin with the biggest number of related particles.
+ \end{itemize}
+ 
+ After this process, each voxel will know their estimated speed and direction. These must be obtained using just the surviving particles after the prediction process. As weighting and resampling is an stochastic process, results could be biased by wrongly duplicated or eliminated particles. In figure \ref{XXX-segmentation} we can view the main vectors obtained for the surviving voxels after the segmentation process.
+
+\begin{figure}[th]
+  \centering
+  \includegraphics{sphericalHist}
+  \caption{Diagram representing an spherical histogram.}\label{fig:cp05_spherical_hist}
+\end{figure}
+
+\paragraph{Weighting}\label{ch:chapter05_01_04_02_02}
+
+The number of particles $N_g$ is assumed to be constant, assuming that the real particles inside a voxel have the occupancy value \emph{true}, while that the absence of real particles is considered as the presence of virtual particles with an occupancy value equal to \emph{false}. Based on this idea, as measurement data does not include speed information (we are using as input pure 3D point clouds), the weight of the particles depends only on the \emph{occupied} hypothesis.
+
+So, for each voxel, we are interested on getting the total posterior probability of being occupied or free. In order to obtain these probabilities, we will need the measurement conditional probabilities (weights) of each voxel and the number of free/occupied hypotheses. The total posterior probabilities are given by:
+
+\begin{equation}\label{eq:cp05_total_posterior_probabilities}
+\begin{array}{l}
+P_{og}={{\omega_{occupied} \cdot N_{og}} \over {\omega_{occupied} \cdot N_{og} + \omega_{free} \cdot N_{fg}}} \\
+P_{fg}={{\omega_{free} \cdot N_{fg}} \over {\omega_{occupied} \cdot N_{og} + \omega_{free} \cdot N_{fg}}}
+\end{array}
+\end{equation}
+
+In these equations, the values of the weights $\omega_{occupied}$ and $\omega_{free}$ are already calculated during the process described at section \ref{ch:chapter05_01_03_01}, so 
+
+\begin{equation}\label{eq:cp05_occupancy_weights}
+\begin{array}{l}
+\omega_{occupied} = p(m(w,l,h)|occupied) \\
+\omega_{free} = p(m(w,l,h)|free)
+\end{array}
+\end{equation}
+
+; about $N_{og}$ and $N_{fg}$, they are the number of particles having the \emph{occupied} hypothesis (real number of particles in the voxel), and those having the \emph{free} hypothesis, respectively. As said before, we consider the absence of particles as the presence of a set of virtual particles with the hypothesis \emph{free}:
+
+\begin{equation}\label{eq:cp05_number_of_particles}
+\begin{array}{l}
+N_{og} = | \{ p_i \in \mathcal{P} | p_i \text{ belongs to voxel } g \} | \\
+N_{fg} = N_g - N_{og}
+\end{array}
+\end{equation}
+
+\paragraph{Resampling}\label{ch:chapter05_01_04_02_03}
+
+After the weighting step is done, we can start with the resampling step. After this, the population of particles will be properly updated, so we can use them for the reconstruction of the obstacles. As we do not take into account the free voxels, just real particles (those with the \emph{occupied} hypothesis) will be considered. For each of these particles, we will decide if they are destroyed or multiplied. After the process of resampling has been completed, each voxel will have the proper number of particles.
+
+In the algorithm \ref{alg:cp05_weighting_resampling}, we describe the resampling process. For the sake of clarity, the point in which weighting and main vectors are computed is indicated.
+
+\begin{algorithm}
+\caption{Weighting and Resampling}
+\label{alg:cp05_weighting_resampling}
+\begin{algorithmic}
+\State {\comment{A la persona que me esté revisando esto: échale un ojo al algoritmo correspondiente en \cite{danescu2012particle} (pagina 11). No se si es plagio o adaptacion al caso concreto de los voxels y, en parte, a como llevé el cambio de celda a voxel. En general es el mismo algoritmo, pero uní los dos fors por un tema de optimización: no recorro todas las partículas correspondientes buscando el voxel asociado. En vez de eso, recorro para cada voxel (para el cual ya calculé $f_g$) y hago el resampling sólo en las partículas asociadas. A efectos prácticos es lo mismo, sólo que más eficiente :) }}
+\Function{MeasurementBasedUpdate}{$\mathcal{G}$} 
+  \For {\textbf{each} voxel $g \in \mathcal{G}$}
+    \State \textbf{Main vectors computation}
+      \State \indent {$g$.computeMainVectors()}
+    \State
+    \State \textbf{Weighting}
+      \State \indent Compute $N_{og}$ and $P_{og}$
+      \State
+    \State \textbf{Resampling}
+      \State \indent Compute resampled number of particles $N_{rg}$
+      \State \indent $N_{rg} \gets P_{og} \cdot N_g$
+      \State \indent $f_g \gets {{N_{rg}} \over {N_{og}}}$
+    \For {\textbf{each} particle $p$ belonging to $g$}
+      \State \Comment { The number of particles will be increased.}
+      \If { $f_g > 1$ } 
+	\State {$F_n \gets \lfloor f_g\rfloor$} \Comment {Integer part}
+	\State {$F_f \gets f_g - \lfloor f_g\rfloor$} \Comment {Fractional part}
+	\For {$k = 1$ to $F_n - 1$}
+	  \State {$g$.makeCopy($p$)}
+	\EndFor
+	\State $r \gets \text{random value in the range [0 \ldots 1]}$
+	\If {$r < F_f$}
+	  \State {$g$.makeCopy($p$)}
+	\EndIf
+      \State \Comment {$f_g < 1$, the number of particles will be decreased.}
+      \Else 
+	\State $r \gets \text{random value in the range [0 \ldots 1]}$
+	\If {$r > F_g$}
+	  \State {$g$.remove($p$)}
+	\EndIf
+      \EndIf
+    \EndFor
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+The algorithm is almost the same as proposed in \cite{danescu2012particle}. The main difference is that, due to optimization reasons we do not split the whole process into two different loops. To do that, instead of having the set of particles separated from the voxels, each voxel knows exactly where its particles are. In the original algorithm, it is necessary to compute and store the value of $f_g$ for absolutely all the voxels in $\mathcal{G}$. After that, the program iterates over all the particles in $\mathcal{P}$. For each of these particles $p$, we need to know the related voxel and look for the computed value $f_g$. In our approach, we assign each particle to its voxel directly at the \emph{initialization} and \emph{prediction} steps, so we can perform all the weighting and resampling step at once, saving a little bit more computational time again.
+
+The resampling process depends on the value of the ratio between the actual number of particles and the number of resampled particles ($f_g$). Based on this value, we know if the particles will be duplicated ($f_g > 1$) or removed ($f_g < 1$). In figure \ref{fig:cp05_weight_and_resample}, an example where the surviving particles after this step are shown. In this case, pedestrians are moving in the negative direction of $X$ and $Y$ axis, so the most of surviving particles have this trend. These will be used in the next step for the calculation of the main vectors representing the movement of each voxel separately.
+
+\begin{figure}[th]
+  \centering
+  \includegraphics{weightAndResample}
+  \caption{Pipeline of the voxel pose and speed computation stage.}\label{fig:cp05_weight_and_resample}
+\end{figure}
+
+After this process is finished, we can proceed to the initialization stage.
+
+\subsubsection{Initialization}\label{ch:chapter05_01_04_03}
+
+In this stage, those voxels without particles initialize a new set of them with a number proportional to the occupancy probability. This situation can be reached for two reasons:
+\begin{itemize}
+ \item This is the first iteration, so none of the voxels has been initialized already.
+ \item After the weighting and resampling process, none of the particles survived.
+\end{itemize}
+
+This stage is the first step we perform in the execution on the method, and the last at each iteration. It is in charge of ensuring that the number of particles never become zero. Here, we just check each of the voxels $g \in \mathcal{G}$. If there are not particles in the voxel ($N_p = 0$), or the occupancy probability is bigger than the occupancy threshold $\tau_{o}$ ($\omega_{occupied} > \tau_{o}$), a number of particles equal to $N_p$ is initialized in the voxel.
+
+Given the voxel $g \in \mathcal{G}$, each particle is initialized with the position $(x, y, z) = (g.c_x, g.c_y, g.c_z)$, and a random speed $(v_x, v_y, v_z)$ in the range $[0\dots v_{max}(n)]$, being $v_{max}(n)$ an user defined parameter that determines the maximal speed at each dimension $n \in \{ X, Y, Z\}$ that is expected by each voxel. 
+
+In this implementation, we allow vertical movements controlled by the parameter $v_{max}(Z)$. However, in certain situations like planar grounds this movement is not relevant, so it is better to assign it to $0$, so the particles can restrict their movement to the $XY$ plane.
 
 \subsection{Object reconstruction}\label{ch:chapter05_01_05}
 
@@ -174,6 +409,16 @@ With the point cloud received from
 % 
 % Aggregation
 % ===========
+
+% Ego-motion compensation
+% =======================
+% Decir lo que más o menos se explica en la fase de predicción
+
+\begin{figure}[th]
+  \centering
+  \includegraphics{obstacleSpeed}
+  \caption{\todo{Explicar esto cuando ya haya terminado con la fase de segmentacion. Rehacer la imagen}.}\label{fig:cp05_obstacle_speed}
+\end{figure}
 
 \subsection{Planning and obstacle avoidance}\label{ch:chapter05_01_06}
 
