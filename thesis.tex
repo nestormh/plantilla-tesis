@@ -114,6 +114,8 @@
 % \usepackage{algorithmic}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+% \newcommand{\pushcode}[1][1]{\hskip\dimexpr#1\algorithmicindent\relax}
+\newcommand{\pushcode}[1][1]{\hskip\algorithmicindent\relax}
 
 % Gráficos
 \usepackage{tikz}
@@ -121,7 +123,7 @@
 \newlength{\figuresheight}
 \setlength{\figuresheight}{7cm}
 \setkeys{Gin}{totalheight=\figuresheight,keepaspectratio=true}
-\graphicspath{{./images/bmps/}{./images/vects/}{./images/}}
+% \graphicspath{{./images/bmps/}{./images/vects/}{./images/}}
 \usepackage{ifpdf}
 \ifpdf
   \DeclareGraphicsExtensions{.pdf,.mps,.png,.jpg}

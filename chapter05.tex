@@ -401,22 +401,16 @@ In this implementation, we allow vertical movements controlled by the parameter 
 
 \subsection{Object reconstruction}\label{ch:chapter05_01_05}
 
-Now we know the relative movement of each voxel, we can proceed to segment the obstacles based on this information. This process comprises three steps: segmentation, in which an initial segmentation of the obstacles is performed; filtering, in order to remove the remaining noise; and aggregation, which tries to join obstacles that were initially split, but are actually parts of a single obstacle.
-
-\subsection{Segmentation}\label{ch:chapter05_01_05_01}
-
 Based on the main vectors obtained for each voxel, we can assume that all the adjacent voxels with a similar direction and speed belong to the same obstacle, or at least to the same group of obstacles (for example, we could find a situation in which a group of people are all of them walking together. We are not concerned about this case because if they are considered as a single obstacle is because they are adjacent and there is no traversable space between them. As they walk in the same direction, in practice we can think on them as a single obstacle).
 
 In this sense, we have developed a method inspired in the color-based clustering described by \cite{broggi2013}. However, in our case, the similarity function is not based on color information because of the reasons explained before, so this similarity function is split into three different similarity functions:
 
-\begin{equation}\label{eq:cp05_number_of_particles}
-\begin{cases}
-% \begin{array}{l}
+\begin{equation}\label{eq:cp05_similarity_functions}
+\begin{array}{l}
 f_1(o,g)=\| |\vec{v}|_o - |\vec{v}|_g \|\\
 f_2(o,g)=\| \phi_o - \phi_g \|\\
 f_3(o,g)=\| \theta_o - \theta_g \|
-% \end{array}
-\end{cases}
+\end{array}
 \end{equation}
 
 , where $|\vec{v}|_o$ and $|\vec{v}|_g$ are the modulus of the speeds obtained for an obstacle $o \in \mathcal{O}$ and for a voxel $g \in \mathcal{G}$, respectively. The same applies for the yaw $\phi_o$ and $\phi_g$, and the pitch $\theta_o$ and $\theta_g$ measurements.
@@ -442,7 +436,10 @@ The use of these similarity functions has several advantages. The most direct is
       \EndIf
     \EndFor
   \EndWhile
-  \If {$|o| >= \tau_{min\_voxels\_per\_obstacle}}$}
+  \If {$|o| >= \tau_{min\_voxels\_per\_obstacle} \textbf{ and }$\\ 
+  \pushcode\pushcode$~~~~o.sz(Z) >= \tau_{min\_obstacle\_height} \textbf{ and }$\\
+  \pushcode\pushcode$~~~~o.min(Z) == I_{min}(Z)$}
+      \State {$o \text{.updateVectors()}$}
       \State {$\text{insert } o \text{ in } \mathcal{O}$}
   \EndIf
 \EndFor
@@ -450,28 +447,149 @@ The use of these similarity functions has several advantages. The most direct is
 \end{algorithmic}
 \end{algorithm}
 
-The neighborhood of a voxel $g$ represented by the function $N(g)$, as in \cite{broggi2013}, is performed using the Chebyshev distance. When a new voxel $g''$ is added to an obstacle $o$, the voxel identifier is updated. From the obstacle point of view, we just add the voxel to a list associated to each obstacle. In the future, this list will be used for updating the information related to the obstacle centroid, speed and limits on each dimension. This process could be online, saving computational resources, but as we are performing the filtering and aggregation steps, we have to wait until those steps will be finished.
+The neighborhood of a voxel $g$ represented by the function $N(g)$, as in \cite{broggi2013}, is performed using the Chebyshev distance. When a new voxel $g''$ is added to an obstacle $o$, the voxel identifier is updated. From the obstacle point of view, we just add the voxel to a list associated to each obstacle. Once an obstacle is about to be added to the final set of obstacles, this list will be used for updating the information related to the obstacle centroid, speed and limits on each dimension (See section \ref{ch:chapter05_01_05_01}).
 
-\subsection{Filtering}\label{ch:chapter05_01_05_02}
+Before adding an obstacle to the final list of obstacles $\mathcal{O}$, we perform a filtering stage which, for optimization reasons, has been integrated in the segmentation process. This filtering procedure is based in a set of assumptions, related to the expected size of the obstacles and their position regarding to the ground. An obstacle is accepted in the final list if:
 
-\subsection{Aggregation}\label{ch:chapter05_01_05_03}
+\begin{itemize}
+ \item It is big enough. That is, if the number of voxels (which is directly proportional to its volume) is over the user-defined parameter $\tau_{min\_voxels\_per\_obstacle}$.
+ \item It is tall enough. The minimal height is controlled by the parameter $\tau_{min\_obstacle\_height}$
+ \item The obstacle is on the ground. This helps to remove flying obstacles like traffic lights or the top of some trees.
+\end{itemize}
+
+\subsubsection{Obstacle vectors computation}\label{ch:chapter05_01_05_01}
+
+Once we have the list of voxels that compose each obstacle, we can use it for the calculation of their speed direction and magnitude. We want also to compensate the motion of our vehicle in order to know their real speed. Let $ego_{vx}$, $ego_{vy}$ and $ego_{vz}$ be the vectors that represent the motion of the vehicle regarding to the left camera coordinates frame. Also, $o_{vx}$, $o_{vy}$ and $o_{vz}$ will be the motion vectors of each obstacle and $g_{vx}$, $g_{vy}$ and $g_{vz}$ those for each of the voxels in the list for that obstacle. Then, the final speed for each obstacle will be obtained by applying:
+
+\begin{equation}\label{eq:cp05_obstacle_vectors_computation}
+\begin{cases}
+o_{vx} = {{\sum\limits_{g \in \mathcal{G}_o} g_{vx}} \over {|\mathcal{G}_o|}} + ego_{vx}\\
+o_{vy} = {{\sum\limits_{g \in \mathcal{G}_o} g_{vy}} \over {|\mathcal{G}_o|}} + ego_{vy}\\
+o_{vz} = {{\sum\limits_{g \in \mathcal{G}_o} g_{vz}} \over {|\mathcal{G}_o|}} + ego_{vz}
+\end{cases}
+\end{equation}
+
+Here, $\mathcal{G}_o$ is the list of voxels associated to the obstacle $o$. In figure \ref{fig:cp05_obstacle_vectors_computation}, we have shown a simulation of which will be the future movement of the obstacles if we consider the obstacle speed computed in this stage.
 
 \begin{figure}[th]
   \centering
-  \includegraphics{obstacleSpeed}
-  \caption{\todo{Explicar esto cuando ya haya terminado con la fase de segmentacion. Rehacer la imagen}.}\label{fig:cp05_obstacle_speed}
+  \includegraphics{fakePointCloud}
+  \caption{Simulation of the obstacles future movement using the computed vectors.}\label{fig:cp05_obstacle_vectors_computation}
 \end{figure}
-
-\subsection{Ego-motion compensation}\label{ch:chapter05_01_05_04}
-
 
 \subsection{Planning and obstacle avoidance}\label{ch:chapter05_01_06}
 
+\todo{Si me da tiempo, intentar meter el dataset de Daimler y hacer unos test de detection rate un poco mejores, incluyendo velocidades.}
+The speed vectors of each obstacle, together with their position and the 3D point cloud stored by the associated voxels will be used by the planner of the vehicle in order to perform an efficient and safe planning. This task, which is the final objective of this thesis, will be described in section \todoref{XXX}. A figure of the output of this method being used for planning tasks is shown at figure \todoref{XXX}, in the same section. Also, a video of the pipeline of the whole method described here is available at \todoref{XXX}.
 
+\section{Results}\label{ch:chapter05_02}
 
-% RESULTADOS:
+\section{Input point cloud}\label{ch:chapter05_02_01}
 % Imagen que compara los resultados con ELAS y con BT-SGM
-% Gráfica de tiempos
-% Decir los tiempos en Hz (ya se dijo arriba, pero se puede repetir)
+\begin{figure*}[th]
+        \centering
+        \begin{subfigure}[b]{0.475\textwidth}
+                \centering
+                \caption{BT-SGM}
+                \includegraphics[width=\textwidth]{btsgm}\label{fig:cp05_bt_sgm}
+        \end{subfigure}%        
+        ~ 
+        \begin{subfigure}[b]{0.475\textwidth}
+                \centering
+                \caption{ELAS}
+                \includegraphics[width=\textwidth]{elas}\label{fig:cp05_elas}                
+        \end{subfigure}%
+        \caption{Comparison of a resulting point cloud obtained using both \emph{BT-SGM} and \emph{ELAS}.}\label{fig:cp05_comparison_bt_sgm_vs_elas}
+\end{figure*}
+
+% Comparacion de tiempos
+ \begin{figure}[th]
+  \centering
+  \includegraphics[trim=50 50 90 60, clip]{timesELAS_OPENCV}
+  \caption{Comparison of the required time for each of the stereo reconstruction algorithms.}\label{fig:cp05_times_elas_btsgm}
+\end{figure}
+
+\section{Ego-motion}\label{ch:chapter05_02_02}
 % Añadir comparativa entre libviso y la odometría real
+ \begin{figure}[th]
+  \centering
+  \includegraphics[trim=50 50 90 60, clip]{yaw}
+  \caption{Comparison between the yaw values obtained through visual odometry compared to mechanical odometry.}\label{fig:cp05_ego_yaw}
+\end{figure}
+
+\begin{figure}[th]
+  \centering
+  \includegraphics[trim=50 50 90 60, clip]{speed}
+  \caption{Comparison between the speed values obtained through visual odometry compared to mechanical odometry.}\label{fig:cp05_ego_speed}
+\end{figure}
+
+\section{Detection}\label{ch:chapter05_02_03}
+\todo{Si me sobra tiempo, intentar hacer un estudio más exhaustivo usando las imágenes de Daimler}
+% Tasa de deteccion
+\begin{figure*}[th]
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \centering
+                \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{recall}\label{fig:cp05_recall}
+                \caption{Recall}
+                \label{fig:recallChart}
+        \end{subfigure}%        
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \centering
+                \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{precision}\label{fig:cp05_precision}
+                \caption{Precision}
+                \label{fig:precisionChart}
+        \end{subfigure}%
+        
+%         ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \centering
+                \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{f1}\label{fig:cp05_f1}
+                \caption{$F_1$}
+                \label{fig:f1Chart}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \centering
+                \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{similarity}\label{fig:cp05_similarity}
+                \caption{Similarity}
+                \label{fig:similarityChart}
+        \end{subfigure}
+        \caption{Detection rate obtained by our method, compared with our implementation of the method of \cite{danescu2012particle}.}\label{fig:cp05_detection_rate}
+\end{figure*}
+
+\section{Performance}\label{ch:chapter05_02_04}
+% Relacion tiempo-particulas
+\begin{figure}[th]
+  \centering
+  \includegraphics[trim=50 50 90 60, clip]{timesVsParticles}
+  \caption{Comparison of the time needed for the each iteration when the number of particles increases.}\label{fig:cp05_time_vs_particles}
+\end{figure}
+
+% Decir los tiempos en Hz (ya se dijo arriba, pero se puede repetir)
+ 
+\section{Summary}\label{ch:chapter05_03}
+ 
+% Decir que el código correspondiente a esta parte de la tesis se encuentra disponible en GITHUB
+% Decir que se puede ver un video en youtube con los resultados
+% Ventajas:
+% Rápido
+% repetir las ventaja de danescu
+% Mejora el estado del arte si lo comparamos con Danescu
+% - 3d completo
+% - Permitimos movimiento en las 3 dimensiones
+% - Otras ventajas q se me ocurran haciendo la parte de resultados
+% 
+% Trabajo futuro:
+% Incluir informacion de color
+% Hacer seguimiento a lo largo del tiempo de los obstaculos para poder aplicar filtro de kalman
+% Mejorar mecanismo de segmentacion
+% Implementar version paralela q haga uso de las ventajas de un grid
+ 
+ 
+ 
  
