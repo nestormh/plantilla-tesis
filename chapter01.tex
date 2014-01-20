@@ -101,11 +101,46 @@ Based on how much information they use, we can divide object tracking methods in
 
 \subsection{Global planning}\label{ch:chapter01_02_06}
 
-\todo{blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah }
+Muchos estudios se han realizado en torno al problema de generacion de rutas globales. Aunque fue inicialmente propuesta para aplicaciones en robotica, ultimamente se ha usado con exito en aplicaciones de automocion.
+
+Podemos dividir los algoritmos de planificacion en... (El resto esta en la libreta, en la parte de estado del arte de planificacion local)
+
+
+==============================================================
+Lo que pongo a continuacion va para la intro de global planning
+Los algoritmos de planificacion pueden ser divididos en locales y globales:
+Globales:
+  La ruta global y los estados del vehiculo quedan determinados por la info proporcionada por un mapa digital y un sistema de localizacion
+Locales:
+  La ruta local puede ser generada entonces en la etapa de planificacion basada en la ruta global y la info del entorno del vehiculo obtenida por los sensores
+  El paper se basa en local path planning que proporciona capacidades de evitacion de obstaculos a un vehiculo autonomo que sigue una ruta global predefinida
+
 
 \subsection{Local planning}\label{ch:chapter01_02_03}
 
-\todo{blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah }
+Con una ruta global calculada y el conocimiento del entorno del vehículo, hace falta enviar al vehículo una serie de comandos que le indiquen cómo seguirla.
+
+En la literatura, muchos métodos se basan en la búsqueda de trayectorias que hagan de intermediarias entre esta ruta global y la ruta local.
+
+Muchos de estos métodos de generación trayectorias se basan en un esquema de optimización discreta (refs. 6, 17-19 coreanos)
+
+Estos métodos calculan un cjto finito de trayectorias basadas en un modelo parametrico, habitualmente funciones polinomiales de un orden determinado. El problema de esto es que a pesar de q el espacio de sol. se reduce y permite una planificacion eficiente, puede introducir suboptimalidad -> Puede llevar a overshoots y/o stationary offsets en curvas
+
+Algunos ejemplos:
+(9-annieway) -> Un árbol de trayectorias es muestreado simulando el closed loop system empleando el RRT algorithm
+(10-annieway) -> El sistema incorpora varias heurísticas en forma de sampling biases to assert well behaved operation
+(17-annieway) El control optimo de un sistema aerodinamico se encuentra dentro de un function space que es spanned by a Garlekin based
+Algunos metodos que se basan en la transformacion del espacio de configuraciones mediante el espacio de Frenét:
+(Annieway -> Optimal Trajectory Generation for Dynamic Street Scenarios in a Frenét Frame) -> Realiza objetivos a largo plazo como mantenimiento de velocidad, merging, following, stopping por medio de estrategias de ctrol optimo within the Frenét-frame de la calle.
+(Stanley: The robot that won the DARPA Grand Challenge) -> Define el offset lateral como la perpendicular a una trayectoria base establecida
+  Esta condicion permite al vehiculo circular por la carretera paralelo a la trayectoria base.
+  Para seleccionar el path optimo, la funcion de coste penaliza el paso sobre obstaculos y la distancia respecto al centro de la carretera actual
+(Coreanos) Tambien genera paths candidatos con endpoints en posiciones fijadas a diferentes offsets respecto al base frame
+  Sin embargo, no se basa en el centro de la carretera sino que usa un coste de seguridad para cada path candidato, ya que la estimacion del centro de la carretera puede ser peligroso a la hora de calcular el coste en ciertos escenarios.
+  La seguridad de cada path es evaluada cuantitativamente blurring los datos binarios para una colision
+  Tb tienen en cuenta como criterios de coste la suavidad y la consitencia del path
+
+
 
 \section{Summary}\label{ch:chapter01_03}
 

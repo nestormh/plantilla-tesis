@@ -1,0 +1,73 @@
+%%
+%%  chapter07.tex - Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques
+%%
+%%  Copyright 2014 Néstor Morales <nestor@isaatc.ull.es>
+%%
+%%  This work is licensed under a Creative Commons Attribution 4.0 International License.
+%%
+
+\graphicspath{{./images/chapter07/bmps/}{./images/chapter07/vects/}{./images/chapter07/}}
+
+\chapter{Local Planning}\label{ch:chapter07}
+
+Intro:
+Path planning allows an autonomous vehicle to determine the behavior of a vehicle by itself.
+
+Ya tenemos un conocimiento exhaustivo del entorno del vehículo y una ruta global que conecta su posición con la del punto de destino
+Con esta ruta global por sí sola no hacemos nada, ya que no modela la impredictibilidad del entorno a largo plazo, ya que este entorno es cambiante debido a la presencia de obstáculos móviles.
+Además necesitamos un mecanismo que nos permita seguir la trayectoria.
+
+Muchos de estos métodos de generación trayectorias se basan en un esquema de optimización discreta:
+
+Un cjto finito de paths es calculado:
++ reduce el espacio de soluciones y
++ permite una implementación de tiempo real 
+
+
+Habitualmente esto se hace mediante forward integration de las ecuaciones diferenciales que describen la dinamica del vehiculo
+Del cjto de trayectorias se escoge aquella que minimiza un det. coste
+Para la generacion de trayectorias un modelo parametrico es empleado, habitualmente func. polinomiales de un orden arbitratio. 
+Nosotros usamos splines calculados sobre el espacio de frenet
+
+
+La ruta global forma un base frame de un sistema de coordenadas curvilineo que es el espacio de generacion de las paths
+
+La info. direccional de la ruta global es incorporada a la de maniobras del vehiculo ajustando el offset lateral al base frame
+
+El trabajo está inspirado en el sistema desarrollado por los coreanos y stanley
+
+- empleamos un base frame
+- generamos rutas candidatas basadas en la posición actual respecto al base frame y una serie de endpoints en posiciones fijadas a diferentes offsets respecto al base frame
+- Cada ruta es evaluada cuantitativamente mediante una funcion de coste
+  + Al igual que en Stanley, nosotros usamos la distancia al centro de la ruta como funcion de coste
+    ++ A diferencia suya, el centro de la ruta no es calculado mediante un metodo basado en filtros de Kalman, sino el metodo basado de multiclass SVM descrito en el capitulo anterior
+  + Al igual que los coreanos, nuestra funcion de coste se basa en la suavidad de la ruta y el coste de chocar con los obstaculos calculado como una funcion de distancia a los mismos
+    ++ Sin embargo, en nuestro caso este coste no se basa en el blurring de los datos binarios de un mapa de obstaculos
+      +++ Nosotros usamos un mapa de costes basados en una funcion exponencial relativa a la distancia y al footprint del vehículo
+  + Tambien usamos las funciones de coste...
+
+Estas funciones de coste seran descritas con mayor detalle en la seccion XXX
+
+En este trabajo nos hemos focalizado en la consecucion de resultados experimentales que logren el correcto funcionamiento de verdino a nivel practico, mas que en mejorar el algoritmo en si mismo, aunque aportamos algunas soluciones que mejoran los resultados iniciales al ser adaptado a las caracteristicas especiales de nuestro vehiculo.
+
+El algoritmo resultante ha sido aplicado sobre verdino. Al final de este capitulo se muestran algunos resultados experimentales. Ademas, hay disponible una serie de videos que muestran el vehiculo en funcionamiento.
+  
+===========================================================================
+Poner la parte de generacion del mapa de costes
+  Describir brevemente, esto mejor lo dejo para el ultimo capitulo
+Hablar de la parte de frenet
+  Decir que hay codigo disponible de esta parte
+Hablar de los costes
+  Asociar los originales con el paper de Corea
+  Asociar la distancia lateral con Stanley
+  Describir los nuevos costes
+Hablar de como calculamos la ruta final
+  Describir el modelo de la bicicleta
+Resultados
+  Algunas situaciones complejas en rviz
+  Mostrar situaciones reales en imagenes
+  Enlazar videos
+Resumen
+  Hablar de las ventajas/desventajas
+  Indicar que en la fase siguiente se describe la integracion con los obstaculos detectados empleados por los metodos de los capitulos previos
+  
