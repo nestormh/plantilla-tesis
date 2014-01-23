@@ -106,8 +106,6 @@ Based on how much information they use, we can divide object tracking methods in
 % Podemos dividir los algoritmos de planificacion en... (El resto esta en la libreta, en la parte de estado del arte de planificacion local)
 % 
 % 
-% ==============================================================
-% Lo que pongo a continuacion va para la intro de global planning
 % Los algoritmos de planificacion pueden ser divididos en locales y globales:
 % Globales:
 %   La ruta global y los estados del vehiculo quedan determinados por la info proporcionada por un mapa digital y un sistema de localizacion
@@ -115,38 +113,23 @@ Based on how much information they use, we can divide object tracking methods in
 %   La ruta local puede ser generada entonces en la etapa de planificacion basada en la ruta global y la info del entorno del vehiculo obtenida por los sensores
 %   El paper se basa en local path planning que proporciona capacidades de evitacion de obstaculos a un vehiculo autonomo que sigue una ruta global predefinida
 
+% Hablar de las bandadas de pájaros
+
 
 \subsection{Local planning}\label{ch:chapter01_02_03}
 
 With a generated path, there problem is computing the commands that the vehicle needs in order to follow that path while avoiding the occasional obstacles in the way of the vehicle. In the literature, many methods are based in searching a set of trajectories that act as intermediaries between this global path and the local path, all of them starting from the vehicle and evolving in time following an specific model, most of them following a discrete optimization scheme (\cite{thrun2006stanley, montemerlo2008junior, werling2010optimal, ferguson2008motion}).
+Sampling based approaches are suitable for planning problems in the high dimensional space. The algorithm builds a collision-free path from the initial configuration to the goal path. The configuration that defines the position and orientation of the vehicle is sampled. From all the approaches of this kind, \acf{RRT} and its variants are widely used in non-holonomic motion planning applications.
+\acp{RRT} are incrementally built in a way in which that the estimated distance from an specific point to the tree is quickly reduced. However, for real time implementations require efficient heuristics for the sampling configuration. 
+Some examples of this kind of methods are \cite{van1997real}, \cite{lavalle2001randomized} and \cite{kuwata2009real}.
+
 These methods compute a finite set of trajectories based on a parametric model, usually polynomial functions of a given order, The problem with this is that, despite of the fact that the space of possible solutions is reduced, allowing a efficient planning, can introduce suboptimality, reaching to overshoots or stationary offsets in curves.
-Some examples of this kind of methods are the following:
+Some other methods, which are inside the discrete optimization approaches, are based in the transformation of the configuration space through the Fren\'et space. Some examples are these:
 \begin{itemize}
- \item In \cite{kuwata2008motion}, a tree of trajectories is sampled simulating the closed loop system using the \acf{RRT} algorithm.
- \item lavalle1998rapidly
- \item van1997real
+ \item In \cite{werling2010optimal}, long term objectives are performed, like speed keeping, merging, following, stopping. This is done through optimal control strategies within the Fren\'et frame of the street.
+ \item In \cite{thrun2006stanley}, lateral offset is defined as the perpendicular to a established base trajectory. This allows the vehicle to drive along the road parallel to this trajectory. In order to select the optimal path, the cost function penalizes passing over obstacles and the distance respect to the center of the current road.
+ \item In \cite{chu2012local}, also a set of candidate paths are generated, with endpoints in fixed positions at different offsets respect to the base frame, but they do not set this base frame in the center of the road, as it could be dangerous when computing the costs at certain scenarios. Instead of that, they use a security cost for each candidate path. Security of the path is computed by blurring the binary data of the obstacles. They also have into account certain criteria, as the smoothness cost or the path consistency between iterations.
 \end{itemize}
-
-
-
-% 
-% Estos métodos calculan un cjto finito de trayectorias basadas en un modelo parametrico, habitualmente funciones polinomiales de un orden determinado. El problema de esto es que a pesar de q el espacio de sol. se reduce y permite una planificacion eficiente, puede introducir suboptimalidad -> Puede llevar a overshoots y/o stationary offsets en curvas
-% 
-% Algunos ejemplos:
-% (9-annieway) -> Un árbol de trayectorias es muestreado simulando el closed loop system empleando el RRT algorithm
-% (10-annieway) -> El sistema incorpora varias heurísticas en forma de sampling biases to assert well behaved operation
-% (17-annieway) El control optimo de un sistema aerodinamico se encuentra dentro de un function space que es spanned by a Garlekin based
-% Algunos metodos que se basan en la transformacion del espacio de configuraciones mediante el espacio de Frenét:
-% (Annieway -> Optimal Trajectory Generation for Dynamic Street Scenarios in a Frenét Frame) -> Realiza objetivos a largo plazo como mantenimiento de velocidad, merging, following, stopping por medio de estrategias de ctrol optimo within the Frenét-frame de la calle.
-% (Stanley: The robot that won the DARPA Grand Challenge) -> Define el offset lateral como la perpendicular a una trayectoria base establecida
-%   Esta condicion permite al vehiculo circular por la carretera paralelo a la trayectoria base.
-%   Para seleccionar el path optimo, la funcion de coste penaliza el paso sobre obstaculos y la distancia respecto al centro de la carretera actual
-% (Coreanos) Tambien genera paths candidatos con endpoints en posiciones fijadas a diferentes offsets respecto al base frame
-%   Sin embargo, no se basa en el centro de la carretera sino que usa un coste de seguridad para cada path candidato, ya que la estimacion del centro de la carretera puede ser peligroso a la hora de calcular el coste en ciertos escenarios.
-%   La seguridad de cada path es evaluada cuantitativamente blurring los datos binarios para una colision
-%   Tb tienen en cuenta como criterios de coste la suavidad y la consitencia del path
-
-
 
 \section{Summary}\label{ch:chapter01_03}
 

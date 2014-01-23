@@ -10,62 +10,193 @@
 
 \chapter{Local Planning}\label{ch:chapter07}
 
-% Intro:
-% Path planning allows an autonomous vehicle to determine the behavior of a vehicle by itself.
-% 
-% Ya tenemos un conocimiento exhaustivo del entorno del vehículo y una ruta global que conecta su posición con la del punto de destino
-% Con esta ruta global por sí sola no hacemos nada, ya que no modela la impredictibilidad del entorno a largo plazo, ya que este entorno es cambiante debido a la presencia de obstáculos móviles.
-% Además necesitamos un mecanismo que nos permita seguir la trayectoria.
-% 
-% Muchos de estos métodos de generación trayectorias se basan en un esquema de optimización discreta:
-% 
-% Un cjto finito de paths es calculado:
-% + reduce el espacio de soluciones y
-% + permite una implementación de tiempo real 
-% 
-% 
-% Habitualmente esto se hace mediante forward integration de las ecuaciones diferenciales que describen la dinamica del vehiculo
-% Del cjto de trayectorias se escoge aquella que minimiza un det. coste
-% Para la generacion de trayectorias un modelo parametrico es empleado, habitualmente func. polinomiales de un orden arbitratio. 
-% Nosotros usamos splines calculados sobre el espacio de frenet
-% 
-% 
-% La ruta global forma un base frame de un sistema de coordenadas curvilineo que es el espacio de generacion de las paths
-% 
-% La info. direccional de la ruta global es incorporada a la de maniobras del vehiculo ajustando el offset lateral al base frame
-% 
-% El trabajo está inspirado en el sistema desarrollado por los coreanos y stanley
-% 
-% - empleamos un base frame
-% - generamos rutas candidatas basadas en la posición actual respecto al base frame y una serie de endpoints en posiciones fijadas a diferentes offsets respecto al base frame
-% - Cada ruta es evaluada cuantitativamente mediante una funcion de coste
-%   + Al igual que en Stanley, nosotros usamos la distancia al centro de la ruta como funcion de coste
-%     ++ A diferencia suya, el centro de la ruta no es calculado mediante un metodo basado en filtros de Kalman, sino el metodo basado de multiclass SVM descrito en el capitulo anterior
-%   + Al igual que los coreanos, nuestra funcion de coste se basa en la suavidad de la ruta y el coste de chocar con los obstaculos calculado como una funcion de distancia a los mismos
-%     ++ Sin embargo, en nuestro caso este coste no se basa en el blurring de los datos binarios de un mapa de obstaculos
-%       +++ Nosotros usamos un mapa de costes basados en una funcion exponencial relativa a la distancia y al footprint del vehículo
-%   + Tambien usamos las funciones de coste...
-% 
-% Estas funciones de coste seran descritas con mayor detalle en la seccion XXX
-% 
-% En este trabajo nos hemos focalizado en la consecucion de resultados experimentales que logren el correcto funcionamiento de verdino a nivel practico, mas que en mejorar el algoritmo en si mismo, aunque aportamos algunas soluciones que mejoran los resultados iniciales al ser adaptado a las caracteristicas especiales de nuestro vehiculo.
-% 
-% El algoritmo resultante ha sido aplicado sobre verdino. Al final de este capitulo se muestran algunos resultados experimentales. Ademas, hay disponible una serie de videos que muestran el vehiculo en funcionamiento.
-%   
-% ===========================================================================
-% Poner la parte de generacion del mapa de costes
-%   Describir brevemente, esto mejor lo dejo para el ultimo capitulo
-%   También hablar del rolling window(ultimo capitulo)
-% Hablar de la parte de frenet
-%   Decir que hay codigo disponible de esta parte concreta???
-% 
-%   \begin{figure}
-% \begin{tabular}{cc}
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{justOneCartesian45}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{justOneFrenet45}}
-% \end{tabular}
-% \caption{Conversion of a trajectory between the Cartesian and Frenét spaces. \todo{Incluir la información disponible en el paper original para estas figuras (9 y 10)}}\label{fig:cp07_cartesian_frenet_conversion}
-% \end{figure}
+Path planning allows an autonomous vehicle to determine the behavior of a vehicle by itself. With this in mind, the vehicle is at this moment able to detect the obstacles in the surrounding area, and has the knowledge of how to reach a certain point in the map from the current position. It is time to make the vehicle drive by itself along this path, avoiding the obstacles in the way.
+Despite the global path tell us the safest and shortest path to the goal, we can not use it to directly compute the commands the vehicle needs to start driving, as this global path does not model the long term unpredictability of the environment. Due to the presence of obstacles, this environment is constantly changing. So we need to follow the trajectory using an intermediate mechanism that introduces this short-term information.
+
+\section{The Method}\label{ch:chapter07_01}
+
+The way in which we have solved this problem is based on the method described in \cite{chu2012local} and by \cite{thrun2006stanley}, and modified in order to adapt it to the requirements of our system and the specific characteristics of our prototype, Verdino. Other changes are introduced with the aim of improving the behavior of the whole system.
+In our method, we consider the global path obtained in section \todoref{XXX} as the base frame of a curvilinear coordinates system, which will be the paths generation space. The directional information of this path is included, in the way that:
+\begin{itemize}
+ \item The nearest point (where the distance is computed perpendicular to the global path) to the main trajectory will be the origin of the curvilinear coordinates system.
+ \item The horizontal axis will be represented by the distance over global path itself, on its own direction.
+ \item The vertical axis is represented by the line perpendicular the origin point, in the left sense regarding to the path direction.
+\end{itemize}
+With this schema, we can compute easily the trajectories in the curvilinear space (maneuvering information is created), which are then transformed to the initial euclidean space, in which the obstacles information is added by assigning costs to each of the paths.
+
+As said, we were inspired from the works of \cite{chu2012local} and \cite{thrun2006stanley}. From \cite{thrun2006stanley}, we adopted the way in which the distance to the center of the path is used as part of the cost function. However, as explained in the previous section, our path calculation is different due to the environments in which Verdino will be working. In their work, they used a Kalman filter based method.
+From \cite{chu2012local}, we based our cost function also in the path smoothness and the cost of the collision with the obstacles computed as a function of the distance to them. This cost is computed by blurring the binary map of the obstacles. In our method, we use a exponential function relative to the distance to the obstacles and the footprint of the car.
+We also use as cost functions the length and the curvature of the path. These cost functions will be explained in more detail in section \todoref{XXX}. Both approaches use of a base frame relative to the global path as tool for an easy and efficient computation of the paths.
+
+The obtained algorithm has been applied over Verdino. At the end of this chapter, some experimental results are shown. \comment{Si da tiempo: }Also, there are a set of videos showing the proper behavior of the vehicle in real situations.
+
+The path generation method can be divided in five stages, shown at figure \ref{fig:cp07_pipeline}.
+\begin{enumerate}
+ \item \emph{Generation of the costmap.} Using the information generated by the sensors, the system constructs a costmap in which costs are related to the distance to the obstacles.
+ \item \emph{Base frame construction.} Based on the global path constructed in the previous section (see \todoref{XXX}), we construct the base frame of the curvilinear coordinate system.
+ \item \emph{Candidate paths generation.} Candidate paths are generated into the curvilinear space. Then, they are transformed to the euclidean space.
+ \item \emph{Selection of the winner path.} Costs of all the paths are assigned, and the one with the lowest value is selected.
+ \item \emph{Computation of the vehicle commands.} Vehicle speed and steering angles are computed based on the characteristics of the winner path.
+\end{enumerate}
+
+\begin{figure*}[h!]
+        \centering
+        \includegraphics[width=\textwidth]{pipeline}
+        \caption{Pipeline of the method described on this chapter.}\label{fig:cp07_pipeline}
+\end{figure*}
+
+\subsection{Generation of the costmap}\label{ch:chapter07_01_01}
+
+The costmap maintains information about where the vehicle should navigate in the form of a occupancy grid. It uses sensor data and information from the static map to store and update information about obstacles in the world. In the tests shown in this chapter, information is obtained through the \acp{LIDAR} described at section \todoref{XXX-verdino}. \notsure{Some tests including the information obtained from the methods described in previous sections will be shown at section \todoref{XXX-alltogether}}. Each sensor is used to mark obstacles in the map, or clear them if they are no longer available.
+
+Each cell in the map can have $255$ different cost values:
+\begin{itemize}
+ \item A value of $255$ means that we do not have information about an specific cell in the map.
+ \item $254$ means that a sensor has marked this specific cell as occupied, which is considered as a lethal cell. The vehicle should never enter into this cell.
+ \item The rest of cells are considered as free, but with different cost levels depending on an inflation method relative to the size of the vehicle and its distance to the obstacle.
+\end{itemize}
+
+Cost values out from occupied cells decrease with distance using the following expression:
+
+\begin{equation}\label{eq:cp07_costmap_inflation}
+ \mathcal{C}(i, j) = \exp (-1.0 \cdot \alpha \cdot ( \|c_{ij}-\vec{o}\| - \rho_{inscribed})) \cdot 253
+\end{equation}
+
+In this expression, $\alpha$ is a scaling factor that allows increasing or decreasing the decay rate of the cost of the obstacle. $\|c_{ij}-\vec{o}\|$ is the distance between the cell $c_{ij} \in \mathcal{C}$ (where $\mathcal{C}$ is the set of cells in the costmap) and the obstacle. Finally, $\rho_{inscribed}$ is the inscribed radius, which is the inner circle of the limits of the car. This radius is depicted in the figure \ref{fig:cp07_costmap_concepts}.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{inscribed_circumscribed}} &
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cost_levels}}
+\end{tabular}
+\caption{Costmap computation concepts. On the left side, the inscribed and circumscribed radius are depicted. On the left, the different cost  levels are represented.}\label{fig:cp07_costmap_concepts}
+\end{figure}
+
+Despite all of them are free cells, we define four different distance thresholds in order to set different danger levels in the map, depicted in figure \ref{fig:cp07_costmap_concepts}:
+
+\begin{itemize}
+ \item $\tau_{lethal}$: There is a obstacle in this cell, marked by the sensor. Corresponds to the cost level $254$. The vehicle is in collision.
+ \item $\tau_{inscribed}$: The cell distance to the nearest obstacle is below the value $\rho_{inscribed}$. If the center of the vehicle is in this cell, it is also in collision, so the areas below this distance threshold should be avoided. The cost level is always $253$.
+ \item $\tau_{circumscribed}$: If the vehicle center is on this cell, there are chances to be in collision with an obstacle, depending on its orientation. A cell with a distance to an obstacle below this threshold should be avoided, but there are possibilities to be in one of them without colliding an obstacle. The rest of cells are assumed to be safe (except from those with \emph{unknown} cost).
+\end{itemize}
+
+We just consider in our approach the paths passing along areas with a distance to an obstacle over $\tau_{circumscribed}$, for which a cost will be assigned based on the equation \ref{eq:cp07_costmap_inflation} and other cost factors that will be explained later. Paths passing trough the rest of cells will be truncated at the last safe point.
+
+For optimization reasons, we do not compute the costmap of the whole map at each iteration. Instead, we just compute the cells in a $40x40\,m$ area centered into the current car position. 
+
+In the development of this method, we used the \ROS plugin \program{costmap\_2d}\footnote{\url{http://wiki.ros.org/costmap\_2d}}, which implements the functionalities described in this section. 
+
+\subsection{Base frame construction}\label{ch:chapter07_01_02}
+
+Instead of locating the vehicle in the new created frame, as done in \cite{chu2012local}, at each iteration we prune the global plan up to its nearest point to the car location, so the origin of the base frame will be the first point in the pruned global plan. This distance is measured in terms of the euclidean distance in the direction perpendicular to each point in the path. If the pruned plan is valid and its size is different from zero, we start the base frame construction stage.
+
+In this stage, we will define the base frame of the curvilinear coordinate system, so the algorithm will be able to compute the trajectories in this space as if the global plan were a rectilinear trajectory. The geometric relationship between the path in euclidean coordinates and curvilinear coordinates is shown at figure \ref{fig:cp07_euclidean_frenet_conversion}.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{justOneCartesian45}} &
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{justOneFrenet45}}
+\end{tabular}
+\caption{Conversion of a trajectory between the Cartesian and Frenét spaces. \todo{Incluir la información disponible en el paper original para estas figuras (9 y 10)}}\label{fig:cp07_euclidean_frenet_conversion}
+\end{figure}
+
+
+There, the longitude of the arc of the base frame ($s$, on the right image) is the distance along the global plan, which is represented as a green line. This distance is represented by the horizontal axis of the curvilinear system. The vertical axis, $q$, represents the perpendicular lateral distance respect to the path, so the left side is represented by positive values and the right by the negatives.
+
+For the computation of the transformation between the euclidean coordinate system and the curvilinear, we need to compute the value $\kappa$, which represents the path curvature. This value is computed as follows (\cite{chu2012local}, \cite{werling2010optimal}, \cite{barfoot2004motion})
+
+\begin{equation}\label{eq:cp07_path_curvature}
+ \kappa = {S \over Q} \cdot \left ( \kappa_b \cdot { 
+ {(1 - q \cdot \kappa_b) \cdot (\partial^2q / \partial s^2) +
+ \kappa_b \cdot (\partial q / \partial s )^2
+ } 
+ \over {Q^2} } \right )
+\end{equation}
+
+,where 
+
+\begin{equation}\label{eq:cp07_path_curvature_s_and_q}
+\begin{cases}
+S=sign(1 - q \cdot \kappa_b)\\
+Q=\sqrt{\left ( { {\partial q} \over {\partial s}} \right ) ^2+ (1 - q \cdot \kappa_b)^2}
+\end{cases}
+\end{equation}
+
+Based on this, each generated path will be rejected in the following cases:
+\begin{itemize}
+ \item The lateral offset $q$ is similar to the curvature radius of the base frame $1 / \kappa_b$. In this case, the path passes through the center of curvature of the base frame.
+ \item $q > {1 \over \kappa_b}$. In this case, the curvature and direction of the generated path has a sign opposed to the direction of the base frame. Path should be discarded, as it violates the non-holonomic condition of the movement of the vehicle.
+\end{itemize}
+
+Also, the maximal curvature a path can have in order to be feasible by the vehicle is limited by a restriction in the steering angle. If this restriction is violated, the corresponding path is rejected. This curvature is directly related to the movement of the vehicle, which can be described through several models. A simplified version, which ignores the related physical effects (like inertia or mass), is (\cite{chu2012local}, \cite{barfoot2004motion}):
+
+\begin{equation}\label{eq:cp07_simplified_motion_model}
+\begin{cases}
+\dot{x} = |\vec{v}| \cdot cos(\theta) \\
+\dot{y} = |\vec{v}| \cdot sin(\theta) \\
+\dot{\theta} = |\vec{v}| \cdot \kappa
+\end{cases}
+\end{equation}
+
+As these physical effects does not affect to the geometric shape of the path, we can avoid their usage. In equation \ref{eq:cp07_simplified_motion_model}, $[\dot{x} \dot{y} \dot{\theta} ]^T$ are the estimated position and orientation of the vehicle and $|\vec{v}|$ is the module of the speed. Taking into account this simplified model, we can assume that the vehicle just have two degrees of freedom, corresponding to the speed $\vec{v}$ and $\kappa$. As at this point we are just interested into the geometric generation of the path, we can remove the speed of the vehicle $\vec{v}$ from the model. The way in which this is done is by expressing the movement of the vehicle in terms of the traveled distance. So the following relation is established (\cite{chu2012local}):
+
+\begin{equation}\label{eq:cp07_speed_to_distance}
+|\vec{v}| = S \cdot Q \cdot { {\partial s} \over {\partial t}}
+\end{equation}
+
+If the speed of the vehicle is substituted into the model described in equation \ref{eq:cp07_simplified_motion_model}, the differential equation of the movement can be represented regarding to the arc length of the base frame as:
+
+\begin{equation}\label{eq:cp07_motion_model_in_distance_terms}
+\begin{cases}
+{{\partial x} \over {\partial s}} = Q \cdot cos(\theta) \\
+{{\partial y} \over {\partial s}} = Q \cdot sin(\theta) \\
+{{\partial \theta} \over {\partial s}} = Q \cdot \kappa
+\end{cases}
+\end{equation}
+
+The advantages of this new model is that it can be generated independently from the vehicle speed along the base frame.
+
+\subsection{Candidate paths generation}\label{ch:chapter07_01_03}
+
+As said previously, the generation of the paths corresponding to each of the maneuvers the car can follow is performed in the curvilinear space, independently from the obstacles in the environment. These will be taken into account later, once the tentative trajectories have been transformed to the euclidean space.
+
+\subsubsection{Maneuvering paths generation}\label{ch:chapter07_01_03_01}
+
+In order to generate a path, its curvature is defined by the lateral offset $q$ respect to the base frame. First and second order derivatives of $q$ are needed if we want to compute $\kappa$ (see equations \ref{eq:cp07_path_curvature} and \ref{eq:cp07_path_curvature_s_and_q}), so we need a function dependent to the lateral offset if we want a smooth lateral change.
+
+$q$ can be defined by a sequence of a cubic polynomial and a set of constants:
+
+\begin{equation}\label{eq:cp07_function_q}
+\begin{align*}
+q(s) &=
+  \begin{cases}
+   a \cdot \Delta s^3 + b \cdot \Delta s^2 + c \cdot \Delta s + q_i & \text{if } s_i \le s < s_f \\
+   q_f        & \text{if } s_f \le s
+  \end{cases}\\
+{{\partial q} \over {\partial s}}(s) &=
+  \begin{cases}
+   3 \cdot a \cdot \Delta s^2 + 2 \cdot b \cdot \Delta s + c & ~~~~~~~\text{if } s_i \le s < s_f \\
+   0        & ~~~~~~~\text{if } s_f \le s
+  \end{cases}\\
+{{\partial^2 q} \over {\partial s^2}}(s) &=
+  \begin{cases}
+   6 \cdot a \cdot \Delta s + 2 \cdot b & ~~~~~~~~~~~~~~~~~~~~~~~\text{if } s_i \le s < s_f \\
+   0        & ~~~~~~~~~~~~~~~~~~~~~~~\text{if } s_f \le s
+  \end{cases}
+\end{align*}
+\end{equation}
+
+, where $\Delta s = s - s_i$.
+
+In figure \ref{fig:cp07_euclidean_frenet_conversion}, the components involved in this process are depicted.
+\begin{itemize}
+ \item Continuar aqui
+\end{itemize}
+
+
+\subsubsection{Candidate paths generation}\label{ch:chapter07_01_03_02}
+
+% Decir que los paths son transformados desde el espacio curvilineo al euclideo, tal y como se ve en las figuras siguientes. Comentarlas.
 % 
 % \begin{figure}
 % \begin{tabular}{cc}
@@ -82,6 +213,18 @@
 % \end{tabular}
 % \caption{Example in which the vehicle is rotated with respect to the path.}\label{fig:cp07_frenet45}
 % \end{figure}
+% 
+% Comentar como se truncan los paths calculados
+% Decir que se comentara mas en profundidad lo de los costes de oclusion en la seccion XXX
+
+\subsection{Selection of the winner path}\label{ch:chapter07_01_04}
+\subsubsection{Costs}\label{ch:chapter07_01_04_01}
+\subsubsection{Selection of the winner path}\label{ch:chapter07_01_04_02}
+\subsubsection{Recoveries}\label{ch:chapter07_01_04_03}
+\subsection{Computation of the vehicle commands}\label{ch:chapter07_01_05}
+\section{Results}\label{ch:chapter07_02}
+
+
   
 % COSTES
 % 
