@@ -190,38 +190,75 @@ q(s) &=
 
 In figure \ref{fig:cp07_euclidean_frenet_conversion}, the components involved in this process are depicted.
 \begin{itemize}
- \item Continuar aqui
+ \item The initial lenght $s_i$ is zero, due to the prune task performed to the path at the beginning of each iteration. Lateral offset $q_i$ is also known, which is the lateral offset to the initial point of the global path.
+ \item Angle $\theta$ defines the difference between the vehicle heading angle and the tangent angle of the base frame.
+ \item $s_f$ is a parameter that allows controlling the longitudinal distance needed to reach the offset $q_f$. This distance should be dependent from the speed. However, as the maximal speed of the prototype is not too hight, we can set $\Delta s_f$ as the distance needed to go from $q_i$ to the biggest $q_f$ at the maximal speed.
+ \item $q_f$s are computed for each path attending to the parameters defined by the user. $s_f$ is also a parameter.
 \end{itemize}
 
+Parameters $s_i$, $q_i$, and $s_f$ are the same for all the candidate paths. By modifying the value of $q_f$ we get the different paths. To do that, we divide the width of the road into as many segments as the desired number of paths. Then, $q_f$ will be a distance, perpendicular to the base frame, between the global path and the corresponding road width division depending on the number of path being generated. Using this technique, the desired number of paths is created, each of them with a different lateral offset $q_f$. The set of paths should cover the whole road width, so the vehicle should be able to avoid the obstacles if possible.
+
+In our tests, we have considered a maximal width of 4\,m (a little bit above the width of the roads in our testing area), with an horizon of 10\,m in the direction of the global path. This horizon gives us a prediction of 2\,seconds at the maximal speed of the vehicle. We evaluate a total of 21 paths, with a distance between them ($\Delta q_f$) of 20\,cm.
 
 \subsubsection{Candidate paths generation}\label{ch:chapter07_01_03_02}
 
-% Decir que los paths son transformados desde el espacio curvilineo al euclideo, tal y como se ve en las figuras siguientes. Comentarlas.
-% 
-% \begin{figure}
-% \begin{tabular}{cc}
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cartesian0}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{frenet0}}
-% \end{tabular}
-% \caption{Example in which the vehicle is oriented parallel to the path.}\label{fig:cp07_frenet0}
-% \end{figure}
-% 
-% \begin{figure}
-% \begin{tabular}{cc}
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cartesian45}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{frenet45}}
-% \end{tabular}
-% \caption{Example in which the vehicle is rotated with respect to the path.}\label{fig:cp07_frenet45}
-% \end{figure}
-% 
-% Comentar como se truncan los paths calculados
-% Decir que se comentara mas en profundidad lo de los costes de oclusion en la seccion XXX
+Once we have computed the paths in the curvilinear coordinate system, we transform them so we they can be used in the euclidean space. In this new space, we will be able to evaluate their associated costs, as those related to the distance to obstacles, smoothness, etc. In figures \ref{fig:cp07_frenet0} and \ref{fig:cp07_frenet45}, we can see two examples of this process.
+
+In figure \ref{fig:cp07_frenet0}, an example in which the vehicle is at a lateral distance of 1\,m respect to the base frame, and the orientation of the vehicle regarding to this base frame is 0. That is, $q_i = 1$, $s_i = 0$ and $\theta = 0$. In the left image, we see that the set of paths is symmetric, being the central path completely parallel to the axis $s$. These trajectories are then projected to the euclidean space, obtaining the paths represented in the right image. There, the green line represents the global path, and the blue lines are the projected candidate paths. As can be seen, they fit properly to the global path.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{frenet0}} &
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cartesian0}}
+\end{tabular}
+\caption{Example in which the vehicle is oriented parallel to the path.}\label{fig:cp07_frenet0}
+\end{figure}
+
+In figure \ref{fig:cp07_frenet45}, a similar example is shown. The only difference is that, this time, the vehicle is oriented $45^\circ$ away from the base frame orientation. This causes the paths in the curvilinear space to move away from the $s$ axis until they start converging. Same effect occurs in the transformed euclidean paths: they get away from the global path but, after a few meters, they start approaching to it.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{frenet45}} &
+\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cartesian45}}
+\end{tabular}
+\caption{Example in which the vehicle is rotated with respect to the path.}\label{fig:cp07_frenet45}
+\end{figure}
+
+Now we have the paths in the euclidean distance, we can evaluate which is the maximal distance they can reach individually if obstacles are considered. To do that, we iterate over the points in the trajectory, and check the cost associated to each cell $c_ij$ containing the point. If this cost is over the value associated to the threshold $\tau_{circumscribed}$, the path is truncated at this point. The points iterated before reaching this cost will be kept, but it is unlikely that this will be the winner path, as the occlusion cost (see section \todoref{XXX}) will be maximal, and the length of the path shorter (see section \todoref{XXXlengthCost}. The reason for that is that, as the car will be traveling in likely crowded areas, we want to keep moving even if we see that at this point each of the paths do not reach the maximal distance horizon. Obviously, in this case the speed is reduced according to the winner path length. Also, if there is a way to reach the horizon in one of the paths, this will be probably the winner one.
+
+\begin{figure}
+\centering
+\includegraphics{example15}
+\caption{Paths truncation example.}\label{fig:cp07_path_truncation}
+\end{figure}
 
 \subsection{Selection of the winner path}\label{ch:chapter07_01_04}
-\subsubsection{Costs}\label{ch:chapter07_01_04_01}
-\subsubsection{Selection of the winner path}\label{ch:chapter07_01_04_02}
-\subsubsection{Recoveries}\label{ch:chapter07_01_04_03}
-\subsection{Computation of the vehicle commands}\label{ch:chapter07_01_05}
+
+The path is selected from among all the other paths based on a cost function which is a linear combination of other cost functions with weighting factors. The cost function evaluate the occlusion, length, distance to the global path, curvature and consistency of the path as follows:
+
+\begin{equation}\label{eq:cp07_cost_function}
+J[i] = \omega_o C_o[i] + \omega_l C_l[i] + \omega_d C_d[i] + \omega_{\kappa} C_{\kappa}[i] + \omega_c C_c[i]
+\end{equation}
+
+Here, $i$ is the path index, and $C_o$, $C_l$, $C_d$, $C_{\kappa}$ and $C_c$ are the costs of occlusion, length, distance to the global path, curvature and consistency, respectively. Their relatives $\omega_k$, $k \in \{o, l, d, \kappa, c\}$ are the associate weights that allow to decide the influence of each of the costs to the final cost value.
+
+As we will see in the next sections, all those costs are normalized to $1$, and 
+
+\begin{equation}\label{eq:cp07_weights_sum}
+\sum_{{i \in \{o, l, d, \kappa, c\}}} w_i= 1
+\end{equation}
+
+, so it is easy to determine the proportional influence of each of the weights with respect to the others. Based on this, the value of $J[i]$ should fall inside the interval $[0\dots1]$.
+
+
+\paragraph{Occlusion}\label{ch:chapter07_01_04_00_01}
+\paragraph{Length}\label{ch:chapter07_01_04_00_02}
+\paragraph{Distance to the global path}\label{ch:chapter07_01_04_00_03}
+\paragraph{Curvature}\label{ch:chapter07_01_04_00_04}
+\paragraph{Consistency}\label{ch:chapter07_01_04_00_05}
+\subsubsection{Selection of the winner path}\label{ch:chapter07_01_04_01}
+\subsubsection{Recoveries}\label{ch:chapter07_01_04_02}
+\subsection{Computation of the vehicle commands}\label{ch:chapter07_01_03}
 \section{Results}\label{ch:chapter07_02}
 
 
@@ -259,10 +296,10 @@ In figure \ref{fig:cp07_euclidean_frenet_conversion}, the components involved in
 %   \includegraphics[trim=50 50 90 60, clip]{differences}
 %   \caption{Comparison between the localization of the vehicle and the nearest point in the global path.}\label{fig:cp07_localization_diff}
 % \end{figure}
-% 
-% \subsection{Costs}\label{ch:XXX}
-% 
-% 
+
+\subsection{Costs}\label{ch:XXX}
+
+
 % \begin{figure}
 % \begin{tabular}{cc}
 % \subfloat{\includegraphics[width=0.5\textwidth]{example1}} &
@@ -283,8 +320,6 @@ In figure \ref{fig:cp07_euclidean_frenet_conversion}, the components involved in
 % \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs12}}\label{fig:cp07_example5}\\
 % \subfloat{\includegraphics[width=0.5\textwidth]{example14}} &
 % \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs14}}\label{fig:cp07_example6}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example15}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs15}}\label{fig:cp07_example7}
 % \end{tabular}
 % \caption{Some examples of the computed paths and their costs.}\label{fig:cp07_examplesB}
 % \end{figure}
@@ -298,9 +333,9 @@ In figure \ref{fig:cp07_euclidean_frenet_conversion}, the components involved in
 % \end{tabular}
 % \caption{Some examples of the computed paths and their costs.}\label{fig:cp07_examplesC}
 % \end{figure}
-% 
-% \subsection{Obstacle avoidance}\label{ch:XXX}
-% 
+
+\subsection{Obstacle avoidance}\label{ch:XXX}
+
 % \begin{figure}
 % \begin{tabular}{cc}
 % \subfloat{\includegraphics[width=0.5\textwidth]{example9}} &
