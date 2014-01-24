@@ -224,9 +224,9 @@ In figure \ref{fig:cp07_frenet45}, a similar example is shown. The only differen
 \caption{Example in which the vehicle is rotated with respect to the path.}\label{fig:cp07_frenet45}
 \end{figure}
 
-Now we have the paths in the euclidean distance, we can evaluate which is the maximal distance they can reach individually if obstacles are considered. To do that, we iterate over the points in the trajectory, and check the cost associated to each cell $c_ij$ containing the point. If this cost is over the value associated to the threshold $\tau_{circumscribed}$, the path is truncated at this point. The points iterated before reaching this cost will be kept, but it is unlikely that this will be the winner path, as the occlusion cost (see section \todoref{XXX}) will be maximal, and the length of the path shorter (see section \todoref{XXXlengthCost}. The reason for that is that, as the car will be traveling in likely crowded areas, we want to keep moving even if we see that at this point each of the paths do not reach the maximal distance horizon. Obviously, in this case the speed is reduced according to the winner path length. Also, if there is a way to reach the horizon in one of the paths, this will be probably the winner one.
+Now we have the paths in the euclidean distance, we can evaluate which is the maximal distance they can reach individually if obstacles are considered. To do that, we iterate over the points in the trajectory, and check the cost associated to each cell $c_{ij}$ containing the point. If this cost is over the value associated to the threshold $\tau_{circumscribed}$, the path is truncated at this point, as shown in figure \ref{fig:cp07_path_truncation}. The points iterated before reaching this cost will be kept, but it is unlikely that this will be the winner path, as the occlusion cost (see section \todoref{XXX}) will be maximal, and the length of the path shorter (see section \todoref{XXXlengthCost}. The reason for that is that, as the car will be traveling in likely crowded areas, we want to keep moving even if we see that at this point each of the paths do not reach the maximal distance horizon. Obviously, in this case the speed is reduced according to the winner path length. Also, if there is a way to reach the horizon in one of the paths, this will be probably the winner one.
 
-\begin{figure}
+\begin{figure}[h!]
 \centering
 \includegraphics{example15}
 \caption{Paths truncation example.}\label{fig:cp07_path_truncation}
@@ -250,91 +250,150 @@ As we will see in the next sections, all those costs are normalized to $1$, and
 
 , so it is easy to determine the proportional influence of each of the weights with respect to the others. Based on this, the value of $J[i]$ should fall inside the interval $[0\dots1]$.
 
+The following costs will be computed for each candidate path independently in the euclidean space.
 
 \paragraph{Occlusion}\label{ch:chapter07_01_04_00_01}
+
+The occlusion cost is related to the safety of the path. This cost tries to estimate the goodness of a path, being the bests paths those which travel far enough from the obstacles. To do that, we iterate along the path in the way that the footprint of the car is simulated for each position. The cost of occlusion corresponding to the trajectory point $i$, $C_{o,i}$, will be the maximal cost of each of the cells $c_{ij} \in \mathcal{C}$ under the footprint of the car at that position. Based on this, the cost of occlusion will be
+
+\begin{equation}\label{eq:cp07_occlusion_cost}
+C_o = {{max\{c_i\}} \over 255}, ~~~~~~ i=1 \dots L
+\end{equation}
+
+In this expression, $L$ is the length of the current path. $max\{c_i\}$ is the maximal value of all the costs, each associated to a point in the path. The maximal value of each cost, as we saw before, is $255$. This is the reason for which it is divided by this value, so the values are normalized to $1$.
+
 \paragraph{Length}\label{ch:chapter07_01_04_00_02}
+
+This costs represents the length of the current path. At the same time we iterate over the points in that path for other costs, we accumulate the distance between points, so we know the real distance traveled in euclidean coordinates. The longer a path is, the better, as it means the paths is able to go further. The expression that calculates this cost is:
+
+\begin{equation}\label{eq:cp07_length_cost}
+C_l = 1- {{\sum\limits_{i=1}^{L}\|p_i - p_{i - 1}\|} \over {q_{f_{max}} + s_f}}
+\end{equation}
+
+Here, $p_i$ is a certain point inside the current path. $q_{f_{max}}$ is the maximal value a $q_f$ can have for a certain path. Lengths are normalized to a value a path could never go beyond in any situation. In our case, we decided that the sum of the maximal expected offset for $s$ and for $q$ will be good enough, as it is safe (lengths will never trespass this value, but it is not too big so paths can be discriminated easily).
+
+As the longer a path is, the better, we subtract it to 1, in order to make it comparable to the rest of costs.
+
 \paragraph{Distance to the global path}\label{ch:chapter07_01_04_00_03}
+
+In our implementation, we included information about the average lateral offset respect to the global path. This information is not considered in the implementation of \cite{chu2012local}. We consider that it is important as we could want to come back to the global path once an occasional obstacle is avoided. In their implementation this possibility is not considered, so the vehicle can remain following a path parallel to the global plan.
+
+This cost is computed as follows:
+
+\begin{equation}\label{eq:cp07_lateral_cost}
+C_d = {{\sum\limits_{i=1}^{L}\|p_i - nearest(p_i, g)\|} \over {L \cdot q_{f_{max}}}}
+\end{equation}
+
+, where $nearest(p, g)$ is the nearest point in the global path $g$ to the point $p$. This cost is normalized with respect to the maximal expected offset, $q_{f_{max}}$.
+
 \paragraph{Curvature}\label{ch:chapter07_01_04_00_04}
+
+This costs is an attempt to give priority to those paths which are smoother than those with changes in the angle. Let $p_(x_i, y_i), ~ i=1\cdots L$, be a point in the path. Then, 
+
+\begin{equation}\label{eq:cp07_curvature_cost}
+C_{\kappa} = max \left \{ {{x_i' \cdot y_i'' - x_i'' \cdot y_i'} \over {(x_i' + y_i')^{3/2}}} \right \}, ~~~~~~ i=1 \dots L
+\end{equation}
+
 \paragraph{Consistency}\label{ch:chapter07_01_04_00_05}
+
+This cost tries to keep using a winner path between iterations. Once the vehicle starts a maneuver, it does not change its behavior in the next iteration.
+
+This is done through the following expression:
+
+\begin{equation}\label{eq:cp07_consistency_cost}
+C_c = {1 \over {s_2 - s_1}} \int \limits_{s_1}^{s_2} l_i ~ ds
+\end{equation}
+
+This equation is better explained if we look at figure \ref{fig:cp07_consistency_cost}. There, the lateral cost $l_i(s)$ is the distance between the current and the previous winner path at a same longitudinal position $s$; $s_1$ and $s_2$ are the first and last positions over $s$ for which there are points in common for both trajectories.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{consistency_cost}
+  \caption{Representation of the way in which the consistency cost is computed.}\label{fig:cp07_consistency_cost}
+\end{figure}
+
 \subsubsection{Selection of the winner path}\label{ch:chapter07_01_04_01}
-\subsubsection{Recoveries}\label{ch:chapter07_01_04_02}
+
+With all the costs computed, we just apply the expression described in equation \ref{eq:cp07_cost_function}. Those paths for which it is impossible to advance due to the presence of a nearby obstacle or due to the fact that the car is bad oriented to the global path (which means that no valid paths can be generated in this situation), the cost will be negative (invalid path).
+
+From among all possible values, we select that with the smallest cost, which will be the winner path $W$. If all paths are invalid, that means that the car cannot advance. If the reason is the presence of a nearby obstacle, the vehicle waits until the way is clearer. If this never happens, it generates a new global plan.
+
+In case that the vehicle is bad oriented to the global plan, the recovery behavior process is started.
+
+\subsubsection{Recovery behavior}\label{ch:chapter07_01_04_02}
+
+When the lateral offset of a path is bigger than the radius of curvature of base frame, paths can not be generated using the approach described before. Because of that, we propose to compute the paths in a different way, so the vehicle can advance towards the global plan until this restriction is satisfied. The way in which we do that is through the use of a model of the behavior of the vehicle, which is the same as that used in \todoref{XXX-espelosin}.
+
+Four paths are evolved in a parameterized time $t$, considering a low speed. Two of these paths are generated considering a positive speed (forward movement) and the top left and top right steering position, and the other two are generated for the case of a negative speed. All these four paths are weighted following the same process as in \ref{ch:chapter07_01_04}, and the winner is selected, so the speed and steering commands will be those used to evolve the winner path.
+
 \subsection{Computation of the vehicle commands}\label{ch:chapter07_01_03}
+
+When using this method for path generation, the computation of the speed and steering commands is not straightforward. We have a path that departs from the current position of the vehicle. However, we still have to think how to follow it. The way in which this is done is taking advantage of the bike dynamics model.
+
+This model is represented in figure \ref{fig:cp07_vehicle_commands}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{vehicle_commands}
+  \caption{Representation of the model used to recover the steering angle and the speed from a path.}\label{fig:cp07_vehicle_commands}
+\end{figure}
+
+As $R = 1 / \kappa$, we just need to compute the curvature for the first $\rho_{steering}$\,m of the winner path. This value will be the steering angle at current time $t$, $\alpha_{t}$, of the vehicle. From this value, we get the speed which is obtained as a linear function of the required steering change.
+
+\begin{equation}\label{eq:cp07_speed_computation}
+\dot{v} = \rho_{speed} \cdot v_{max} \cdot | \alpha_{t} - \alpha_{t - 1}|
+\end{equation}
+
+, where $\alpha_{t - 1}$ is the steering angle in the last iteration. $\rho_{speed}$ is a constant that allows modifying the influence of the steering increment into the final speed regarding to the maximal speed $v_{max}$.
+
 \section{Results}\label{ch:chapter07_02}
 
+In this section, some results showing the performance of the planner are shown. For more results, please check the videos available at \todoref{XXX}, in which some examples of Verdino using this planner in real situations are shown with the vehicle in movement.
 
-  
-% COSTES
-% 
-%   Asociar los originales con el paper de Corea
-%   Asociar la distancia lateral con Stanley
-%   Describir los nuevos costes
-% 
-% Consistency cost
-% \begin{figure}
-% \subfloat{\includegraphics[width=0.5\textwidth]{example3a}}\label{fig:cp07_consistency_frame1} ~~~
-% \subfloat{\includegraphics[width=0.5\textwidth]{example3b}}\label{sdsgd}
-% 
-% \centering
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{consistency}}\label{fig:cp07_consistency_costs}
-% \caption{Example of the costs obtained using the consistency cost.}\label{fig:cp07_examplesC}
-% \end{figure}
+\subsection{Path following performance}\label{ch:chapter07_02_01}
 
-%  Hablar de como calculamos la ruta final
-%   Describir el modelo de la bicicleta
+In this section, we will see a comparison of a generated global path with the trajectory finally followed by the vehicle using this method, in absence of obstacles. Results of this experiment are shown in figure \ref{fig:cp07_localization_diff}.
 
-% RESULTADOS
-% ===========================================================================  
-%   Enlazar videos
+\begin{figure}[h!]
+  \centering
+  \includegraphics[trim=50 50 90 60, clip]{differences}
+  \caption{Comparison between the localization of the vehicle and the nearest point in the global path.}\label{fig:cp07_localization_diff}
+\end{figure}
+
+In our tests, global planner computes a unique path at the beginning of the execution, in order to avoid biases due to the generation of a new trajectory.
+
+Results are shown into two charts corresponding each of the axis in the euclidean space. In red, the initially generated global path is shown, while in blue we represent the blue position over time. As can be seen, just some minor bias is shown when the tangent of the curve changes in any of the axis, with an average difference of $7\,cm$, which is a good result.
+
+\subsection{Costs}\label{ch:chapter07_02_02}
+
+In figure \ref{fig:cp07_examples}, some examples of real situations captured in our test area are shown. In the left column, a representation of the map, including the static map, the costmap and the global and candidate trajectories is included. The map is represented through a gray scale in which the black cells represent static obstacles, the dark gray cells represent non-traversable areas and the light gray cells correspond to traversable areas.
+
+About the costmap, it is represent through a color scale, in which the yellow cells are those in which the sensors have detected an obstacle, and the cyan ones are those inside the $\tau_{circumscribed}$ threshold. Occlusion costs are represented by a blue to red scale in which lower costs are assigned to the blue areas, and the higher are represented in red.
+
+Red line represents the global path, the candidate paths are depicted in green, and the vehicle footprint is represented by an orange rectangle.
+
+In the first row, an example in which there are not vehicles in front of the car can be observed. Just a few paths in the right side of the vehicle are being truncated, as they pass too close from a row of cars being parked there. Costs of the paths are reflected in the image on the right side, where the different costs are represented in the $y-axis$, compared to each candidate path, represented by a position in the $x-axis$. 
+
+As can bee seen, curvature costs are very similar at the different paths, but with a bigger curvature found for the trajectories in the external paths, as expected. We also see that the path distance grows (as expected) while path becomes more external, as the vehicle is over the global path. The occlusion cost reaches $1$ in the paths from $0$ to $3$ (starting from the right to the left), being quite small in the central paths, and near to $1$ in the outer paths, which pass quite near to the red areas. Length is related to the point in which paths are truncated, so the shape is quite similar along the paths, except from those between $0$ and $3$, where costs grow as the paths become shorter.
+
+Finally, if we attend to the consistency cost, we and guess that the last selected path was quite close to the current path number $10$, as we see that the consistency cost of this path is near to $0$, and it grows when we move away from it.
+
+Similar examples are shown at rows 2 and 3, where...
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\subfloat{\includegraphics[width=0.45\textwidth]{example4}} &
+\subfloat{\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs4}}\label{fig:cp07_example3}\\
+\subfloat{\includegraphics[width=0.45\textwidth]{example14}} &
+\subfloat{\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs14}}\label{fig:cp07_example6}\\
+\subfloat{\includegraphics[width=0.45\textwidth]{example17}} &
+\subfloat{\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs17}}\label{fig:cp07_example9}
+\end{tabular}
+\caption{Some examples of the computed paths and their costs.}\label{fig:cp07_examples}
+\end{figure}
 
 
-% \subsection{Path following performance}\label{ch:XXX}
-% 
-% Se ha capturado la posición del vehículo en cada momento y se ha comparado con la posición más cercana dentro de la ruta global.
-% No se ha permitido al planificador global replanificar en ningun momento.
-% \begin{figure}[th]
-%   \centering
-%   \includegraphics[trim=50 50 90 60, clip]{differences}
-%   \caption{Comparison between the localization of the vehicle and the nearest point in the global path.}\label{fig:cp07_localization_diff}
-% \end{figure}
-
-\subsection{Costs}\label{ch:XXX}
-
-
-% \begin{figure}
-% \begin{tabular}{cc}
-% \subfloat{\includegraphics[width=0.5\textwidth]{example1}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs1}}\label{fig:cp07_example1}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example2}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs2}}\label{fig:cp07_example2}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example4}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs4}}\label{fig:cp07_example3}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example5}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs5}}\label{fig:cp07_example4}
-% \end{tabular}
-% % \caption{Some examples of the computed paths and their costs.}\label{fig:cp07_examplesA}
-% \end{figure}
-% 
-% \begin{figure}
-% \begin{tabular}{cc}
-% \subfloat{\includegraphics[width=0.5\textwidth]{example12}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs12}}\label{fig:cp07_example5}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example14}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs14}}\label{fig:cp07_example6}\\
-% \end{tabular}
-% \caption{Some examples of the computed paths and their costs.}\label{fig:cp07_examplesB}
-% \end{figure}
-% 
-% \begin{figure}
-% \begin{tabular}{cc}
-% \subfloat{\includegraphics[width=0.5\textwidth]{example16}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs16}}\label{fig:cp07_example8}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example17}} &
-% \subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{costs17}}\label{fig:cp07_example9}
-% \end{tabular}
-% \caption{Some examples of the computed paths and their costs.}\label{fig:cp07_examplesC}
-% \end{figure}
-
-\subsection{Obstacle avoidance}\label{ch:XXX}
+\subsection{Obstacle avoidance}\label{ch:chapter07_02_03}
 
 % \begin{figure}
 % \begin{tabular}{cc}
@@ -348,6 +407,12 @@ As we will see in the next sections, all those costs are normalized to $1$, and
 % \caption{Example of a sequence in which an obstacle is avoided.}\label{fig:cp07_sequence}
 % \end{figure}
 
+\section{Summary}\label{ch:chapter07_03}
+
 % Resumen
 %   Hablar de las ventajas/desventajas
 %   Indicar que en la fase siguiente se describe la integracion con los obstaculos detectados empleados por los metodos de los capitulos previos
+% Trabajo futuro: 
+% nuevos costes
+% Estrategias de control long-term
+% Generacion de los comandos usando control predictivo
