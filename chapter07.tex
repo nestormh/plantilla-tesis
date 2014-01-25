@@ -374,11 +374,13 @@ Red line represents the global path, the candidate paths are depicted in green, 
 
 In the first row, an example in which there are not vehicles in front of the car can be observed. Just a few paths in the right side of the vehicle are being truncated, as they pass too close from a row of cars being parked there. Costs of the paths are reflected in the image on the right side, where the different costs are represented in the $y-axis$, compared to each candidate path, represented by a position in the $x-axis$. 
 
-As can bee seen, curvature costs are very similar at the different paths, but with a bigger curvature found for the trajectories in the external paths, as expected. We also see that the path distance grows (as expected) while path becomes more external, as the vehicle is over the global path. The occlusion cost reaches $1$ in the paths from $0$ to $3$ (starting from the right to the left), being quite small in the central paths, and near to $1$ in the outer paths, which pass quite near to the red areas. Length is related to the point in which paths are truncated, so the shape is quite similar along the paths, except from those between $0$ and $3$, where costs grow as the paths become shorter.
+As can bee seen, curvature costs are very similar at the different paths, but with a bigger curvature found for the trajectories in the external paths, as expected. We also see that the path distance is bigger in the more external paths, as the vehicle is over the global path. The occlusion cost reaches $1$ in the paths from $0$ to $3$ (starting from the right to the left), being quite small in the central paths, and near to $1$ in the outer paths, which pass quite near to the red areas. Length is related to the point in which paths are truncated, so the shape is quite similar along the paths, except from those between $0$ and $3$, where costs due the the presence of shorter paths.
 
 Finally, if we attend to the consistency cost, we and guess that the last selected path was quite close to the current path number $10$, as we see that the consistency cost of this path is near to $0$, and it grows when we move away from it.
 
-Similar examples are shown at rows 2 and 3, where...
+Similar examples are shown at rows 2 and 3. In the second row, a person is after a turn, so trajectories have more curvature, and some of them are truncated. This is observed in the occlusion costs, which is just different from $1$ in the trajectories from $9$ to $16$. Length cost is also smaller in those trajectories, and from these, the longer paths are those in the external side of the turn. Path distance has the minimum on the trajectory number $10$, as the global path is under it, but the last trajectory was near to the current $13^{th}$ path, which is again the winner path, as the red highlight represents.
+
+Finally, the third row represents a similar case, in which a pedestrian is in the middle of the way of the car. Costs have a similar behavior than that shown for the other paths. In this case we will just focus in the length cost, which is quite small for the only path that was able to avoid correctly the obstacle. Paths 3, 4 and 5 reach also the final horizon, but they are too short, and other costs are not too good. The winner path was the number 16, as can be observed in the left image, highlighted in red.
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
@@ -395,19 +397,37 @@ Similar examples are shown at rows 2 and 3, where...
 
 \subsection{Obstacle avoidance}\label{ch:chapter07_02_03}
 
-% \begin{figure}
-% \begin{tabular}{cc}
-% \subfloat{\includegraphics[width=0.5\textwidth]{example9}} &
-% \subfloat{\includegraphics[width=0.5\textwidth]{seq9}}\label{fig:cp07_seq1}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example10}} &
-% \subfloat{\includegraphics[width=0.5\textwidth]{seq10}}\label{fig:cp07_seq2}\\
-% \subfloat{\includegraphics[width=0.5\textwidth]{example11}} &
-% \subfloat{\includegraphics[width=0.5\textwidth]{seq11}}\label{fig:cp07_seq3}
-% \end{tabular}
-% \caption{Example of a sequence in which an obstacle is avoided.}\label{fig:cp07_sequence}
-% \end{figure}
+In figure \ref{fig:cp07_sequence} a set of three images from the a sequence in which the vehicle is avoiding a pedestrian in the test area is shown. In the left column, we can see the paths generated together with the costmap and the global planner, in a color scheme similar to that described for section \ref{ch:chapter07_02_02}. In the right column, an image that was actually happening in the real world is shown. The whole video can be observed at \todoref{XXX-sequence}.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\subfloat{\includegraphics[width=0.45\textwidth]{example9}} &
+\subfloat{\includegraphics[width=0.45\textwidth]{seq9}}\label{fig:cp07_seq1}\\
+\subfloat{\includegraphics[width=0.45\textwidth]{example10}} &
+\subfloat{\includegraphics[width=0.45\textwidth]{seq10}}\label{fig:cp07_seq2}\\
+\subfloat{\includegraphics[width=0.45\textwidth]{example11}} &
+\subfloat{\includegraphics[width=0.45\textwidth]{seq11}}\label{fig:cp07_seq3}
+\end{tabular}
+\caption{Example of a sequence in which an obstacle is avoided.}\label{fig:cp07_sequence}
+\end{figure}
+
+\subsection{Algorithm performance}\label{ch:chapter07_02_04}
+
+In figure \ref{fig:cp07_times}, execution times obtained for a test example are shown. As can be seen, the method works at an average of $8\,Hz$. This test was configured to generate 21 candidate paths at each iteration, so better times would be obtained with less paths. Anyway, this speed is fast enough given the maximal speed at which the car is able to drive.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[trim=50 50 90 60, clip]{times}
+  \caption{Execution times obtained for a test with a configuration with 21 candidate paths.}\label{fig:cp07_times}
+\end{figure}
 
 \section{Summary}\label{ch:chapter07_03}
+
+In this chapter, we have seen a method able to efficiently follow a given trajectory while avoiding the potential obstacles in the way. The use of a curvilinear coordinate system for the generation of a set of candidate trajectories simplifies the calculations while allows creating soft paths that makes the vehicle to converge to the followed track as smooth as possible. Also, these paths are generated with different lateral offsets regarding to the global plan, so we are able to avoid an obstacle even if it is in the middle of the path. Finally, as speed is out the model used for the generation of the tracks, it is reduced to the computation of a set of parameters that define a third order polynomial. Speed and steering angle is then computed based on the shape of the winner path, which is chosen based on a cost function.
+
+As future work, we can study the inclusion of new costs or long-term control strategies, as those used in \cite{werling2010optimal}. Also, the computation of the steering angle based on the winner path is quite rudimentary. We propose as future work the use of a PID controller or even a predictive one, as that explained in \todocite{XXX-espelosin}.
+
+In the next chapter, we will show how this method will be integrated with the obstacles detected in the previous stages, concluding the work presented in this Thesis.
 
 % Resumen
 %   Hablar de las ventajas/desventajas
