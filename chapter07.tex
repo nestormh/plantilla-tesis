@@ -66,10 +66,20 @@ In this expression, $\alpha$ is a scaling factor that allows increasing or decre
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{inscribed_circumscribed}} &
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cost_levels}}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{inscribed_circumscribed}
+    \caption{$\tau_{inscribed}$ and $\tau_{circumscribed}$.}
+    \label{fig:cp07_inscribed_circumscribed}
+  \end{subfigure} &
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{cost_levels}
+    \caption{Cost levels.}
+    \label{fig:cp07_cost_levels}
+  \end{subfigure}% 
 \end{tabular}
-\caption{Costmap computation concepts. On the left side, the inscribed and circumscribed radius are depicted. On the left, the different cost  levels are represented.}\label{fig:cp07_costmap_concepts}
+\caption{Costmap computation concepts.}\label{fig:cp07_costmap_concepts}
 \end{figure}
 
 Despite all of them are free cells, we define four different distance thresholds in order to set different danger levels in the map, depicted in figure \ref{fig:cp07_costmap_concepts}:
@@ -94,8 +104,18 @@ In this stage, we will define the base frame of the curvilinear coordinate syste
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{justOneCartesian45}} &
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{justOneFrenet45}}
+  \begin{subfigure}[b]{0.5\textwidth}
+      \centering
+      \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{justOneCartesian45}
+      \caption{Euclidean space.}
+      \label{fig:cp07_justOneCartesian45}
+  \end{subfigure} &
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{justOneFrenet45}
+    \caption{Curvilinear space.}
+    \label{fig:cp07_justOneFrenet45}
+  \end{subfigure}%   
 \end{tabular}
 \caption{Conversion of a trajectory between the Cartesian and Frenét spaces. \todo{Incluir la información disponible en el paper original para estas figuras (9 y 10)}}\label{fig:cp07_euclidean_frenet_conversion}
 \end{figure}
@@ -208,8 +228,18 @@ In figure \ref{fig:cp07_frenet0}, an example in which the vehicle is at a latera
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{frenet0}} &
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cartesian0}}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{frenet0}
+    \caption{Curvilinear space.}
+    \label{fig:cp07_frenet0}
+  \end{subfigure} &
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{cartesian0}
+    \caption{Curvilinear space.}
+    \label{fig:cp07_cartesian0}
+  \end{subfigure}%
 \end{tabular}
 \caption{Example in which the vehicle is oriented parallel to the path.}\label{fig:cp07_frenet0}
 \end{figure}
@@ -218,8 +248,18 @@ In figure \ref{fig:cp07_frenet45}, a similar example is shown. The only differen
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{frenet45}} &
-\subfloat{\includegraphics[width=0.5\textwidth,trim=50 40 80 60,clip]{cartesian45}}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{frenet45}
+    \caption{Curvilinear space.}
+    \label{fig:cp07_frenet45}
+  \end{subfigure} &
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{cartesian45}
+    \caption{Curvilinear space.}
+    \label{fig:cp07_cartesian45}
+    \end{subfigure}
 \end{tabular}
 \caption{Example in which the vehicle is rotated with respect to the path.}\label{fig:cp07_frenet45}
 \end{figure}
@@ -384,12 +424,12 @@ Finally, the third row represents a similar case, in which a pedestrian is in th
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
-\subfloat{\includegraphics[width=0.45\textwidth]{example4}} &
-\subfloat{\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs4}}\label{fig:cp07_example3}\\
-\subfloat{\includegraphics[width=0.45\textwidth]{example14}} &
-\subfloat{\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs14}}\label{fig:cp07_example6}\\
-\subfloat{\includegraphics[width=0.45\textwidth]{example17}} &
-\subfloat{\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs17}}\label{fig:cp07_example9}
+\includegraphics[width=0.45\textwidth]{example4} &
+\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs4}\label{fig:cp07_example3}\\
+\includegraphics[width=0.45\textwidth]{example14} &
+\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs14}\label{fig:cp07_example6}\\
+\includegraphics[width=0.45\textwidth]{example17} &
+\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{costs17}\label{fig:cp07_example9}
 \end{tabular}
 \caption{Some examples of the computed paths and their costs.}\label{fig:cp07_examples}
 \end{figure}
@@ -401,12 +441,12 @@ In figure \ref{fig:cp07_sequence} a set of three images from the a sequence in w
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
-\subfloat{\includegraphics[width=0.45\textwidth]{example9}} &
-\subfloat{\includegraphics[width=0.45\textwidth]{seq9}}\label{fig:cp07_seq1}\\
-\subfloat{\includegraphics[width=0.45\textwidth]{example10}} &
-\subfloat{\includegraphics[width=0.45\textwidth]{seq10}}\label{fig:cp07_seq2}\\
-\subfloat{\includegraphics[width=0.45\textwidth]{example11}} &
-\subfloat{\includegraphics[width=0.45\textwidth]{seq11}}\label{fig:cp07_seq3}
+\includegraphics[width=0.45\textwidth]{example9} &
+\includegraphics[width=0.45\textwidth]{seq9}\label{fig:cp07_seq1}\\
+\includegraphics[width=0.45\textwidth]{example10} &
+\includegraphics[width=0.45\textwidth]{seq10}\label{fig:cp07_seq2}\\
+\includegraphics[width=0.45\textwidth]{example11} &
+\includegraphics[width=0.45\textwidth]{seq11}\label{fig:cp07_seq3}
 \end{tabular}
 \caption{Example of a sequence in which an obstacle is avoided.}\label{fig:cp07_sequence}
 \end{figure}
@@ -429,10 +469,4 @@ As future work, we can study the inclusion of new costs or long-term control str
 
 In the next chapter, we will show how this method will be integrated with the obstacles detected in the previous stages, concluding the work presented in this Thesis.
 
-% Resumen
-%   Hablar de las ventajas/desventajas
-%   Indicar que en la fase siguiente se describe la integracion con los obstaculos detectados empleados por los metodos de los capitulos previos
-% Trabajo futuro: 
-% nuevos costes
-% Estrategias de control long-term
-% Generacion de los comandos usando control predictivo
+

@@ -21,7 +21,7 @@
 \usepackage[T1]{fontenc}
 
 \usepackage{float}
-\usepackage{subfig}
+% \usepackage{subfig}
 \usepackage{multirow}
 
 % \renewcommand*{\USenglishcontentsname}{\'Indice}
@@ -207,34 +207,34 @@ References with more than one author are ordered based on the first of them.\par
 % \date{2014}
 % \maketitle
 
-% \input{certificate}
-% \input{dedicatory}
-% \input{acknowledges}
-% 
-% \cleardoublepage
-% \pdfbookmark{\contentsname}{tableofcontents}
-% \tableofcontents
-% 
-% \cleardoublepage
-% \pdfbookmark{\listtablename}{listoftables}
-% \listoftables
-% 
-% \cleardoublepage
-% \pdfbookmark{\listfigurename}{listoffigures}
-% \listoffigures
-% 
-% \cleardoublepage
-% \pdfbookmark{\listalgorithmname}{listofalgorithms}
-% \listofalgorithms
+\input{certificate}
+\input{dedicatory}
+\input{acknowledges}
+
+\cleardoublepage
+\pdfbookmark{\contentsname}{tableofcontents}
+\tableofcontents
+
+\cleardoublepage
+\pdfbookmark{\listtablename}{listoftables}
+\listoftables
+
+\cleardoublepage
+\pdfbookmark{\listfigurename}{listoffigures}
+\listoffigures
+
+\cleardoublepage
+\pdfbookmark{\listalgorithmname}{listofalgorithms}
+\listofalgorithms
 
 \input{acronyms}
-% \input{notation}
+\input{notation}
 
-% \input{introduction}
+\input{introduction}
 
 \mainmatter
-% \input{chapter01}
-% \input{chapter05}
+\input{chapter01}
+\input{chapter05}
 \input{chapter07}
 \acresetall
 
@@ -244,7 +244,7 @@ References with more than one author are ordered based on the first of them.\par
 % \input{appendixA}
 %\input{apendiceB}
 
-% \backmatter
-% \bibliography{references}
+\backmatter
+\bibliography{references}
 
 \end{document}
