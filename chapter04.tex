@@ -10,4 +10,273 @@
 
 \chapter{Stixel World}\label{ch:chapter04}
 
-zgxsdjgljgklfzljgklgz
+In the previous chapter, we saw a set of algorithms and configurations able to construct a disparity map from a pair of stereo images. These methods are useful for the reconstruction of the environment. However, this reconstruction is dense, which leads to the intensive usage of the computer resources. In order to solve this problem, some authors propose approaches that try to minimize the area of the image being processed by doing a simpler reconstruction than that done with dense 3D reconstruction algorithms. In this sense, \cite{badino2009stixel} proposed to represent the world by a set of rectangular sticks named \emph{stixels} (from \emph{stick} and \emph{pixel}). Each stixel is defined by its 3D position relative to the camera and stands vertically on the ground, having a certain height.
+This compact but flexible representation of the world can be used as the common basis for the scene understanding tasks of driver assistance and autonomous systems. The main advantages of using such an approach are listed next:
+\begin{itemize}
+ \item \emph{Compact}. Significant reduction of the data volume.
+ \item \emph{Complete}. Information of interest is preserved.
+ \item \emph{Stable}. Small changes of the underlying data must not cause rapid changes within the representation.
+ \item \emph{Robust}. Outliers must have minimal or no impact on the resulting representation.
+\end{itemize}
+
+The method described in this chapter is based in the fast stixels implementation described in \cite{benenson2012pedestrian}. One of the main advantages of this implementation is that there is no need of obtaining a previous depth map. This fact is also the main reason for which we did not use the original implementation from \cite{badino2009stixel} or that from \cite{pfeiffer2010efficient}. Based on the output of this method, we do the tracking of the stixels following a bipartite-graph method based on a given cost metric. In this sense, we have tested several cost metrics, which are described in the following sections.
+
+Our tracking method is based on the contribution by \cite{gunyel2012stixels}. There, movement is just computed for the areas which are covered by stixels. It has been demonstrated that stixels are good enough to do a representation of the surroundings of a vehicle, and that they have a detail level enough for the movement detection. Traditionally, this movement detection is carried out through the computation of the optical flow between two frames, which is computationally expensive. In this chapter, we will see how this movement can be computed also using the stixel world representation, by extending the method of \cite{gunyel2012stixels} with an upper tracking level and new cost metrics.
+
+Our contribution in this work is based on
+\begin{enumerate}
+ \item Improvement of the results obtained by the stixels. The free space computation without the use of a disparity map have some drawbacks. Some of them are related with the fact that the precision in the reconstruction of the obstacles is not good enough. The two-level detection scheme proposed in this chapter allows the correction of the obstacles though the previous clustering of the stixels described in section \todoref{XXX}.
+ \item Improvement of the results obtained by the method described in \cite{gunyel2012stixels}. We modified the method by using a graph-based approach instead of a \ac{DP} based method, as they did. \notsure{Also, we tried with other different cost metrics, as histogram comparisons o polar alignment distance metrics}. All of this, together with the use of an upper tracking level, provides a better output, as depicted in section \todoref{XXX}.
+ \item Faster tracking. As we will see in section \todoref{XXX}, the speed achieved with our graph-based implementation is bigger than that obtained with the tracking method based on \ac{DP}.
+ \item \todo{Algo más habrá...}
+\end{enumerate}
+
+In the following section, each of the steps of the method are detailed. At the end of the chapter some results are shown in order to evaluate the performance of the described stixels tracker.
+
+\section{The Method}\label{ch:chapter04_01}
+
+The method follows a pipeline as that described in figure \ref{fig:cp04_pipeline}. First, from a given pair of images, the free space in front of the vehicle is computed in order to estimate the ground plane. From the extracted ground plane, stixels are obtained. Then, a two-level tracking approach is started. The first level is that corresponding to the tracking of the stixels. This stage is inspired by the work described in \cite{gunyel2012stixels}. The set of stixels computed for the current frame are compared with those from the previous frame. Based on this comparison, some of them are matched. At the same time, we cluster stixels based on their position once projected in the 3d world. Using the clusters and the tracked stixels, we start a new tracking step in which the tracking is performed at object level. At the end of this step, we will know the obstacles in the scene and their velocities, as well as an historic of the path followed by them that could be useful for future movement estimation.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{pipeline}
+  \caption{Pipeline of the stixels tracking method described in this chapter.}\label{fig:cp04_pipeline}
+\end{figure}
+
+\subsection{Free space computation}\label{ch:chapter04_01_01}
+
+In this section and in the following, we will describe the stixel extraction method, which is similar to that described in \cite{benenson2012pedestrian}. This method works under the following assumptions:
+
+\begin{itemize}
+ \item The input of the algorithm is a calibrated stereo image pair.
+ \item We use the Lambertian surface assumption.
+ \item The ground is planar, at least at local level.
+ \item The objects of interest are mainly vertical, and have a limited height range.
+ \item Stereo rig has a negligible roll with respect to the ground plane.
+\end{itemize}
+
+In this section, we introduce the first step needed for the stixels estimation process, which is the ground plane estimation stage. This ground plane is estimated using the evidences collected in the \emph{v-disparity} domain. Instead of computing and projecting a depthmap obtained, for example, one of the methods evaluated in chapter \todoref{XXX}, the evidence is collected directly from matching the rows from the left and right images at different disparities, obtaining a cube $(U, V, D)$ in which each cell represents the cost of matching the pixel at $p_i(u_i, v_i) \in I_L$ with that at $q_i(u_i + d_i, v_i) \in I_R$. Here, $p_i$ and $q_i$ are pixels from the left ($I_L$) and right ($I_R$) images, respectively; and $u_i$, $v_i$ and $d_i$ are the different possible column, row and disparity values in the cube. In figure \ref{fig:cp04_freespace}, a graphical description of the obtained cube is represented.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{freespace}
+  \caption{Free space computation process.}\label{fig:cp04_freespace}
+\end{figure}
+
+For each row $v_i$, the disparity with the lowest cost is extracted for each row, as depicted in figure \ref{XXX}. From these values, a robust line fitting is used in order to find the ground plane, which is represented by the following expression:
+
+\begin{equation}\label{eq:cp04_ground_plane_function}
+  d_i = f_{ground}(v_i)
+\end{equation}
+
+Using this equation, we can know the disparity associated to each row at ground level, which will we use later for the stixels computation. For optimization purposes, instead of collecting the evidences for each row below the horizon, just one out of each $N$ rows is computed. 
+
+\subsection{Stixels extraction}\label{ch:chapter04_01_02}
+
+With the ground plane, we can start detecting the stixels in the images. The way in which this is done is by dividing the image in multiple row bands $b_i$. Inside each band $b_i$, and for each column $u_i$, the pixel with the biggest horizontal gradient is selected. This reduces the computational cost while the possibilities of finding the border of the object accurately are increased. Also, one of the advantages of using bands and not the rows directly is that, in presence of a confusing horizontal line, the effect is compensated by the band height.
+
+From \ref{fig:cp04_freespace}, we obtain:
+
+\begin{equation}\label{eq:cp04_ground_plane_function_by_band}
+  d(q_j, b_i) = f_{ground}(v(q_j, b_i))
+\end{equation}
+
+Here, $q_j$ makes reference to the stixel $j$, where the total number of stixels is the total number of columns in the image divided by a parameterized stixel width $\tau_{stixel\_width}$. That is, $j=1 \dots \tau_{stixel\_width}$. In general, interest objects are wider than one column, so computing an evidence for each column in the image is redundant. Each stixel is located in the column $u(q_j) = j \cdot \tau_{stixel\_width}$. $v(q_j, b_i)$ is a certain row inside the stixel $q_j$ in the band $b_i$. 
+
+At this point, the goal is to localize the optimal band for each stixel. This is based on the following expression:
+
+\begin{equation}\label{eq:cp04_stixel_band_cost}
+  b^*_s (q) = \underset{b(q)}{\arg\min} \underset{q}{\sum}c_s(q, b(q)) + \underset{q_a, q_b}{\sum}s_s(v(q_a, b(q_a)), v(q_b, b(q_b)))
+\end{equation}
+
+Here, we can think on $c_s$ as the data term, while $s_s$ is the smooth term. $q_a$ and $q_b$ are neighbors. That is, $|q_a - q_b| = 1$
+
+\paragraph{Data term}\label{ch:chapter04_01_02_01}
+
+By computing the cost $c_s$, we know the likelihood of the presence of an stixel $q$ at the row band $b$. The lower the cost is, the more possible that there is a stixel. This cost is computed as follows:
+
+\begin{equation}\label{eq:cp04_stixel_band_cost_data_term}
+  c_s(q, b) = c_o (u(q), d(q, b)) + c_g(u(q), d(q,b))
+\end{equation}
+
+This equation is composed by two terms:
+\begin{itemize}
+ \item \emph{Object cost($c_o$)}. It represents the cost of the presence of a vertical object. It just sums the evidence along the vertical column, using the expected height of the object, which is projected on the image using the distance given by the ground plane.
+ \item \emph{Ground cost($c_g$)}. It represents the cost of a supporting ground being present, and sums the evidence along the ground plane.
+\end{itemize}
+
+\paragraph{Smooth term}\label{ch:chapter04_01_02_02}
+
+The smooth term ($s_s$) forces to respect the left-right occlusion restrictions and promotes ground object boundaries with few jumps.
+
+\begin{equation}\label{eq:cp04_stixel_band_cost_smooth_term}
+  s_s(v_a, v_b) = 
+  \begin{align*}
+    \begin{cases}
+    \infty & \text{if } d(v_a) < d(v_b) - 1 \\
+    c_o(u_a, d(v_a)) & \text{if } d(v_a) \approx d(v_b) - 1 \\
+    - \omega \cdot c_o(u_a, d(v_a)) & \text{if } q_a = q_b \\
+    0 & \text{if } d(v_a) > d(v_b) - 1
+    \end{cases}
+  \end{align*}
+\end{equation}
+
+Here, $\omega$ is a free parameter, chosen by the user, which promotes boundaries with a few jumps. At this point, we will have extracted the stixels, obtaining a result similar to that shown at figure \ref{fig:cp04_stixels}, in which the stixels (in green) are superimposed to the left image from which they were extracted. For more information about the process described in sections \ref{ch:chapter04_01_01} and \ref{ch:chapter04_01_02}, please refer to \cite{benenson2012fast}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{stixels}
+  \caption{Stixels superimposed to the frame from which they were extracted.}\label{fig:cp04_stixels}
+\end{figure}
+
+\subsection{Stixels-level tracking}\label{ch:chapter04_01_03}
+
+At this point, we are ready to start tracking the stixels. As said before this tracking is perfomed at two levels. In this first level, stixels will be tracked independently, in which we match each stixel at the previous frame $t - 1$ with another (or none) stixel at the current frame $t$. So it becomes a matching problem in which we try to find the minimal cost matching between frames. In \cite{gunyel2012stixels}, this minimal matching was done using \ac{DP}. In our implementation we use a bipartite graph matching based method, as it gave us better results, as shown at section \todoref{XXX}.
+
+For this stage, we made some assumptions:
+\begin{itemize}
+ \item First, we assume that all stixels have been properly estimated.
+ \item The maximal speed of the objects is limited, so we limit the search range between stixels to a certain threshold. This range depends on the distance of the stixel at the current frame and the frame rate. As there is just one stixel per column, we can limit also the matching process to a search into the $u$ direction.
+ \item There is not a big temporal difference between two consecutive frames. That means that the same stixel at time $t$ and $t - 1$ should be similar. Also their height in meters should be similar. Some of the metrics described below try to avoid this limitation by calibrating the images between them before starting the matching process.
+\end{itemize}
+
+As said before, we have implemented the matching process over a bipartite graph in which nodes are the stixels at frame $t$ and $t - 1$, and the edges are associated to a certain movement cost $c_m$, which is represented by the equation next:
+
+\todo{Esto podría ser un sumatorio, depende de los resultados}
+\begin{equation}\label{eq:cp04_stixel_movement_cost}
+\tiny
+  c_m(u_i\{t\}, u_j\{t - 1\}) = 
+  \begin{align*}
+    \begin{cases}
+    \infty & \textbf{if } (|X(u_i\{t\}) - X(u_j\{t - 1\})| > \tau_{max\_disp}) \textbf{ or} \\
+    ~ & ~~~~ (u_i\{t\} \text{ is a new stixel}) \textbf{ or} \\
+    ~ & ~~~~ (u_i\{t\} \text{ is occluded}) \textbf{ or} \\
+    ~ & ~~~~ (u_j\{t - 1\} \text{ is occluded}) \textbf{ or} \\
+    ~ & ~~~~ (f_{cost}(u_i\{t\}, u_j\{t - 1\}) > \tau_{max\_cost})   \\
+    f_{cost}(u_i\{t\}, u_j\{t - 1\}) & \textbf{otherwise}
+    \end{cases}
+  \end{align*}
+\end{equation}
+
+Here, the free parameter $\tau_{max\_disp}$ computes the maximal displacement of a certain stixel between frames. From the disparity of each stixel $u$, its position in 3d coordinates is computed. $X(u)$ refers to its $x$ position in 3d coordinates. If the displacement between both stixels in 3d coordinates is above this threshold, cost is marked to infinity. Also, we do not consider those stixels which have been marked as occluded or which have appeared for the first time in this frame. Finally, we directly reject those matches with a cost above the user defined parameter $\tau_{max\_cost}$.
+
+$f_{cost}(u_i\{t\}, u_j\{t - 1\})$ can take several forms depending on the metric being used. In our tests, we have used \notsure{five} different metric, each one with different advantages and weaknesses. These five metrics are listed next.
+
+\subsubsection{\acf{SAD}}\label{ch:chapter04_01_03_01}
+
+This cost is computed as the pixel-wise sum of the absolute differences over the RGB color scheme between $u_i\{t\}$ and $u_j\{t - 1\}$, following the expression
+
+\begin{equation}\label{eq:cp04_stixel_movement_sad_cost}
+\tiny
+f_{SAD}(u_i\{t\}, u_j\{t - 1\}) = 
+\overset{v_b(q_i\{t\})}{\underset{v_1=v_a(q_i\{t\})}{\sum}}
+\overset{v_b(q_j\{t - 1\})}{\underset{v_2=v_a(q_i\{t - 1\})}{\sum}}
+| I_L\{t\}(u_i\{t\}, v_1) - I_L\{t - 1\}(u_j\{t - 1\}, v_2) |
+\end{equation}
+
+As it is very unlikely for both stixels to have the exact same height, they are resized to a dimension of $30\,px$. This metric was already used in \cite{gunyel2012stixels} for the computation of the movement of the stixels. It has been used in our tests to compare the our results with those obtained by them in their implementation.
+
+\subsubsection{Histograms matching}\label{ch:chapter04_01_03_02}
+
+As said, the same stixel has not always the same size in different frames. This can happen because the position of the object partially represented by the stixel can change its depth in the scene, or due to noise in the height detection of the stixel. In order to normalize this, we have computed the histogram of each of the stixels being compared. Then, the cost is computed from the Hellinger distance between both histograms:
+
+
+
+\subsubsection{\ac{SAD} over polar calibrated images}\label{ch:chapter04_01_03_03}
+% Describir por encima el metodo, pero sera detallado mejor en el apendice
+\subsubsection{Distance over polar calibrated images}\label{ch:chapter04_01_03_04}
+\subsubsection{Height difference}\label{ch:chapter04_01_03_05}
+
+% En los resultados vemos cuales son las mejores metricas, tanto en resultados como en coste de tiempo
+
+% Hablar de cómo usamos el grafo en vez de DP
+% Poner imagen del grafo
+% Decir las ventajas
+% - Mejores tiempos
+% - Nos aseguramos de que el emparejamiento es hecho uno-a-uno
+% Mostrar imágenes de ejemplo
+
+\subsection{Obstacle-level tracking}\label{ch:chapter04_01_04}
+\subsubsection{Clustering}\label{ch:chapter04_01_04_01}
+\subsubsection{Tracking}\label{ch:chapter04_01_04_02}
+\subsection{Kalman filtering}\label{ch:chapter04_01_05}
+
+\section{Results}\label{ch:chapter04_06}
+
+\subsection{Clustering}\label{ch:chapter04_06_01}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[trim=50 40 80 60,clip]{detectionRate}
+\caption{Obstacles detection rate achieved using our clustering method.}\label{fig:cp04_detection_rate}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\includegraphics[width=0.49\textwidth]{stixelsDetection}\label{fig:cp04_stixels_detection} &
+\includegraphics[width=0.49\textwidth]{obstacleDetection}\label{fig:cp04_obstacle_detection}
+\end{tabular}
+\caption{Comparison of the stixels obtained trough the method of \cite{benenson2012fast} and the clustering performed in our method.}\label{fig:cp04_clustering_comparison}
+\end{figure}
+
+\subsection{Stixel accuracy}\label{ch:chapter04_06_02}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[trim=50 40 80 60,clip]{disparity}
+\caption{Difference in disparity achieved for both our clustering method and the initial stixel reconstruction.}\label{fig:cp04_disparity_comparison}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{tabular}{cccc}
+% \centering
+\includegraphics[width=0.25\textwidth]{elas}\label{fig:cp04_reconstruction_elas} & 
+\includegraphics[width=0.25\textwidth]{stixels}\label{fig:cp04_reconstruction_stixels} & 
+\includegraphics[width=0.25\textwidth]{objects}\label{fig:cp04_reconstruction_objects} &
+\includegraphics[height=0.1875\textwidth]{colorscale_jet}\label{fig:cp04_reconstruction_colorscale} % 0.25*48/64 = 0.1875
+\end{tabular}
+\caption{Comparison of the disparities obtained for \ac{ELAS}, stixels and the reconstructed objects.}\label{fig:cp04_reconstruction}
+\end{figure}
+
+\subsection{Tracking}\label{ch:chapter04_06_03}
+
+\subsubsection{Performance along the sequence}\label{ch:chapter04_06_03_01}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[trim=50 40 80 60,clip]{recall_vs_delta_frames}
+\caption{Comparison of the recall obtained for the different configurations.}\label{fig:cp04_recall_vs_delta_frames}
+\end{figure}
+
+\subsubsection{Performance at different frame increments}\label{ch:chapter04_06_03_02}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[trim=50 40 80 60,clip]{increments}
+\caption{Comparison of the recall obtained for the different frame increments.}\label{fig:cp04_increments}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+% \centering
+\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{recall_vs_delta_frames_vs_step_test28b}\label{fig:cp04_recall_vs_delta_frames_vs_step_test28b} &
+\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{recall_vs_delta_frames_vs_step_test16b}\label{fig:cp04_recall_vs_delta_frames_vs_step_test16b}
+\end{tabular}
+\caption{Comparison of the tracking capabilities at different frame increments for configurations \todo{XXX and XXX}.}\label{fig:cp04_recall_vs_delta_frames_vs_step}
+\end{figure}
+
+\subsection{Computation time}\label{ch:chapter04_06_04}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[trim=50 40 80 60,clip]{times_average}
+\caption{Times obtained for each configuration.}\label{fig:cp04_times_average}
+\end{figure}
+
+% No hay enlaces para stixels nuevos
+% No hay enlaces con un coste > tanto
+
+
+\section{Summary}\label{ch:chapter04_07}
+
+% Trabajo futuro: Utilizar el polar calibration para la generación de los propios stixels?
