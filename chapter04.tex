@@ -10,7 +10,7 @@
 
 \chapter{Stixel World}\label{ch:chapter04}
 
-In the previous chapter, we saw a set of algorithms and configurations able to construct a disparity map from a pair of stereo images. These methods are useful for the reconstruction of the environment. However, this reconstruction is dense, which leads to the intensive usage of the computer resources. In order to solve this problem, some authors propose approaches that try to minimize the area of the image being processed by doing a simpler reconstruction than that done with dense 3D reconstruction algorithms. In this sense, \cite{badino2009stixel} proposed to represent the world by a set of rectangular sticks named \emph{stixels} (from \emph{stick} and \emph{pixel}). Each stixel is defined by its 3D position relative to the camera and stands vertically on the ground, having a certain height.
+In the previous chapter, we saw a set of algorithms and configurations able to construct a disparity map from a pair of stereo images. These methods are useful for the reconstruction of the environment. However, this reconstruction is dense, which leads to an intensive usage of the computer resources. In order to solve this problem, some authors propose approaches that try to minimize the area of the image being processed by doing a simpler reconstruction than that done with dense 3D reconstruction algorithms. In this sense, \cite{badino2009stixel} proposed to represent the world by a set of rectangular sticks named \emph{stixels} (from \emph{stick} and \emph{pixel}). Each stixel is defined by its 3D position relative to the camera and stands vertically on the ground, having a certain height.
 This compact but flexible representation of the world can be used as the common basis for the scene understanding tasks of driver assistance and autonomous systems. The main advantages of using such an approach are listed next:
 \begin{itemize}
  \item \emph{Compact}. Significant reduction of the data volume.
@@ -21,25 +21,28 @@ This compact but flexible representation of the world can be used as the common 
 
 The method described in this chapter is based in the fast stixels implementation described in \cite{benenson2012pedestrian}. One of the main advantages of this implementation is that there is no need of obtaining a previous depth map. This fact is also the main reason for which we did not use the original implementation from \cite{badino2009stixel} or that from \cite{pfeiffer2010efficient}. Based on the output of this method, we do the tracking of the stixels following a bipartite-graph method based on a given cost metric. In this sense, we have tested several cost metrics, which are described in the following sections.
 
-Our tracking method is based on the contribution by \cite{gunyel2012stixels}. There, movement is just computed for the areas which are covered by stixels. It has been demonstrated that stixels are good enough to do a representation of the surroundings of a vehicle, and that they have a detail level enough for the movement detection. Traditionally, this movement detection is carried out through the computation of the optical flow between two frames, which is computationally expensive. In this chapter, we will see how this movement can be computed also using the stixel world representation, by extending the method of \cite{gunyel2012stixels} with an upper tracking level and new cost metrics.
+Our tracking method is based on the contribution by \cite{gunyel2012stixels}. There, movement is just computed for the areas which are covered by stixels. It has been demonstrated that stixels are good enough to do a representation of the surroundings of a vehicle, and that they have a detail level enough for the movement detection. Traditionally, this movement detection is carried out through the computation of the optical flow between two frames, which is computationally expensive. In this chapter, we will see how this movement can be computed also using the stixel world representation, by extending the method of \cite{gunyel2012stixels}. For that, we have followed two different approaches, each with its own benefits and drawbacks. The first tries to cluster the stixels in objects, so the tracking is performed at object level; the second joins the stixel tracking with the object tracking in a two level tracking schema.
 
-Our contribution in this work is based on
+Our contribution in this work is summarized next:
 \begin{enumerate}
- \item Improvement of the results obtained by the stixels. The free space computation without the use of a disparity map have some drawbacks. Some of them are related with the fact that the precision in the reconstruction of the obstacles is not good enough. The two-level detection scheme proposed in this chapter allows the correction of the obstacles though the previous clustering of the stixels described in section \todoref{XXX}.
- \item Improvement of the results obtained by the method described in \cite{gunyel2012stixels}. We modified the method by using a graph-based approach instead of a \ac{DP} based method, as they did. \notsure{Also, we tried with other different cost metrics, as histogram comparisons o polar alignment distance metrics}. All of this, together with the use of an upper tracking level, provides a better output, as depicted in section \todoref{XXX}.
- \item Faster tracking. As we will see in section \todoref{XXX}, the speed achieved with our graph-based implementation is bigger than that obtained with the tracking method based on \ac{DP}.
- \item \todo{Algo más habrá...}
+ \item Improvement of the reconstruction obtained by the stixels. The free space computation without the use of a disparity map have some drawbacks. Some of them are related with the fact that the precision in the reconstruction of the obstacles is not good enough. The object reconstruction detection scheme proposed in this chapter allows the correction of the stixel depths and the removal of the fake obstacles, as described in sections \ref{ch:chapter04_02_01} and \ref{ch:chapter04_02_02}.
+ \item Improvement of the results obtained by the method described in \cite{gunyel2012stixels}, in both object and two-level tracking approaches. We modified the method by using a graph-based approach instead of a \ac{DP} based method, as they did. 
+ \item Different cost metrics for the tracking have been tested, with promising results. 
+ \item Faster tracking. As we will see in section \ref{ch:chapter04_02_04}, the speed achieved with our implementation is better, specially in the object based tracking. The two-level tracking is also a little bit faster, thanks to the usage of a bipartite graph based method for the matching of the stixels between frames.
+ \item \notsure{Robustness after a big change between images (for example, in presence of a low framerate).}
 \end{enumerate}
 
-In the following section, each of the steps of the method are detailed. At the end of the chapter some results are shown in order to evaluate the performance of the described stixels tracker.
+In the following section, each of the steps of the method are detailed. At the end of the chapter some results are shown in order to evaluate the performance of the described method.
 
 \section{The Method}\label{ch:chapter04_01}
 
 The method follows a pipeline as that described in figure \ref{fig:cp04_pipeline}. First, from a given pair of images, the free space in front of the vehicle is computed in order to estimate the ground plane. From the extracted ground plane, stixels are obtained. Then, a two-level tracking approach is started. The first level is that corresponding to the tracking of the stixels. This stage is inspired by the work described in \cite{gunyel2012stixels}. The set of stixels computed for the current frame are compared with those from the previous frame. Based on this comparison, some of them are matched. At the same time, we cluster stixels based on their position once projected in the 3d world. Using the clusters and the tracked stixels, we start a new tracking step in which the tracking is performed at object level. At the end of this step, we will know the obstacles in the scene and their velocities, as well as an historic of the path followed by them that could be useful for future movement estimation.
 
+We also propose another solution in which just the object level tracking is performed. In this case, instead of doing a comparison at stixel level, we compare each obstacle to the obstacles detected in the previous frame, so the stixel level tracking is not needed anymore. In section \ref{ch:chapter04_02}, we will see the advantages and drawbacks of using one or another approach.
+
 \begin{figure}[h!]
   \centering
-  \includegraphics{pipeline}
+  \includegraphics{pipeline.jpg}
   \caption{Pipeline of the stixels tracking method described in this chapter.}\label{fig:cp04_pipeline}
 \end{figure}
 
@@ -125,44 +128,59 @@ Here, $\omega$ is a free parameter, chosen by the user, which promotes boundarie
 
 \begin{figure}[h!]
   \centering
-  \includegraphics{stixels}
+  \includegraphics{stixels_over_original}
   \caption{Stixels superimposed to the frame from which they were extracted.}\label{fig:cp04_stixels}
 \end{figure}
 
-\subsection{Stixels-level tracking}\label{ch:chapter04_01_03}
+\subsection{Tracking}\label{ch:chapter04_01_03}
 
-At this point, we are ready to start tracking the stixels. As said before this tracking is perfomed at two levels. In this first level, stixels will be tracked independently, in which we match each stixel at the previous frame $t - 1$ with another (or none) stixel at the current frame $t$. So it becomes a matching problem in which we try to find the minimal cost matching between frames. In \cite{gunyel2012stixels}, this minimal matching was done using \ac{DP}. In our implementation we use a bipartite graph matching based method, as it gave us better results, as shown at section \todoref{XXX}.
+At this point, we are ready to start tracking the stixels. As said before this tracking has been performed using two different approaches: one consists on two different tracking levels from the first one tracks the stixels independently (that is, each stixel at the previous frame $t - 1$ is matched with another - or none - at the current frame $t$). So it becomes a matching problem in which we try to find the minimal cost matching between frames. In \cite{gunyel2012stixels}, this minimal matching was done using \ac{DP}. In our implementation we use a bipartite graph matching based method. In a second level, stixels are clustered into objects, which are matched based on the previous stixels tracking.
+
+In the other approach, just the second level is performed, tracking obstacles based on one of the cost metrics, without considering the stixels included in the objects (except for the clustering process). In the next sections, the tracking process is described. Please note that the process described in section \ref{ch:chapter04_01_03_01} is performed only for the two-level approach, while the process in \label{ch:chapter04_01_04} is common to both approaches, except from the differences explicitly indicated in that section.
 
 For this stage, we made some assumptions:
 \begin{itemize}
  \item First, we assume that all stixels have been properly estimated.
  \item The maximal speed of the objects is limited, so we limit the search range between stixels to a certain threshold. This range depends on the distance of the stixel at the current frame and the frame rate. As there is just one stixel per column, we can limit also the matching process to a search into the $u$ direction.
- \item There is not a big temporal difference between two consecutive frames. That means that the same stixel at time $t$ and $t - 1$ should be similar. Also their height in meters should be similar. Some of the metrics described below try to avoid this limitation by calibrating the images between them before starting the matching process.
+ \item There is not a big temporal difference between two consecutive frames. That means that the same stixel at time $t$ and $t - 1$ should be similar. Also their height in meters should be similar. \notsure{As shown in section \ref{ch:chapter04_02_03_02}, this temporary consistence is more or less restrictive depending on the approach finally used for the tracking process.}
 \end{itemize}
 
-As said before, we have implemented the matching process over a bipartite graph in which nodes are the stixels at frame $t$ and $t - 1$, and the edges are associated to a certain movement cost $c_m$, which is represented by the equation next:
+\subsubsection{Stixels-level tracking}\label{ch:chapter04_01_03_01}
 
-\todo{Esto podría ser un sumatorio, depende de los resultados}
+In this stage, the tracking is performed at stixel level. As we just try to match each stixel at column $q_i\{t\}$ with another in the previous frame $t - 1$, we can think on this process as a matching problem. The way in which we have solved this is through a bipartite graph, in which nodes are the stixels at frame $t$ and $t - 1$, and the edges are associated to a certain movement cost $c_m$, which is represented by the equation:
+
 \begin{equation}\label{eq:cp04_stixel_movement_cost}
-\tiny
   c_m(u_i\{t\}, u_j\{t - 1\}) = 
   \begin{align*}
     \begin{cases}
-    \infty & \textbf{if } (|X(u_i\{t\}) - X(u_j\{t - 1\})| > \tau_{max\_disp}) \textbf{ or} \\
-    ~ & ~~~~ (u_i\{t\} \text{ is a new stixel}) \textbf{ or} \\
-    ~ & ~~~~ (u_i\{t\} \text{ is occluded}) \textbf{ or} \\
-    ~ & ~~~~ (u_j\{t - 1\} \text{ is occluded}) \textbf{ or} \\
-    ~ & ~~~~ (f_{cost}(u_i\{t\}, u_j\{t - 1\}) > \tau_{max\_cost})   \\
-    f_{cost}(u_i\{t\}, u_j\{t - 1\}) & \textbf{otherwise}
+    f_{cost}(u_i\{t\}, u_j\{t - 1\}) & \textbf{if} \text{ matching is applicable} \\
+    \infty & \textbf{otherwise}
     \end{cases}
   \end{align*}
 \end{equation}
 
-Here, the free parameter $\tau_{max\_disp}$ computes the maximal displacement of a certain stixel between frames. From the disparity of each stixel $u$, its position in 3d coordinates is computed. $X(u)$ refers to its $x$ position in 3d coordinates. If the displacement between both stixels in 3d coordinates is above this threshold, cost is marked to infinity. Also, we do not consider those stixels which have been marked as occluded or which have appeared for the first time in this frame. Finally, we directly reject those matches with a cost above the user defined parameter $\tau_{max\_cost}$.
+Here, a matching is applicable if and only if the following restrictions are satisfied:
+\begin{itemize}
+ \item $|X(u_i\{t\}) - X(u_j\{t - 1\})| < \tau_{max\_disp}$, where the free parameter $\tau_{max\_disp}$ indicates the maximal displacement of a certain stixel between frames; and $X(u)$ refers to its $X$ position in 3d coordinates.
+ \item $u_i\{t\}$ is not a new stixel. That is, this is not the very first frame in which the stixel appears.
+ \item Stixel $u_i\{t\}$ and $u_j\{t - 1\}$ are not occluded.
+ \item $f_{cost}(u_i\{t\}, u_j\{t - 1\}) < \tau_{max\_cost}$.
+\end{itemize}
 
-$f_{cost}(u_i\{t\}, u_j\{t - 1\})$ can take several forms depending on the metric being used. In our tests, we have used \notsure{five} different metric, each one with different advantages and weaknesses. These five metrics are listed next.
+Else, the cost is considered as infinity, so the link is not included in the graph. $f_{cost}(u_i\{t\}, u_j\{t - 1\})$ is a cost function which can be composed by different cost metrics, weighted by a set of parameters in the form:
 
-\subsubsection{\acf{SAD}}\label{ch:chapter04_01_03_01}
+\begin{equation}\label{eq:cp04_cost_function}
+\small
+  \begin{align*}
+  f_{cost}(u_i\{t\}, u_j\{t - 1\}) =~  & & \alpha_{SAD} & ~\cdot~ & f_{SAD}(u_i\{t\}, u_j\{t - 1\}) \\
+      & + & \alpha_{hist} & ~\cdot~ & f_{hist}(u_i\{t\}, u_j\{t - 1\}) \\
+      & + & \alpha_{height} & ~\cdot~ & f_{height}(u_i\{t\}, u_j\{t - 1\})
+  \end{align*}
+\end{equation}
+
+Here, $\alpha_{SAD} + \alpha_{hist} + \alpha_{height} = 1$. $f_{SAD}(u_i\{t\}, u_j\{t - 1\})$, $f_{hist}(u_i\{t\}, u_j\{t - 1\})$ and $f_{height}(u_i\{t\}, u_j\{t - 1\})$ are the different cost metrics being tested, which are described next.
+
+\subsubsection{\acf{SAD}}\label{ch:chapter04_01_03_01_01}
 
 This cost is computed as the pixel-wise sum of the absolute differences over the RGB color scheme between $u_i\{t\}$ and $u_j\{t - 1\}$, following the expression
 
@@ -174,36 +192,62 @@ f_{SAD}(u_i\{t\}, u_j\{t - 1\}) =
 | I_L\{t\}(u_i\{t\}, v_1) - I_L\{t - 1\}(u_j\{t - 1\}, v_2) |
 \end{equation}
 
-As it is very unlikely for both stixels to have the exact same height, they are resized to a dimension of $30\,px$. This metric was already used in \cite{gunyel2012stixels} for the computation of the movement of the stixels. It has been used in our tests to compare the our results with those obtained by them in their implementation.
+As it is very unlikely for both stixels to have the exact same height, they are resized to a dimension of $30\,px$. This metric was originally used in \cite{gunyel2012stixels} for the computation of the movement of the stixels. It has been used in our tests to compare the our results with those obtained by them in their implementation.
 
-\subsubsection{Histograms matching}\label{ch:chapter04_01_03_02}
+\subsubsection{Histograms matching}\label{ch:chapter04_01_03_01_02}
 
 As said, the same stixel has not always the same size in different frames. This can happen because the position of the object partially represented by the stixel can change its depth in the scene, or due to noise in the height detection of the stixel. In order to normalize this, we have computed the histogram of each of the stixels being compared. Then, the cost is computed from the Hellinger distance between both histograms:
 
+\begin{equation}\label{eq:cp04_stixel_movement_histograms_cost}
+f_{SAD}(u_i\{t\}, u_j\{t - 1\}) = d(P, Q) = 2 \cdot \sqrt { 1 - \underset{i=1}{\overset{d}{\sum}}\sqrt{P_i \cdot Q_i}}
+\end{equation}
 
+Here, $P$ is the histogram of the stixel $u_i\{t\}$, and $Q$ is the histogram of the stixel $u_j\{t - 1\}$. $d$ is the number of bins in the histogram. In our implementation, $d = 256$.
 
-\subsubsection{\ac{SAD} over polar calibrated images}\label{ch:chapter04_01_03_03}
-% Describir por encima el metodo, pero sera detallado mejor en el apendice
-\subsubsection{Distance over polar calibrated images}\label{ch:chapter04_01_03_04}
-\subsubsection{Height difference}\label{ch:chapter04_01_03_05}
+\subsubsection{Height difference}\label{ch:chapter04_01_03_01_05}
 
-% En los resultados vemos cuales son las mejores metricas, tanto en resultados como en coste de tiempo
+This metric is used to complement the other two metrics, as by its own is not enough to do a matching, but it is good enough to help in the decision, in case of very similar scores in two or more possible matches. $f_{height}$ is computed as follows:
 
-% Hablar de cómo usamos el grafo en vez de DP
-% Poner imagen del grafo
-% Decir las ventajas
-% - Mejores tiempos
-% - Nos aseguramos de que el emparejamiento es hecho uno-a-uno
-% Mostrar imágenes de ejemplo
+\begin{equation}\label{eq:cp04_stixel_movement_height_cost}
+f_{height}(u_i\{t\}, u_j\{t - 1\}) = 1 - |h(u_i\{t\} - h(u_j\{t - 1\})|
+\end{equation}
+
+, where $h(u)$ is the height of the stixel in column $u$. 
+
+In our tests, we have tried different values for $\alpha_{SAD}$, $\alpha_{hist}$ and $\alpha_{height}$, obtaining the results shown in section \ref{ch:chapter04_02}, both in terms of performance and time. As said, the value obtained using the function $f_{cost}$ is used to weight the links between the nodes of a bipartite graph. This graph, whose nodes are the stixels at times $t$ and $t - 1$, is shown at figure \ref{fig:cp04_bipartite_graph}. In the top row, we can see the nodes (stixels) at current time, while in the lower row, previous stixels are represented. Costs of the match are represented by the edges, depicted in the image with the notation $\omega_{i,j}$.
+
+\begin{figure}[h!]
+\centering
+\includegraphics{bipartite_graph}
+\caption{Representation of the bipartite graph used for the matching process.}\label{fig:cp04_bipartite_graph}
+\end{figure}
+
+Over this graph, we solve the following maximization problem:
+
+\comment{No estoy seguro de esta notación}
+\begin{equation}\label{eq:cp04_match_minimization}
+\mathcal{\hat{M}}=\underset{\mathcal{M}}{\arg\min} \underset{(i, j) \in \mathcal{M}}{\sum} \omega_{i,j}, 
+~~~~\exists! (i, \cdot) \wedge \exists! (\cdot, j)
+\end{equation}
+
+This problem is solved using a $O(n \cdot m \cdot log(n))$ implementation of the Edmond's maximum weighted matching algorithm (\cite{edmonds1965paths}). The advantages of using this method instead the \ac{DP} implementation by \cite{gunyel2012stixels} is that we getter better times that the implementation available and, specially, we can ensure that each match is performed one-to-one. That is, in the \cite{gunyel2012stixels} implementation, the same stixel could be matched with more than one stixel from the other frame. This is not good, as we can have multiple paths from the same stixel, so it is difficult to know the trajectory it has followed in the past. In our implementation, we choose the matching set that maximizes the whole matching, ensuring that one stixel is matched with \emph{only} one stixel in the other frame.
 
 \subsection{Obstacle-level tracking}\label{ch:chapter04_01_04}
+
+In this stage, we perform the tracking at obstacle level, and not at stixel level, as described in the previous section. In the case of two-level tracking, we should have at this point the set of matchings $m(i,j) \in \mathcal{M}$, which relates each stixel at column $u_i$ in the frame $t$ with the stixel at column $u_j$ in the frame $t - 1$. Anyway, we do not really need to have these matches for this stage, and do the tracking directly at the obstacle level. This section comprises two steps: object detection (clustering) and object tracking.
+
 \subsubsection{Clustering}\label{ch:chapter04_01_04_01}
+
+% Hablar de la calibración polar
 \subsubsection{Tracking}\label{ch:chapter04_01_04_02}
+\paragraph{Two-level tracking case}\label{ch:chapter04_01_04_02_01}
+\paragraph{Object tracking case}\label{ch:chapter04_01_04_02_02}
+
 \subsection{Kalman filtering}\label{ch:chapter04_01_05}
 
-\section{Results}\label{ch:chapter04_06}
+\section{Results}\label{ch:chapter04_02}
 
-\subsection{Clustering}\label{ch:chapter04_06_01}
+\subsection{Clustering}\label{ch:chapter04_02_01}
 
 \begin{figure}[h!]
 \centering
@@ -216,10 +260,10 @@ As said, the same stixel has not always the same size in different frames. This 
 \includegraphics[width=0.49\textwidth]{stixelsDetection}\label{fig:cp04_stixels_detection} &
 \includegraphics[width=0.49\textwidth]{obstacleDetection}\label{fig:cp04_obstacle_detection}
 \end{tabular}
-\caption{Comparison of the stixels obtained trough the method of \cite{benenson2012fast} and the clustering performed in our method.}\label{fig:cp04_clustering_comparison}
+\caption{Comparison of the stixels obtained trough the method of \cite{benenson2012pedestrian} and the clustering performed in our method.}\label{fig:cp04_clustering_comparison}
 \end{figure}
 
-\subsection{Stixel accuracy}\label{ch:chapter04_06_02}
+\subsection{Stixel accuracy}\label{ch:chapter04_02_02}
 
 \begin{figure}[h!]
 \centering
@@ -238,9 +282,9 @@ As said, the same stixel has not always the same size in different frames. This 
 \caption{Comparison of the disparities obtained for \ac{ELAS}, stixels and the reconstructed objects.}\label{fig:cp04_reconstruction}
 \end{figure}
 
-\subsection{Tracking}\label{ch:chapter04_06_03}
+\subsection{Tracking}\label{ch:chapter04_02_03}
 
-\subsubsection{Performance along the sequence}\label{ch:chapter04_06_03_01}
+\subsubsection{Performance along the sequence}\label{ch:chapter04_02_03_01}
 
 \begin{figure}[h!]
 \centering
@@ -248,7 +292,7 @@ As said, the same stixel has not always the same size in different frames. This 
 \caption{Comparison of the recall obtained for the different configurations.}\label{fig:cp04_recall_vs_delta_frames}
 \end{figure}
 
-\subsubsection{Performance at different frame increments}\label{ch:chapter04_06_03_02}
+\subsubsection{Performance at different frame increments}\label{ch:chapter04_02_03_02}
 
 \begin{figure}[h!]
 \centering
@@ -265,7 +309,7 @@ As said, the same stixel has not always the same size in different frames. This 
 \caption{Comparison of the tracking capabilities at different frame increments for configurations \todo{XXX and XXX}.}\label{fig:cp04_recall_vs_delta_frames_vs_step}
 \end{figure}
 
-\subsection{Computation time}\label{ch:chapter04_06_04}
+\subsection{Computation time}\label{ch:chapter04_02_04}
 
 \begin{figure}[h!]
 \centering
