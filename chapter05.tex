@@ -420,7 +420,7 @@ The use of these similarity functions has several advantages. The most direct is
 \label{alg:cp05_clustering}
 \begin{algorithmic}
 \Function{Clustering}{$\mathcal{G}$} 
-\State {$\mathcal{G'} \gets \mathcal{G}$} \Comment {$\mathcal{G'}$ is the set of not-checked voxels }
+\State {$\mathcal{G'} \gets \mathcal{G}$} \Comment {$\mathcal{G'}$ is the set of not-checked voxels. }
 \For {\textbf{each} voxel $g \in \mathcal{G'}$}
   \State {$\mathcal{G'} \gets \mathcal{G'} - g$}
   \State {$o \gets \text{ new object containing }g$}
