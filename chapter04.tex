@@ -178,7 +178,7 @@ Else, the cost is considered as infinity, so the link is not included in the gra
   \end{align*}
 \end{equation}
 
-Here, $\alpha_{SAD} + \alpha_{hist} + \alpha_{height} = 1$. $f_{SAD}(u_i\{t\}, u_j\{t - 1\})$, $f_{hist}(u_i\{t\}, u_j\{t - 1\})$ and $f_{height}(u_i\{t\}, u_j\{t - 1\})$ are the different cost metrics being tested, which are described next.
+Here, $\alpha_{SAD} + \alpha_{hist} + \alpha_{height} = 1$. $f_{SAD}(u_i\{t\}, u_j\{t - 1\})$, $f_{hist}(u_i\{t\}, u_j\{t - 1\})$ and $f_{height}(u_i\{t\}, u_j\{t - 1\})$ are the factors for the different cost metrics being tested, which are described next.
 
 \subsubsection{\acf{SAD}}\label{ch:chapter04_01_03_01_01}
 
@@ -513,7 +513,7 @@ In this section, we will show some evaluation results obtained after the evaluat
  \item Computation time.
 \end{itemize}
 
-In order to compare our results with those obtained by \cite{gunyel2012stixels} and \cite{benenson2011stixels}, we have used the \emph{Bahnhof} sequence (\cite{ess2009robust}), which contains 1000 stereo pairs from a pedestrian area with a lot of pedestrians and for which ground truth is available. All tests described in this section have been performed over this sequence.
+In order to compare our results with those obtained by \cite{gunyel2012stixels} and \cite{benenson2011stixels}, we have used the \emph{Bahnhof} sequence (\cite{ess2009robust}), which contains about 7400 obstacle annotations with height $\geq 40\,px$ on 999 stereo pairs, with an image resolution of $640 \times 480$ pixels and a frame rate of about 15 frames per second. All tests described in this section have been performed over this sequence.
 
 \subsection{Clustering}\label{ch:chapter04_02_01}
 
@@ -547,48 +547,74 @@ In this section, we want to show the accuracy found in the depth computation for
 \caption{Difference in disparity achieved for both our clustering method and the initial stixel reconstruction.}\label{fig:cp04_disparity_comparison}
 \end{figure}
 
-In figure \ref{fig:cp04_reconstruction_elas}, we show the disparity maps presented by \ac{ELAS}, the original stixels from \cite{benenson2011stixels} and our clustered obstacles. These are represented by a color scale, which is shown in the right side of the images. In this scale, the lower disparities (further) are represented in red, while the highest disparities are represented in blue.
+In figure \ref{fig:cp04_reconstruction}, we show the disparity maps presented by \ac{ELAS}, the original stixels from \cite{benenson2011stixels} and our clustered obstacles. These are represented by a color scale, which is shown in the right side of the images. In this scale, the lower disparities (further) are represented in red, while the highest disparities are represented in blue.
 
 \begin{figure*}[h!]
         \centering
         \begin{subfigure}[b]{0.25\textwidth}
 	  \begin{tabular}{c}
-	    \includegraphics[width=\textwidth]{elas}\label{fig:cp04_reconstruction_elas}
+	    \includegraphics[width=\textwidth]{elas}
 	  \end{tabular}
-	  \caption{ELAS.}
+	  \caption{ELAS.}\label{fig:cp04_reconstruction_elas}
         \end{subfigure}% 
         ~
         \begin{subfigure}[b]{0.25\textwidth}
 	  \begin{tabular}{c}
-	    \includegraphics[width=\textwidth]{stixels}\label{fig:cp04_reconstruction_stixels}
+	    \includegraphics[width=\textwidth]{stixels}
 	  \end{tabular}
-	  \caption{Stixels.}
+	  \caption{Stixels.}\label{fig:cp04_reconstruction_stixels}
         \end{subfigure}%       
         ~
         \begin{subfigure}[b]{0.25\textwidth}
 	  \begin{tabular}{c}
-	    \includegraphics[width=\textwidth]{objects}\label{fig:cp04_reconstruction_objects}
+	    \includegraphics[width=\textwidth]{objects}
 	  \end{tabular}
-	  \caption{Object clustering.}
+	  \caption{Object clustering.}\label{fig:cp04_reconstruction_objects}
         \end{subfigure}%    
         ~
         \begin{subfigure}[b]{0.25\textwidth}
 	  \centering
 	  \begin{tabular}{c}
-	    \includegraphics[height=0.375\figuresheight]{colorscale_jet}\label{fig:cp04_reconstruction_colorscale}\\
+	    \includegraphics[height=0.375\figuresheight]{colorscale_jet}
 	  \end{tabular}
-	  \caption*{}
+	  \caption*{}\label{fig:cp04_reconstruction_colorscale}
         \end{subfigure}% 
         \caption{Comparison of the disparities obtained for \ac{ELAS}, stixels and the reconstructed objects.}\label{fig:cp04_reconstruction}
 \end{figure*}
 
 \subsection{Tracking}\label{ch:chapter04_02_03}
 
-In the tracking tests, we are going to evaluate the recall obtained related to two different criteria: the behavior of the tracking after a few frames (that is, the track length achievable with a certain level of confidence); and the behavior when the time between frames is increased. 
+In this section, the results obtained in our tracking evaluation tests are shown in terms of the recall measured related to two different criteria: the behavior of the tracking after a few frames (that is, the track length achievable with a certain level of confidence); and the behavior when the time between frames is increased. 
+
+In our tests, we have tried with different configurations attending to the matching metrics and the method used. From the whole set of tests, we have selected the most representative, which are shown in table \ref{table:cp04_configurations_tested}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+  \hline
+ \multirow{2}{*}{Name} & \multicolumn{3}{ c| }{Cost factors} & \multirow{2}{*}{Tracking Method} \\ \cline{2-4}
+ & $\alpha_{SAD}$ & $\alpha_{hist}$ & $\alpha_{height}$ &  \\
+ \hline
+ Conf. 1 & 1 & 0 & 0 & \cite{gunyel2012stixels} \\
+ Conf. 2 & 0.5 & 0 & 0.5 & \cite{gunyel2012stixels} \\
+ \hline
+ Conf. 3 & 1 & 0 & 0 & Two-level tracking \\
+ Conf. 4 & 0.5 & 0 & 0.5 & Two-level tracking \\
+ Conf. 5 & 0 & 1 & 0 & Two-level tracking \\
+ Conf. 6 & 0 & 0.5 & 0.5 & Two-level tracking \\
+ \hline
+ Conf. 7 & 0 & 0 & 0 & Object tracking \\
+ \hline
+\end{tabular}
+\end{center}
+\caption{Configurations for which the evaluation results are shown.}\label{table:cp04_configurations_tested}
+\end{table}
+
+Two of these configurations are from the implementation of the method by \cite{gunyel2012stixels}, available at \url{https://bitbucket.org/rodrigob/doppia}, with just the \ac{SAD} cost, and the final configuration described in their paper, in which $\alpha_{SAD} = 0.5$ and $\alpha_{height} = 0.5$, in order to know the real contribution of factor $\alpha_{height}$. Same process is done for the two-level tracking method, in which we evaluate also the contribution of factor $\alpha_{hist}$. Finally, we do a evaluation of the results obtained by using the object based tracking, without doing a previous stixel level tracking. As this level is not needed, $\alpha_{SAD} = \alpha_{hist} = \alpha_{height} = 0$.
 
 \subsubsection{Performance along the sequence}\label{ch:chapter04_02_03_01}
 
-% TODO: Decir que hemos hecho tal y tal test, con esta configuration y los nombres cuales
+For the evaluation of the tracking capabilities of the method, we followed the same strategy as \cite{gunyel2012stixels}: we used annotated obstacle bounding boxes provided as ground truth with the evaluated sequence. Starting from ground truth annotations at a certain frame, each evaluated configuration is used to predict the bounding box positions up to $\Delta$ frames in the future. For each frame, we evaluate the recall using the standard intersection over union metric. By running this evaluation starting from every frame in a video sequence we obtain the \emph{recall vs. $\Delta$ frames} curve shown at figure \ref{fig:cp04_recall_vs_delta_frames}, that can be used to compare the configurations. 
 
 \begin{figure}[h!]
 \centering
@@ -596,25 +622,50 @@ In the tracking tests, we are going to evaluate the recall obtained related to t
 \caption{Comparison of the recall obtained for the different configurations.}\label{fig:cp04_recall_vs_delta_frames}
 \end{figure}
 
+In this chart, we can see that the \cite{gunyel2012stixels} method falls quite fast, with a recall below 50\% just after 5 frames have passed. Also, we notice that the contribution of $\alpha_{height}$ is not clear. About the two-level tracking methods, results are better, specially those in which $\alpha_{hist} \neq 0$. There are many reasons for that. Respect with the method of \cite{gunyel2012stixels}, the use of obstacles for the tracking instead of just the stixels filters a lot of noise, making the tracking more reliable. This is confirmed if we look at figure \ref{fig:cp04_tracking_examples}, where we can see the tracking performed by \emph{Configuration 1}, \emph{Configuration 5} and \emph{Configuration 7}. If we look at the first two images, we can see that the trajectories obtained for the \emph{Configuration 5} are longer, and smoother. About the difference between using $\alpha_{hist}$ or $\alpha_{SAD}$, the histograms being used are normalized just before the matching, while the sum of absolute differences is done pixel by pixel, without considering illumination changes.
+
+Finally, object based tracking shows good results for the first frames, but it falls a little bit faster than the two-level based tracking methods. We think the most likely reason for that is that the two-level tracking is more tolerant to the clustering errors. For example, if in one frame we consider as part of the obstacle a relatively big fraction of the background, the aspect of the histogram will change, so the matching score could be small. Looking again at figure \ref{fig:cp04_tracking_examples}, we can see that the quality of the tracks both in configurations 5 and 7 is comparable, but the length of the former is bigger.
+
+\begin{figure*}[h!]
+        \centering
+        \begin{subfigure}[b]{0.33\textwidth}
+	  \begin{tabular}{c}
+	    \includegraphics[width=\textwidth]{trackingConf1}
+	  \end{tabular}
+	  \caption{Conf. 1.}\label{fig:cp04_tracking_example_conf_1}
+        \end{subfigure}% 
+        ~
+        \begin{subfigure}[b]{0.33\textwidth}
+	  \begin{tabular}{c}
+	    \includegraphics[width=\textwidth]{trackingConf5}
+	  \end{tabular}
+	  \caption{Conf. 5.}\label{fig:cp04_tracking_example_conf_5}
+        \end{subfigure}%       
+        ~
+        \begin{subfigure}[b]{0.33\textwidth}
+	  \begin{tabular}{c}
+	    \includegraphics[width=\textwidth]{trackingConf7}
+	  \end{tabular}
+	  \caption{Conf. 7.}\label{fig:cp04_tracking_example_conf_7}
+        \end{subfigure}%
+        \caption{Example of the tracking obtained for the different configurations, at stixel level.}\label{fig:cp04_tracking_examples}
+\end{figure*}
+
 \subsubsection{Performance at different frame increments}\label{ch:chapter04_02_03_02}
 
 % TODO: Decir que una de las cosas que se asumen es que no va a haber un gran cambio
 % En el caso test0,1,22,23 seguimos con el mismo problema, pero 28b nos soluciona la papeleta????
+We also wanted to know which of the methods was more tolerant to low frame rate sequences, as one of the assumptions for the tracking methods is that the temporal difference between frames is not too big. Based on this, we evaluated the relation existing between the recall, $\Delta$ frames and the time step between frames. So we repeated the tests, but this time increasing $k$ frames each time, with $k=0.06\dots1.2\,s$. Then, we evaluated the variation in the results, obtaining the values represented in figure \ref{fig:cp04_recall_vs_delta_frames_vs_step}.
 
+% TODO: Mostrar la parte deltatime-recall para todos y luego el 3d con una seleccion
 \begin{figure}[h!]
 \centering
-\includegraphics[trim=50 40 80 60,clip]{increments}
-\caption{Comparison of the recall obtained for the different frame increments.}\label{fig:cp04_increments}
+\includegraphics[trim=80 90 140 90,clip]{recall_vs_delta_frames_vs_step_28b_1_16b}
+\caption{Comparison of the tracking capabilities at different frame increments for configurations \emph{Conf. 1}, \emph{Conf. 5} and \emph{Conf. 7}}\label{fig:cp04_recall_vs_delta_frames_vs_step}
 \end{figure}
 
-\begin{figure}[h!]
-\begin{tabular}{cc}
-% \centering
-\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{recall_vs_delta_frames_vs_step_test28b}\label{fig:cp04_recall_vs_delta_frames_vs_step_test28b} &
-\includegraphics[width=0.45\textwidth,trim=50 40 80 60,clip]{recall_vs_delta_frames_vs_step_test16b}\label{fig:cp04_recall_vs_delta_frames_vs_step_test16b}
-\end{tabular}
-\caption{Comparison of the tracking capabilities at different frame increments for configurations \todo{XXX and XXX}.}\label{fig:cp04_recall_vs_delta_frames_vs_step}
-\end{figure}
+
+
 
 \subsection{Computation time}\label{ch:chapter04_02_04}
 
@@ -629,5 +680,10 @@ In the tracking tests, we are going to evaluate the recall obtained related to t
 
 
 \section{Summary}\label{ch:chapter04_07}
-
+% AlfaHeight no aporta nada
+% Es mejor usar 2 level pq da mejores resultados ¿aunque si el frame rate puede llegar a compensr el obstacle?
+% El obstacle es el mas rapido, puede interesar si los recursos son limitados o se prefiere velocidad frente a eficiencia
+% 
 % Trabajo futuro: Utilizar el polar calibration para la generación de los propios stixels?
+Usar el propio tracking como medida a tener en cuenta durante el proceso de clustering
+
