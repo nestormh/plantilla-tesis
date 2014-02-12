@@ -21,7 +21,7 @@ This compact but flexible representation of the world can be used as the common 
 
 The method described in this chapter is based in the fast stixels implementation described in \cite{benenson2012pedestrian}. One of the main advantages of this implementation is that there is no need of obtaining a previous depth map. This fact is also the main reason for which we did not use the original implementation from \cite{badino2009stixel} or that from \cite{pfeiffer2010efficient}. Based on the output of this method, we do the tracking of the stixels following a bipartite-graph method based on a given cost metric. In this sense, we have tested several cost metrics, which are described in the following sections.
 
-Our tracking method is based on the contribution by \cite{gunyel2012stixels}. There, movement is just computed for the areas which are covered by stixels. It has been demonstrated that stixels are good enough to do a representation of the surroundings of a vehicle, and that they have a detail level enough for the movement detection. Traditionally, this movement detection is carried out through the computation of the optical flow between two frames, which is computationally expensive. In this chapter, we will see how this movement can be computed also using the stixel world representation, by extending the method of \cite{gunyel2012stixels}. For that, we have followed two different approaches, each with its own benefits and drawbacks. The first tries to cluster the stixels in objects, so the tracking is performed at object level; the second joins the stixel tracking with the object tracking in a two level tracking schema.
+Our tracking method is based on the contribution by \cite{gunyel2012stixels}. There, movement is just computed for the areas which are covered by stixels. It has been demonstrated that stixels are good enough to do a representation of the surroundings of a vehicle, and that they have a detail level enough for the movement detection. Traditionally, this movement detection is carried out through the computation of the optical flow between two frames, which is computationally expensive. In this chapter, we will see how this movement can be computed also using the stixel world representation, by extending the method of \cite{gunyel2012stixels}. For that, we have followed two different approaches, each with its own benefits and drawbacks. The first tries to cluster the stixels in objects, so the tracking is performed at object level; the second joins the stixel tracking with the object tracking in a two level tracking scheme.
 
 Our contribution in this work is summarized next:
 \begin{enumerate}
@@ -199,10 +199,10 @@ As it is very unlikely for both stixels to have the exact same height, they are 
 As said, the same stixel has not always the same size in different frames. This can happen because the position of the object partially represented by the stixel can change its depth in the scene, or due to noise in the height detection of the stixel. In order to normalize this, we have computed the histogram of each of the stixels being compared. Then, the cost is computed from the Hellinger distance between both histograms:
 
 \begin{equation}\label{eq:cp04_stixel_movement_histograms_cost}
-f_{SAD}(u_i\{t\}, u_j\{t - 1\}) = d(P, Q) = 2 \cdot \sqrt { 1 - \underset{i=1}{\overset{d}{\sum}}\sqrt{P_i \cdot Q_i}}
+f_{SAD}(u_i\{t\}, u_j\{t - 1\}) = 2 \cdot \sqrt { 1 - \underset{i=1}{\overset{d}{\sum}}\sqrt{H(u_i\{t\})[i] \cdot H(u_j\{t - 1\})[i]}}
 \end{equation}
 
-Here, $P$ is the histogram of the stixel $u_i\{t\}$, and $Q$ is the histogram of the stixel $u_j\{t - 1\}$. $d$ is the number of bins in the histogram. In our implementation, $d = 256$.
+Here, $H(u)[i]$ is the $i^{th}$ bin of the histogram computed for the stixel $u$, and $d$ is the number of bins in the histogram. In our implementation, $d = 256$.
 
 \subsubsection{Height difference}\label{ch:chapter04_01_03_01_05}
 
@@ -222,7 +222,7 @@ In our tests, we have tried different values for $\alpha_{SAD}$, $\alpha_{hist}$
 \caption{Representation of the bipartite graph used for the matching process.}\label{fig:cp04_bipartite_graph}
 \end{figure}
 
-Over this graph, we solve the following maximization problem:
+Over this graph, we solve the following minimization problem:
 
 \comment{No estoy seguro de esta notación}
 \begin{equation}\label{eq:cp04_match_minimization}
@@ -302,7 +302,7 @@ There, we test all obstacles previously detected, again from left to right. If t
 
 \paragraph{Obstacle filtering}\label{ch:chapter04_01_04_01_02}
 
-If we look again at figure \ref{fig:cp04_clustering_aggregation}, we will notice that we are still detecting some fake obstacles. For instance, between the man with the red jacket and that with the dark suit, there are two of them. Next to the man in the second plane, also with a red jacket, there is another fake obstacle, and there is a last one in the right side of the image. Signs and poles are not considered fake obstacles, as they are elements to avoid, and we do not have a classification schema able to distinguish the class of the obstacle being detected.
+If we look again at figure \ref{fig:cp04_clustering_aggregation}, we will notice that we are still detecting some fake obstacles. For instance, between the man with the red jacket and that with the dark suit, there are two of them. Next to the man in the second plane, also with a red jacket, there is another fake obstacle, and there is a last one in the right side of the image. Signs and poles are not considered fake obstacles, as they are elements to avoid, and we do not have a classification scheme able to distinguish the class of the obstacle being detected.
 
 In order to distinguish real obstacles from fake obstacles, we register the images obtained between frames, so we can distinguish the movement between frames. This movement can be originated both by the movement of the obstacle itself (i.e. a person walking), or by the movement of the camera respect to the obstacles. This makes occluded areas to appear, which allows detecting the border of obstacles that are not moving, but which we want to avoid. This is the case, for example, of the pole in the right part of the image.
 
@@ -382,7 +382,7 @@ Using this method, we compute a transformation map that allows to know the corre
 
 \end{framed}
 
-For the discrimination between real and fake obstacles, we align the current frame at time $t$ with another frame at time $t - k$. Using the aligned images, we get the pixel-wise absolute difference of both images, so we can get those pixels for which there is movement. This difference image is projected back to coordinates of the current image. Then, this difference is thresholded and binarized, rejecting the small differences produced by noise. Result of this process is shown at the top of figure \ref{fig:cp04_obstacle_filtering}. Then, for each obstacle, we get the associated \ac{ROI}. For each ROI, we reject the top half of it, so we just look for movement in the area of the obstacle that is touching the ground. There are two reasons for that: the first one is that obstacles that move over the ground tend to have a higher movement in the lower part (for instance, legs or wheel movements). In the case of first plane static obstacles, the movement due to the camera change is more or less similar in the upper and lower half, so we are not loosing information. The second reason is that the stixels reconstruction assumes a planar ground in front of the camera, it is a fast way to discriminate bad correspondences.
+For the discrimination between real and fake obstacles, we align the current frame at time $t$ with another frame at time $t - k$. Using the aligned images, we get the pixel-wise absolute difference of both images, so we can get those pixels for which there is movement. This difference image is projected back to coordinates of the current image. Then, this difference is thresholded and binarized, rejecting the small differences produced by noise. Result of this process is shown at the top of figure \ref{fig:cp04_obstacle_filtering}. Then, for each obstacle, we get the associated \ac{ROI}. For each \ac{ROI}, we reject the top half of it, so we just look for movement in the area of the obstacle that is touching the ground. There are two reasons for that: the first one is that obstacles that move over the ground tend to have a higher movement in the lower part (for instance, legs or wheel movements). In the case of first plane static obstacles, the movement due to the camera change is more or less similar in the upper and lower half, so we are not loosing information. The second reason is that the stixels reconstruction assumes a planar ground in front of the camera, it is a fast way to discriminate bad correspondences.
 
 \begin{figure}[h!]
   \begin{minipage}{\textwidth}
@@ -421,35 +421,113 @@ For the discrimination between real and fake obstacles, we align the current fra
       \hline
     \end{tabular}
   \end{minipage}\hfill
-  \caption{Object filtering process. In the top, the binarized motion image is shown. In the bottom the occupancy maps generated for each candidate obstacle.}\label{fig:cp04_obstacle_filtering}
+  \caption{Object filtering process. In the top, the binarized motion image is shown ($k=0.2$). In the bottom, the occupancy maps generated for each candidate obstacle.}\label{fig:cp04_obstacle_filtering}
 \end{figure}
 
-% TODO
-% Decir que cogemos cada ROI y dividimos el w y h correspondientes a coordenadas del mundo real y las dividimos en celdas de 10x10, obteniendo el grid que se muestra en la figura XXX
-% Si el porcentaje de celdas marcadas es > umbral, el obstáculo es real
-% Si no, se elimina
-% También filtramos por tamaño del obstáculo en coordenadas reales
+Each region is transformed to real world coordinates and project there the points resulting after the thresholding process. There, the region is dividided in cells (in our tests, of $10\times10\,cm$). For each cell, if there is at least one point falling inside it in the plane $XY$, the cell is marked as occupied. The occupancy grids obtained, together with their associated \ac{ROI} in the motion image, are shown in the table in figure \ref{fig:cp04_obstacle_filtering}. \acs{ROI} are in the first row, and occupancy maps in the second. It is easy to see that real obstacles, like for example number 5 or number 7, present a higher density if compared with, for example, the obstacle number 4. Also, if we look at obstacle 2, a man in a black suit (which makes the motion detection a little bit more complicated through absolute differencing due to the low color values), is properly detected. In order to ensure the detection of this kind of obstacles, it is important to choose a value for $k$ big enough. In our tests, we decided to use $k = 0.2\,s$, so we are sure that differences are appreciable, but being conservative at the same time. At the end of the process, we decide if the obstacle is rejected or not through the following equation:
 
-In our tests, we decided to use $k = 0.2\,s$, in order to be sure that differences are appreciable, but being conservative at the same time.
+\begin{equation}\label{eq:cp04_fake_obstacles}
+  fake(o) = 
+  \begin{align*}
+    \begin{cases}
+      true & \text{if } {{count(G_o, true)} \over {count(G_o, true) + count(G_o, false)}} > \tau_{occ} \\
+      false & otherwise
+    \end{cases}
+  \end{align*}
+\end{equation}
 
-
-% Imagen con las diferencias reproyectadas en la imagen I_L,t
+There, $count(G_o, j)$ counts the number of occupied ($j=true$) or free ($j=false$) cells in the occupancy grid corresponding to the object $o$, $G_o$. $\tau_{occ}$ is a parameter. We also check that the width of each obstacle in real world coordinates is inside the limits. We can see the results obtained for this process again in figure \ref{fig:cp04_obstacle_filtering}. Rejected obstacles are highlighted in red, while the accepted are represented in green.
 
 \subsubsection{Tracking}\label{ch:chapter04_01_04_02}
+
+Once we have the obstacles detected and filtered, we propose two approaches for the object tracking. The first one takes advantage of the process described in section \ref{ch:chapter04_01_03_01}. From the initial matching performed at stixel level, we try to maximize the number of matches between obstacles. The second one tries to do the matching directly. As there is not a big difference between frames, we can use template matching techniques in order to do the tracking. As we will see in section \ref{ch:chapter04_02_03}, each of these techniques has its own advantages. The first one presents a better recall along the frames; however, the second is faster, with a recall that, despite of being not as good as that for the two-level tracking scheme, is still good.
+
 \paragraph{Two-level tracking case}\label{ch:chapter04_01_04_02_01}
+
+As said, the two-level tracking takes advantage from the stixels matched using the method in \ref{ch:chapter04_01_03_01}, together with the obstacles found using the method described in the last section. Again, we consider the tracking problem as a pair matching process that is repeated along the time. Based on that idea, we define the correspondence matrix $C_{|\mathcal{O}\{t\}| \times |\mathcal{O}\{t - 1\}|}$, which counts the number of correspondences obtained at stixel level between the stixels at the current frame and the previous one. This process is described in the algorithm \ref{alg:cp04_two_level_tracking}.
+
+\begin{algorithm}
+\caption{Two-level tracking algorithm}
+\label{alg:cp04_two_level_tracking}
+\begin{algorithmic}
+\Function{Tracking}{$\mathcal{O}\{t\}$, $\mathcal{O}\{t - 1\}$}
+  \State {$C_{|\mathcal{O}\{t\}| \times |\mathcal{O}\{t - 1\}|} \gets 0$}
+  \For {\textbf{each} object $o\{t\} \in \mathcal{O}\{t\}$}
+    \For {\textbf{each} stixel $q\{t\} \in o$}
+      \State {Find correspondence $q\{t - 1\}$ for $q\{t\}$}
+      \State {Find the object $o\{t - 1\} \in \mathcal{O}\{t - 1\}$ associated to $q\{t - 1\}$}
+      \If {$o\{t - 1\}$ found \textbf{and} $\|o\{t\} - o\{t - 1\}\| < \tau_{max\_obst\_dist}$}
+	\State {$C(o\{t\}, o\{t - 1\}) \gets C(o\{t\}, o\{t - 1\}) + 1$}
+      \EndIf
+    \EndFor
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Two objects can be associated between frames if there is at least one stixel correspondence and they are close enough, as we assume the movement between frames should not be too big as the frame rate is high enough. With this cost matrix, we solve the following maximization problem:
+
+\begin{equation}\label{eq:cp04_two_level_maximization}
+\mathcal{\hat{C}}=\underset{\mathcal{C}}{\arg\max} \underset{(i, j) \in \mathcal{M}}{\sum} C(i,j),
+~~~~\exists! (i, \cdot) \wedge \exists! (\cdot, j)
+\end{equation}
+
+After this process, we will have the set of pairs $\mathcal{\hat{C}}$. In our implementation, we maintain an internal structure that associates each track to each obstacle in the last tracked frame. These tracks are extended in order to include the new objects, which will be used as the new indexes of the trajectories list. In figure \ref{fig:cp04_tracking_examples_two_level}, we can see several examples of the results obtained using this tracking method. For more information about the performance obtained, please check the results in section \ref{ch:chapter04_02} \notsure{, or check the videos available at XXX}.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{ ccccc}
+      \includegraphics[width=0.45\textwidth]{sequenceTwoLevel/twolevel30}\label{fig:cp04_two_level_example_15} &
+      \includegraphics[width=0.45\textwidth]{sequenceTwoLevel/twolevel320}\label{fig:cp04_two_level_example_126} &
+    \end{tabular}
+  \caption{Some tracking results using the two-level based tracking.}\label{fig:cp04_tracking_examples_two_level}
+\end{figure}
+
 \paragraph{Object tracking case}\label{ch:chapter04_01_04_02_02}
 
-\subsection{Kalman filtering}\label{ch:chapter04_01_05}
+The object tracking scheme is quite similar. However, in this case the cost matrix is not generated by counting the number of stixels associated to each obstacle, as we do not have this information (remember that for this approach, we do not apply the process described in section \ref{ch:chapter04_01_03_01}). Instead of that, we use the histograms difference for each pair of obstacles, in a process similar to that described in section \ref{ch:chapter04_01_03_01_02}, so the cost matrix in this case is defined as:
+
+\begin{equation}\label{eq:cp04_object_matching_histograms_cost}
+C(o\{t\}, o\{t - 1\}) = 1 - \left ( 2 \cdot \sqrt { 1 - \underset{i=1}{\overset{d}{\sum}}\sqrt{H(o\{t\})[i] \cdot H(o\{t - 1\})[i]}} \right )
+\end{equation}
+
+Then, the tracking problem is the same as explained for the two-level tracking case: we solve the maximization problem defined in \ref{eq:cp04_two_level_maximization}, and then the tracks are updated with the results of the matching. In figure \ref{fig:cp04_tracking_examples_object}, some other examples of the output obtained after applying this process are shown.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{ccccc}
+      \includegraphics[width=0.45\textwidth]{sequenceObstacle/obstacle15}\label{fig:cp04_object_level_example_30} &
+      \includegraphics[width=0.45\textwidth]{sequenceObstacle/obstacle126}\label{fig:cp04_object_level_example_320}
+    \end{tabular}
+  \caption{Some tracking results using the object based tracking.}\label{fig:cp04_tracking_examples_object}
+\end{figure}
 
 \section{Results}\label{ch:chapter04_02}
 
+In this section, we will show some evaluation results obtained after the evaluation of the method described in this chapter. Evaluations have been focused into four different scopes: 
+
+\begin{itemize}
+ \item Quality of the clustering process.
+ \item Accuracy of the depth obtained for the computed stixels compared to object level results.
+ \item Recall of the obtained tracks related to several conditions.
+ \item Computation time.
+\end{itemize}
+
+In order to compare our results with those obtained by \cite{gunyel2012stixels} and \cite{benenson2011stixels}, we have used the \emph{Bahnhof} sequence (\cite{ess2009robust}), which contains 1000 stereo pairs from a pedestrian area with a lot of pedestrians and for which ground truth is available. All tests described in this section have been performed over this sequence.
+
 \subsection{Clustering}\label{ch:chapter04_02_01}
+
+In this test, we want to know if the obstacle detection method described in section \ref{ch:chapter04_01_04_01} is good enough. For that, we compared our detections with the real obstacles appearing in each current frame. In these tests, we have executed the method with and without performing the filtering process described in section \ref{ch:chapter04_01_04_01_02}, obtaining the results shown in figure \ref{fig:cp04_detection_rate}.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[trim=50 40 80 60,clip]{detectionRate}
 \caption{Obstacles detection rate achieved using our clustering method.}\label{fig:cp04_detection_rate}
 \end{figure}
+
+There, we compare each recall value with the number of frames in the sequence falling below it. That is, the faster the plot grows, the better the results are. There, we can see that, for a recall value of 90\%, just a 40\% fall below this value for the case in which we are filtering the obstacles. Situation is different when objects are not filtered. For the same recall value, a 60\% of the frames in the sequence are below this value.
+
+In figure \ref{fig:cp04_clustering_comparison}, we can see the projected 3d output of the detected stixels. In the left image, the original stixels are shown. As we can see, there is a lot of noise, specially between obstacles. We can see also that a lot of free areas are detected. In the right image we show just the stixels falling inside an obstacle, and with their depths restored.
 
 \begin{figure}[h!]
 \begin{tabular}{cc}
@@ -461,26 +539,56 @@ In our tests, we decided to use $k = 0.2\,s$, in order to be sure that differenc
 
 \subsection{Stixel accuracy}\label{ch:chapter04_02_02}
 
+In this section, we want to show the accuracy found in the depth computation for the stixels regarding to our reconstruction based just on the obstacles. There, we compare the disparity error regarding to a \ac{ELAS} reconstructed disparity map wit the percentage of frames below this error. The red line represents the stixels error, which grows faster than the error shown by the clustered obstacles. If we look at the $x-coordinates$, we can see that approximately a 95\% of the images have a disparity error below a 10\%, while this error is just found for a 60\% of the images when the reconstruction is made buy just the original stixel computation.
+
 \begin{figure}[h!]
 \centering
 \includegraphics[trim=50 40 80 60,clip]{disparity}
 \caption{Difference in disparity achieved for both our clustering method and the initial stixel reconstruction.}\label{fig:cp04_disparity_comparison}
 \end{figure}
 
-\begin{figure}[h!]
-\begin{tabular}{cccc}
-% \centering
-\includegraphics[width=0.25\textwidth]{elas}\label{fig:cp04_reconstruction_elas} & 
-\includegraphics[width=0.25\textwidth]{stixels}\label{fig:cp04_reconstruction_stixels} & 
-\includegraphics[width=0.25\textwidth]{objects}\label{fig:cp04_reconstruction_objects} &
-\includegraphics[height=0.1875\textwidth]{colorscale_jet}\label{fig:cp04_reconstruction_colorscale} % 0.25*48/64 = 0.1875
-\end{tabular}
-\caption{Comparison of the disparities obtained for \ac{ELAS}, stixels and the reconstructed objects.}\label{fig:cp04_reconstruction}
-\end{figure}
+In figure \ref{fig:cp04_reconstruction_elas}, we show the disparity maps presented by \ac{ELAS}, the original stixels from \cite{benenson2011stixels} and our clustered obstacles. These are represented by a color scale, which is shown in the right side of the images. In this scale, the lower disparities (further) are represented in red, while the highest disparities are represented in blue.
+
+\begin{figure*}[h!]
+        \centering
+        \begin{subfigure}[b]{0.25\textwidth}
+	  \begin{tabular}{c}
+	    \includegraphics[width=\textwidth]{elas}\label{fig:cp04_reconstruction_elas}
+	  \end{tabular}
+	  \caption{ELAS.}
+        \end{subfigure}% 
+        ~
+        \begin{subfigure}[b]{0.25\textwidth}
+	  \begin{tabular}{c}
+	    \includegraphics[width=\textwidth]{stixels}\label{fig:cp04_reconstruction_stixels}
+	  \end{tabular}
+	  \caption{Stixels.}
+        \end{subfigure}%       
+        ~
+        \begin{subfigure}[b]{0.25\textwidth}
+	  \begin{tabular}{c}
+	    \includegraphics[width=\textwidth]{objects}\label{fig:cp04_reconstruction_objects}
+	  \end{tabular}
+	  \caption{Object clustering.}
+        \end{subfigure}%    
+        ~
+        \begin{subfigure}[b]{0.25\textwidth}
+	  \centering
+	  \begin{tabular}{c}
+	    \includegraphics[height=0.375\figuresheight]{colorscale_jet}\label{fig:cp04_reconstruction_colorscale}\\
+	  \end{tabular}
+	  \caption*{}
+        \end{subfigure}% 
+        \caption{Comparison of the disparities obtained for \ac{ELAS}, stixels and the reconstructed objects.}\label{fig:cp04_reconstruction}
+\end{figure*}
 
 \subsection{Tracking}\label{ch:chapter04_02_03}
 
+In the tracking tests, we are going to evaluate the recall obtained related to two different criteria: the behavior of the tracking after a few frames (that is, the track length achievable with a certain level of confidence); and the behavior when the time between frames is increased. 
+
 \subsubsection{Performance along the sequence}\label{ch:chapter04_02_03_01}
+
+% TODO: Decir que hemos hecho tal y tal test, con esta configuration y los nombres cuales
 
 \begin{figure}[h!]
 \centering
@@ -489,6 +597,9 @@ In our tests, we decided to use $k = 0.2\,s$, in order to be sure that differenc
 \end{figure}
 
 \subsubsection{Performance at different frame increments}\label{ch:chapter04_02_03_02}
+
+% TODO: Decir que una de las cosas que se asumen es que no va a haber un gran cambio
+% En el caso test0,1,22,23 seguimos con el mismo problema, pero 28b nos soluciona la papeleta????
 
 \begin{figure}[h!]
 \centering
