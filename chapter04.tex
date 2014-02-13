@@ -29,7 +29,7 @@ Our contribution in this work is summarized next:
  \item Improvement of the results obtained by the method described in \cite{gunyel2012stixels}, in both object and two-level tracking approaches. We modified the method by using a graph-based approach instead of a \ac{DP} based method, as they did. 
  \item Different cost metrics for the tracking have been tested, with promising results. 
  \item Faster tracking. As we will see in section \ref{ch:chapter04_02_04}, the speed achieved with our implementation is better, specially in the object based tracking. The two-level tracking is also a little bit faster, thanks to the usage of a bipartite graph based method for the matching of the stixels between frames.
- \item \notsure{Robustness after a big change between images (for example, in presence of a low framerate).}
+ \item Our method is slightly more robust after changes between images (for example, in presence of a low framerate), specially in the case of the just object based approach.
 \end{enumerate}
 
 In the following section, each of the steps of the method are detailed. At the end of the chapter some results are shown in order to evaluate the performance of the described method.
@@ -653,21 +653,25 @@ Finally, object based tracking shows good results for the first frames, but it f
 
 \subsubsection{Performance at different frame increments}\label{ch:chapter04_02_03_02}
 
-% TODO: Decir que una de las cosas que se asumen es que no va a haber un gran cambio
-% En el caso test0,1,22,23 seguimos con el mismo problema, pero 28b nos soluciona la papeleta????
-We also wanted to know which of the methods was more tolerant to low frame rate sequences, as one of the assumptions for the tracking methods is that the temporal difference between frames is not too big. Based on this, we evaluated the relation existing between the recall, $\Delta$ frames and the time step between frames. So we repeated the tests, but this time increasing $k$ frames each time, with $k=0.06\dots1.2\,s$. Then, we evaluated the variation in the results, obtaining the values represented in figure \ref{fig:cp04_recall_vs_delta_frames_vs_step}.
+We also wanted to know which of the methods was more tolerant to low frame rate sequences, as one of the assumptions for the tracking methods is that the temporal difference between frames is not too big. Based on this, we evaluated the relation existing between the recall, $\Delta$ frames and the time step between frames. So we repeated the tests, but this time increasing $k$ frames each time, with $k=0.06\dots1.2\,s$ (Corresponding to 1 up to 20 frames at $15\,Hz$). Then, we evaluated the variation in the results. First, we did a few preliminary tests with just the first 200 frames in which we wanted to know the variation in the recall related to the time step. Results of this tests are represented in the chart shown at figure \ref{fig:cp04_recall_vs_step}. In this chart, we show the tracking values presented by the different configurations with just one frame increment at the time step shown in the $x$ axis. There, we can detect four different profiles, which are again related to the configurations 1-2, 3-4; 5-6, and 7. As before, we observe that the contribution offered by the $\alpha_{height}$ factor is negligible. We also observe that the most tolerant of all the configurations is number 7, as it was to be expected. This configuration does the tracking just at object level, so it is able to deal with changes slightly bigger than those with which the stixel level tracking is able to work properly. However, there is a surprise, as the tracking based in just the stixel level presents better values. The reason for that is that tracking using this method gets slightly better results in the first frames, but the recall falls faster along the frames.
 
-% TODO: Mostrar la parte deltatime-recall para todos y luego el 3d con una seleccion
+\begin{figure}[h!]
+\centering
+\includegraphics[trim=50 40 80 60,clip]{recall_vs_step}
+\caption{Behavior of the recall obtained for the different configurations at different frame increments.}\label{fig:cp04_recall_vs_step}
+\end{figure}
+
+This effect is better seen in figure \ref{fig:cp04_recall_vs_delta_frames_vs_step}, where we compare the three involved values (recall, $\Delta frames$ and $\Delta time$ for the configurations 1, 3, 5 and 7. There, we can see that when $\Delta frames \approx 0$, the pattern shown in the previous figure is repeated. However, when $\Delta frames$ starts growing we can see that configurations 3 and 5 do not fall as fast as configuration 1, which confirms the tests previously done. Configuration 7 remains higher with respect to the rest of configurations.
+
 \begin{figure}[h!]
 \centering
 \includegraphics[trim=80 90 140 90,clip]{recall_vs_delta_frames_vs_step_28b_1_16b}
 \caption{Comparison of the tracking capabilities at different frame increments for configurations \emph{Conf. 1}, \emph{Conf. 5} and \emph{Conf. 7}}\label{fig:cp04_recall_vs_delta_frames_vs_step}
 \end{figure}
 
-
-
-
 \subsection{Computation time}\label{ch:chapter04_02_04}
+
+In figure \ref{fig:cp04_times_average}, we can see that, as expected, the faster of the methods is that for the \emph{Configuration 7}, as just object comparison is performed. This is quite faster, as just a few obstacles are compared per frame, against the 640 by 640 comparisons that can be achieved at stixel level in the worst case. From the rest, we see that the graph based methods are in average slightly faster than those based on dynamic programming. However, the time variance obtained when using the sum of absolute differences as measure is bigger. We do not have an explanation for that, probably if the situation is not quite discriminative, the graph based method needs more time for computing the matches.
 
 \begin{figure}[h!]
 \centering
@@ -675,15 +679,10 @@ We also wanted to know which of the methods was more tolerant to low frame rate 
 \caption{Times obtained for each configuration.}\label{fig:cp04_times_average}
 \end{figure}
 
-% No hay enlaces para stixels nuevos
-% No hay enlaces con un coste > tanto
-
-
 \section{Summary}\label{ch:chapter04_07}
-% AlfaHeight no aporta nada
-% Es mejor usar 2 level pq da mejores resultados ¿aunque si el frame rate puede llegar a compensr el obstacle?
-% El obstacle es el mas rapido, puede interesar si los recursos son limitados o se prefiere velocidad frente a eficiencia
-% 
-% Trabajo futuro: Utilizar el polar calibration para la generación de los propios stixels?
-Usar el propio tracking como medida a tener en cuenta durante el proceso de clustering
+
+In this chapter, we have seen a different solution for the object tracking for driver assistance applications, based on the stixel world by \cite{badino2009stixel}. Our work extends the work presented by \cite{gunyel2012stixels}, improving the results obtained by them. The use of a two-level based tracking gives robustness to the stixel tracking and is able to improve the reconstruction by joining stixels that were not in the same plane due to a bad reconstruction. We demonstrate that using the Hellinger distance between histograms give better results than the pure Sum of Absolute Differences, and that the use of the height as matching metric is negligible.
+We also saw another tracking method in which the tracking is performed at obstacle level. In this case, results were not so good, but in certain applications can be useful due to a high performance time and a low decay in the recall when the frame rate is low.
+In the future, we want to try to improve the way in which stixels are computed. We think that using the polar rectification for combining tracking and reconstruction could give good results. Also, the use of a measure of the goodness of the tracks at stixel level should help to improve the results obtained for the clustering process.
+In the next chapter, we will see another obstacle tracking method in which 3D dense reconstruction is used as input.
 
