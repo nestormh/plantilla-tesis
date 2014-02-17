@@ -8,4 +8,524 @@
 
 \graphicspath{{./images/chapter02/bmps/}{./images/chapter02/vects/}{./images/chapter02/}}
 
+<<<<<<< HEAD
 \chapter{Non-rigid Contour Tracking}\label{ch:chapter02}
+=======
+\chapter{Change detection for obstacle localization in images}\label{ch:chapter02}
+
+We drive by mind. That is, once we learn the path to go from a point $A$ to another point $B$, we follow that path without almost thinking. Even more, if a person does this way repeatedly and every day, there will be a day in which he will be able to memorize each black spot, each traffic light and even each pothole. So it is not difficult for us to be surprised the day in which they change the signals or the sense of a road.
+Following this line of thought, we have developed a system in which we make our prototype to \emph{learn} the environment of a certain road, making it able to detect the changes. However, in our case, the changes in which we are interested are the obstacles in the way of the vehicle, giving it the ability to avoid them or to stop if necessary. The idea behind this system is having a dataset with images that have localization information associated. These images will be compared with those captured in real time by the on board cameras. Both images will be registered and changes detected, letting us to know the presence of obstacles or other changes that appeared since the stored images were captured.
+
+This is done through the pipeline shown at figure \ref{fig:cp02_pipeline}. First, the database is captured offline. Then, in real time, images are aligned trough a typical image registration pipeline(feature localization, matching of the features between the images, image transformation and resampling). With the images aligned,  obstacles are retrieved.
+
+\begin{figure}[thb]
+  \centering
+  \includegraphics{pipeline}
+  \caption{Pipeline of the method.}
+  \label{fig:cp02_pipeline}
+\end{figure}
+
+\section{The Method}\label{ch:chapter02_01}
+
+In this section, we will describe each of the stages in the pipeline of the application, starting from the database generation and finishing with the detected obstacles. 
+
+As said, the process is based on the generation of an image database in which each image is associated with certain meta-information, of which a big part is related to its position in the map, so the first step in the application is the development of a database covering the driving area. In this stage, the vehicle will be traveling inside the covered area, driven by a human or in controlled circumstances. While the vehicle is driven, the system stores images, which will have associated geographic information: \emph{latitude}, \emph{longitude}, \emph{height} and their transformation into $x$, $y$, $z$ and orientation coordinates with respect to the coordinates frame of the local map of the prototype. Other information that could be outstanding in the future is also stored (i.e., the day and the hour in which the image was taken, \ac{GPS} rms value, etc.). Images are pre-processed to have as information as possible when used in the next phase, reducing the execution times. For example, we get the set of features from the images offline, not in the real time application. With a $5\,Hz$ update rate, an image is stored about each meter traveled, depending on the speed of the vehicle. In this phase, there would not be any obstacle in the road where the car is going to drive. If so, in the later phase in which the images are processed to get the obstacles, fake objects are going to be detected, due to those obstacles recorded in the database image. Once this process is finished, there will be a database with geographically located images. In figure \ref{fig:cp02_image_database}, a composition of the testing area with some of the stored images highlighted is shown.
+
+\begin{figure}[thb]
+  \centering
+  \includegraphics{database}
+  \caption{Area covered by the database with some example images superimposed.}
+  \label{fig:cp02_image_database}
+\end{figure}
+
+In real time, the vehicle starts driving by itself. Along the path, it passes over different positions near the recorded route. These positions are being reported by the \ac{GPS} device and transformed to the local coordinates to work easily with them. Simultaneously, an image is obtained from the camera while the system looks for the nearest image in the database. The current frame $I_{RT}$ and the image retrieved from the database $I_{DB}$ are compared by using image change detection techniques, obtaining the obstacles in the scene.
+
+In the moment of the development of this application, localization was entirely retrieved from the \ac{GPS} device. This gave a position each 200 ms, so it was desirable to be able to process each frame under this time, in an on board 2009 PC computer.
+
+\subsection{Image selection from database}\label{ch:chapter02_01_01}
+
+This step is important as we want to get an image as similar as possible to the current real time image. This will affect to the quality of the adjustment between the images. Most of the times we just need to find an image with the smaller Euclidean distance to the current point, checking that the angular difference is not too big. Although this solution has good results, many times it is better to have an image not so close to the current point, if it means that all the objects represented in an image are going to appear in the other one. This can be got if an image which is forward or backward regarding to the current image is selected, so one of the images will be contained into the other. Doing that, it will reduce not just the angular difference, but also the lateral distance (which is usually the source of the misalignments due to an excess of parallax).
+
+In figure \ref{fig:cp02_nearest_image}, we can observe this procedure. Based on this, the nearest image in the database is that obtained by the expression:
+
+\begin{equation}\label{eq:cp02_nearest_image}
+I^*_{DB} = \underset{I_{DB}}{\arg\min} \|p_{RT} - p_c\| = {{y_{RT} \cdot v_{DB_x} + x_{RT} \cdot v_{DB_y}} \over 
+  {v_{DB_y} \cdot cos(\theta_{RT}) - v_{DB_x} \cdot sin(\theta_{RT})}}
+\end{equation}
+
+There, $p_{RT} = (x_{RT}, y_{RT})$ is the position of the vehicle, $p_{DB_i} = (x_{DB_i}, y_{DB_i})$ is the position of each of the images in the database, and $p_c = (x_c, y_c)$ is the crossing point shown at figure \ref{fig:cp02_nearest_image}; $v_{DB_x} = x_{DB} + cos(\theta_{DB})$ and $v_{DB_y} = y_{DB} + sin(\theta_{DB})$; and 
+$\theta_{RT}$ and $\theta_{DB_i}$ are the orientations of the vehicle and each of the images in the database. At the end of this selection process a pair of images will be obtained: the current frame, and the associated image extracted from the database. At the same time, we get other related information from the database, like masks, control points, and other things previously computed.
+
+\begin{figure}[thb]
+  \centering
+  \includegraphics{nearest_image}
+  \caption{Nearest image is retrieved.}
+  \label{fig:cp02_nearest_image}
+\end{figure}
+
+With the aforementioned method for image selection, it is ensured that the image content is going to be similar in both images based on their geographical associated points. However, as it will be seen in the next sections, the methods employed for the adjustment and comparison of these images are sensitive to illumination changes or other problems caused by shadows or different atmospheric conditions. For this purpose, some extra values are included into the database. These values are the date and the hour in which the image was taken.
+
+Using this information, it is possible to limit the number of images to those in which the external conditions are going to be similar to the current. That is, during the day, the sun is moving and causing different shadows and lights at different times of the day. Different shadows can be considered as fake obstacles by the algorithm, so it would be desirable to compare just images in which shadows are not very different. Also changes in the brightness of the images could affect to the detection and matching of similar features in both images. To avoid this, just the images in the set $A$ are eligible:
+
+\begin{equation}\label{eq:cp02_eligible_images_by_time}
+A = \{ \forall I_{DB} ~|~ diff\_ToD(I_{DB}, I_{RT}) < \tau_{ToD} \wedge diff\_DoY(I_{DB}, I_{RT}) < \tau_{DoY} \}
+\end{equation}
+
+, where $I_{DB}$ is each of the retrievable images from the database; $diff\_ToD(I_1, I_2)$ is a function that retrieves the difference in seconds of the \emph{Time of the Day} in which images $i_1$ and $I_2$ were captured; $diff\_DoY(I_1, I_2)$ is a function that retrieves the difference in days of the \emph{Day of the Year} in which images $i_1$ and $I_2$ were captured (with this, we ensure that we are using images taken in similar seasons of the year, with similar lighting conditions). $\tau_{ToD}$ and $\tau_{DoY}$ are free parameters that limit the size of the set $A$.
+
+However, despite of the fact that for most of the cases selecting reference images inside the $A$ set is enough to ensure a good behavior of the method, we can be more restrictive. Even with the selection presented in $A$, illumination can be different in many cases. To minimize this, there is another parameter, the brightness, which is stored in the database for a fast retrieval. With this parameter, just images inside the following set will be retrieved:
+
+\begin{equation}\label{eq:cp02_eligible_images_by_brightness}
+B = \{ \forall I_{DB} ~|~ \| \mu_{RT} - \mu_{DB} \| < \tau_{\mu} \}
+\end{equation}
+
+, where $\mu_{RT}$ and $\mu_{DB}$ are the brightness values for the current image and an image in the database, and $\tau_{\mu}$ is a user defined parameter that limits the size of set $B$. Experimentally, best results are obtained when $\tau_{\mu}$ is below 20\%. An study of the influence of this threshold is presented at section \ref{ch:chapter02_02_01}. Finally, from $A$ and $B$ we obtain the group
+
+\begin{equation}\label{eq:cp02_eligible_images}
+C = A \cap B
+\end{equation}
+
+, which will be the input set of images in the retrieval process. $\tau_{DoY}$ and $\tau_{\mu}$ are interrelated. That is, it is needed to have enough images in the set $A$ in order to be sure that $C \neq \emptyset$ when after intersecting it with $B$. To ensure that, images from different days should be chosen in order to ensure that we find an image with similar illumination conditions to the current frame in the surroundings of the vehicle.
+
+\subsection{Image registration}\label{ch:chapter02_01_02}
+
+In this step, a pair of images which represents the same scene, but taken from different view points, moments and cameras, will be superimposed.
+
+This kind of techniques are well known and very used for a big quantity of tasks, like multi-spectral classification, change detection, image stitching, etc., as reflected at \cite{kooper2011stitching, singh1996digital, coppin1996digital, radke2005image, zitova2003image}.
+
+In general, registration techniques have problems with image disparities due to the movement of non static objects (windmills, flags, etc.). Other problems are caused by the shadows or the reflections that are different depending on the position of the source of the light (for example, the position of the sun during the day for images taken out of a building), or the point of view from where the images where taken, as well as changes in the objects in the course of the time (like the fruit that get rotten or a bush flowering). All these changes can produce problems depending on the features that are expected to be detected.
+
+Most of the registration methods use the following steps: feature detection, feature matching, transformation model estimation, and image resampling and transformation. Same steps have been used in our method.
+
+\subsubsection{Feature detection}\label{ch:chapter02_01_02_01}
+
+The first step consists on the detection of similar features in both images to be able to match them in a later step. Therefore, it is needed that, for the same scene, the detected features in one image and the other to be the same, regardless of the effect of perspective, rotation, hidden objects and brightness and contrast changes. One of the first things that must be decided is which kind of features are going to be used, being the most used the features based on corners, borders and areas (\cite{li2008comprehensive}). To develop this method, some tests have been made with corners and area based methods. After performing these tests, the results obtained with the algorithm by using both corners and region detectors were similar. However, a bigger set of features are detected when using corner detectors. But the bigger difference between both methods appears when timing is considered, with times even bigger than a second in those images with big regions inside them.
+
+\paragraph{Corner based methods}\label{ch:chapter02_01_02_01_01}
+
+We refer as corner features those points in which the intensity changes at the image are high in all directions. Since \cite{hans1977towards} made his corner detection operator, a lot of them have appeared like that made by \cite{harris1988combined}, \cite{smith1997susan} (SUSAN), or, more recently, the method used by \cite{rosten2006machine}. Some of these operators have been advanced or modified to improve some characteristics, like the modification of the Harris method made by \cite{shi1994good}.
+
+These operators are, a priori, all valid to be used for this application. However, there are some characteristics that are wanted to be fulfilled by the operator. The first of these characteristics is a high detection rate. If this rate is achieved, the starting set of points will be bigger. Then the estimation of the transformation model that will be used for a final adjustment between the two images will be better. After performing the matching between the features detected in both images, all these points for which there are not a matching will be rejected. Then, for a bigger initial dataset, there will be a bigger probability of finding a match and also the final dataset should be bigger after removing all the points that were not matched. Another characteristic that was interesting for this application but, as it will be shown later, it is not so important for the final version of the algorithm, is to find a high repeatability rate in the detected features. It allows ensuring with a bigger certainty that obtained matches are correct. Finally, the last factor that was specially considered was the execution time of the method. This point is especially important because the algorithm has to be executed in real time. This is the first step of a sequence. If it is too slow, there will not be enough time for the other stages. Taking the comparatives performed at \cite{mohanna2001performance, zheng1999analysis} into account, Harris operator has a high detection rate, and also a high repeatability rate, with a good performance for affine transformations. It has also a good localization for L-junctions, and it has an acceptable robustness to noise. The weak spot in this operator is that uses a high need of resources to calculate the features, which could affect to the final performance of the whole algorithm. Even so, experimentally the times are not so big to get a bad performance, especially if it is compared, as it will be seen, with the timings obtained with other methods based in regions like SIFT (\cite{lowe1999object}) or SURF (\cite{bay2008speeded}).
+
+\cite{shi1994good} proposed a method based on the \cite{harris1988combined}. In their method, Harris calculates the matrix $A$, described at equation \ref{eq:cp02_harris_matrix}, for each pixel in the image. Then he calculates the matrix Eigen values $\lambda_1$ and $\lambda_1$, which indicates the main curvature of $A$. Based on these Eigen values, Harris decides if a point belongs to an edge, if it is in a uniform intensity region or if the pixel is a corner.
+
+\begin{equation}\label{eq:cp02_harris_matrix}
+A = \nabla I \bigotimes \nabla I = 
+\left [ \begin{array}{c} I_x \\ I_y \end{array} \right ]
+\left [ \begin{array}{c} I_x \\ I_y \end{array} \right ]^T = 
+\left [ \begin{array}{cc} 
+I_x^2 & I_xI_y \\ 
+I_yI_x & I_y^2
+\end{array} \right ]
+\end{equation}
+
+, where:
+
+\begin{itemize}
+ \item $\nabla = \vec{i} (\partial / \partial x) + \vec{j} (\partial / \partial y)$.
+ \item $\bigotimes$ is the outer product.
+ \item $I$ is the processed image.
+ \item $I_x = {{\partial I} \over {\partial x}}$.
+ \item $I_y = {{\partial I} \over {\partial y}}$.
+\end{itemize}
+
+To reduce the computational complexity, Harris replaces the use of the Eigen values by the indicator $m_h = det(A) − k \cdot tr^2(A)$, where $k$ is an adjustment parameter and $m_h$ can be considered as a measure of the corner response. To improve this, \cite{shi1994good} proposed method uses the smaller of the Eigen values as indicator, instead of $m_h$. This strategy is enough, and in some cases it produces better results than the original operator proposed by \cite{harris1988combined} using less computational time. This is the motive because the \cite{shi1994good} method has been finally used as operator for the image registration feature detection. In figure \ref{fig:cp02_shi_tomasi_features} we can observe an example of two images, in which the detected features are shown for the \cite{shi1994good} method. One of them was taken from the database (left) and the other is the current image (right).
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{featuresShi1}\label{fig:cp02_features_shi_1} &
+\includegraphics[width=0.45\textwidth]{featuresShi2}\label{fig:cp02_features_shi_2}
+\end{tabular}
+\caption{Result of applying the \cite{shi1994good} method over an image pair. The detected corners are similar in both images.}\label{fig:cp02_shi_tomasi_features}
+\end{figure}
+
+\paragraph{Area based methods}\label{ch:chapter02_01_02_01_02}
+
+There are a lot of area based feature detection methods and a lot of reviews, like those presented at \cite{mikolajczyk2005comparison, li2008comprehensive}. Some examples of them are the region detector of Harris-Laplace, Harris affine and Hessian affine detectors presented by \cite{mikolajczyk2004scale}, the MSER detector proposed by \cite{matas2004robust}, SIFT (\cite{lowe1999object}) and SURF (\cite{bay2008speeded}), among others. Some of these methods, like SIFT or SURF, were tested. In figure \ref{fig:cp02_sift_features} the result of applying the SIFT method to a pair of images is shown. At a first glance, we can observe that although most of the points detected are in the same position in both images, the number of points detected is considerably smaller than the obtained with \cite{shi1994good}. However, the main disadvantage about using the tested region detectors in the presented algorithm is that the time used to compute the regions sometimes is too big for the application requirements, and always bigger than the time needed to detect the features with \cite{shi1994good}.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{featuresSIFT1}\label{fig:cp02_features_sift_1} &
+\includegraphics[width=0.45\textwidth]{featuresSIFT2}\label{fig:cp02_features_sift_2}
+\end{tabular}
+\caption{Result of applying the \cite{lowe1999object} method over an image pair. The number of detected features is quite smaller.}\label{fig:cp02_sift_features}
+\end{figure}
+
+To illustrate this fact, some tests have been performed to obtain a comparison of the computation time needed for the  \cite{harris1988combined} and \ref{shi1994good} against the time needed by a region based detector like \cite{bay2008speeded} (including feature matching). These times are represented in the chart shown at figure \ref{fig:cp02_features_time_comparison}. It is easy to appreciate that the times employed by \cite{bay2008speeded} are quite bigger than those for the other corner based methods. In the other hand, the \cite{shi1994good} implementation seems to be slower than \cite{harris1988combined}, but the experimental tests showed that the final algorithm gave better results in obstacle detection terms when the first one was used. So it was the finally chosen method for the detection of features.
+
+\begin{figure}[h!]
+\centering
+\includegraphics{featuresTimeComparison}
+\caption{Timing results after the comparison of the different feature detection methods, including their matching.}\label{fig:cp02_features_time_comparison}
+\end{figure}
+
+\subsubsection{Feature matching}\label{ch:chapter02_01_02_02}
+
+Once the features are detected for both images, the next step is to match them. However, in the final version of the presented algorithm, it is just needed to detect points in one of the images because optical flow tools will be used to detect the correspondences within the second image. This is the motive because the repeatability characteristic in the feature detectors was not so important at the end.
+
+The image for which the features are being detected is that stored in the database, because it allows calculating these features offline. This will reduce the calculation time of the algorithm. It has been decided to use sparse optical flow techniques. Once there is a previously calculated set of points it is not necessary to use other dense optical flow techniques due to there is still a points set to work with.
+
+The method chosen to perform the optical flow is that proposed by \cite{lucas1981iterative}. This method, quite known and contrasted, gives excellent results when the difference between the images is not too big. However, when this difference is increased, results are worthier, which forced to have a bigger window and, consequently, bigger computational time requirements. Because of that, it was necessary to use the pyramidal implementation of the \cite{lucas1981iterative} method proposed by \cite{bouguet2001pyramidal}. This method will allow locating points with a big distance between them ensuring good results.
+
+The \cite{bouguet2001pyramidal} method produces a significant improvement in the results, but there still are bad matched points. To minimize this effect, the method used is this: for a set of points $S_1$ selected from the image retrieved from the database, the points set $S_2$ is located by using optical flow techniques from the first image to that obtained in real time. Once this second set is calculated, the optical flow is performed from the second image at the points in the set $S_2$ to the first image, obtaining the points set $S_3$. All the points that are in the intersection of $S_1$ and $S_3$ will be considered as valid. The others will be rejected. That is,
+
+\begin{equation}\label{eq:cp02_rejected_points}
+P_{final} = \{ p_i | p_i \in S_1 \cap S_3 \}
+\end{equation}
+
+An example of the matches obtained with this method are shown at figure \ref{fig:cp02_matches}.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{matches1}\label{fig:cp02_matches_1} &
+\includegraphics[width=0.45\textwidth]{matches2}\label{fig:cp02_matches_2}
+\end{tabular}
+\caption{Correspondence between points. Each color represents a match.}\label{fig:cp02_matches}
+\end{figure}
+
+\subsubsection{Transform model estimation}\label{ch:chapter02_01_02_03}
+
+The final objective of any image registration algorithm is to transform an image into another one. In most of the applications in which the perspective warp is not too strong, just global mapping techniques are needed. Some examples where global mapping is enough are the affine transformations for satellite images, or projective transformations for aerial images, which are a little more affected by the perspective.
+
+For the objective of this application, global methods do not reach good results, since the images are locally warped. Then local mapping models are a better option. Global mappings are insufficient due to there are objects in first and in second plane, a strong perspective warping and different points of view. In different sources it is possible to observe the superiority of local mapping models against global mapping models at certain circumstances, as seen at \cite{goshtasby1988image, ehlers1994high, wiemker1996application, flusser1992adaptive}.
+
+In order to select the most suitable mapping model for the objective of the algorithm, some non-rigid transformation functions have been tested. In particular, the pre-selected methods for the comparison are \ac{TPS} (\cite{harder1972interpolation}), \ac{WM} (\cite{goshtasby1993design}) and \ac{PL} \cite{goshtasby1986piecewise}. As one of the most critical parameter of the method is the timing, the time employed by the three methods when different numbers of pairs of points are used has been measured. In figure \ref{fig:cp02_transform_model_time}, these times are represented for each one of the tested functions.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{compTransf}
+\caption{Comparison of three possible methods for non-rigid image transform.}\label{fig:cp02_transform_model_time}
+\end{figure}
+
+As seen, \ac{TPS} function is by far the most time-consuming of the three methods, giving poor results also with a small number of points. This is in because for this transformation, in the first instance a system of $N + 3$ linear equations has to be solved, which requires about $N^2$ multiplications (being $N$ the number of point pairs). Also, TPS is a kind of global method, so it uses all $N$ correspondences, giving a total of $n^2N$ operations (supposing an image of size $n \times n$). Knowing this, the total computational complexity of the TPS method is $\mathcal{O}(N^2) + \mathcal{O}(n^2N)$ (\cite{zagorchev2006comparative}). If this computational complexity is compared with that for \ac{WM} ($\mathcal{O}(n^2N)$) or \ac{PL} ($\mathcal{O}(N~log(N)) + \mathcal{O}(n^2)$), then it is easy to understand how these times are so bigger. In the \acf{WM} method, the coefficients of the weight functions are the same as the coordinates of the feature pairs, so there is no computational time involved in its calculations, as happened for the \ac{TPS} method. However, coordinates of all points are used in the calculations, so the mapping of each pixel needs $N$ multiplications.
+
+In the other hand, \acf{PL} is composed by two different stages. In the first one, triangles have to be generated and a transformation between the corresponding triangles calculated, which requires about $N~log(N)$ comparisons. Once the triangles have been generated, the transformation for each pixel needs a small number of operations ($\mathcal{O}(n^2)$).
+
+In the chart shown at figure \ref{fig:cp02_transform_model_time}, it is shown that there is not a very big difference between the times obtained by the Weighted Mean and Piecewise Linear methods. In some special cases, even the times of Weighted Mean are better than those obtained by \ac{PL}. Anyway, results are better for the Piecewise Linear algorithm and they are just in the limit which the method can afford, if times of the previous stages of the algorithm are taken into account (more information about the timings of the different parts of the full method is provided in the section \ref{ch:chapter02_02_03}). As \ac{WM} is over this limit, it should be rejected to ensure that the expected times are obtained at the end of the whole process.
+
+In general, piecewise linear presents some problems if not so many points are paired, which can originate big triangles and a bad local registration, especially in presence of bad paired points. In the problem being solved here, just the obstacles in the road are going to be detected. This fact solves part of the problem of the bad warped images (This is better explained at section \ref{ch:chapter02_01_03_03}). However, when part of the image appears inside of the road due to a bad transformation, fake obstacles will be detected. There is no way to solve this with the used techniques, and using other methods will produce bad timing results. But also this problem is going to appear in just one frame at once, so in the next frame the obstacle can be rejected if it is not a real obstacle.
+
+In the first step of the piecewise linear method, a Delaunay’s triangulation is performed based on the control points calculated in the previous steps. Like this, the circumcircle of any obtained triangle is not going to contain any vertex of another triangle. In figure \ref{fig:cp02_triangulation} we observe the result of performing the triangulation over the points calculated for the images shown before.
+
+\begin{figure}[h!]
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{triangulation1}\label{fig:cp02_triangulation_1} &
+\includegraphics[width=0.45\textwidth]{triangulation2}\label{fig:cp02_triangulation_2}
+\end{tabular}
+\caption{Original points and the obtained triangulation.}\label{fig:cp02_triangulation}
+\end{figure}
+
+Vertexes of the obtained triangles allow defining other triangles in the second image, since the correspondence of all the points in both images is known. The idea is that, given the coordinates of three control points, vertex of a triangle, and their correspondences in the other image like $[(X_1, Y_1), (x_1, y_1)]$, $[(X_2, Y_2), (x_2, y_2)]$, and $[(X_3, Y_3), (x_3, y_3)]$, it is desired to determine the linear mapping functions $X = f(x, y)$ and $Y = g(x, y)$. These functions will transform a triangle of the first image into the triangle situated in the second image. Or, in other words, given three three-dimensional points $(x_1, y_1, X_1)$, $(x_2, y_2, X_2)$, and $(x_3, y_3, X_3)$, the parameters of the plane $X = f(x, y)$, which pass over these points, have to be calculated. The same will be done for the $Y$ plane.
+
+The same process is going to be performed for all the points $(x_i, y_j)$ of the image retrieved from the database which will be in a new position. The pixels that represent the same surface in the real world will be aligned having the same position in both images. The modified image is that one which has been obtained from the database because in this image it is supposed to not to have obstacles represented in it. This means that just the part of the image corresponding to the background is going to be warped, allowing the obstacles to remain unmodified.
+
+\subsubsection{Image resampling and transformation}\label{ch:chapter02_01_02_04}
+
+In the previous phase a new position has been defined for each pixel in the original image. In this step, the unique task to be realized is to calculate for each new position the appropriate value of the color components by interpolating. For that, the color in the neighborhood of the pixel in the initial position at the original image is used, in order to get a soft image without strong changes that could distort the final result. The most common techniques, like the nearest neighbor, bilinear and bicubic interpolation have been tested, obtaining the best results with the bicubic interpolation. The original image and the result of all the resampling process are shown at figure \ref{fig:cp02_transform_and_resample}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\textwidth]{transformed}
+\caption{Resulting transformed image.}\label{fig:cp02_transform_and_resample}
+\end{figure}
+
+\subsection{Obstacle detection}\label{ch:chapter02_01_03}
+
+The detection of the obstacles is performed in three different steps: mask generation, the obstacle detection itself, and a selection of the finally desired obstacles. After the obstacle detection, the data base is updated.
+
+\subsubsection{Mask generation by using Delaunay triangulation algorithm}\label{ch:chapter02_01_03_01}
+
+Using the piecewise linear method, mapping just can be done inside the region occupied by the obtained triangles. Outside of them mapping cannot be done. In a lot of cases, this is enough to detect an obstacle, because if a mask that covers all the image subset where the triangles are positioned is created, practically all the image will fall inside this area. This happens when there are points dispersed for all the image, or they are enough dispersed to detect the obstacles because they are inside the covered area. This can be observed at figure \ref{fig:cp02_mask_is_covering}.
+
+\begin{figure}[h!]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{maskCovers1}\label{fig:cp02_mask_is_covering_1} &
+\includegraphics[width=0.45\textwidth]{maskCovers2}\label{fig:cp02_mask_is_covering_2}
+\end{tabular}
+\caption{The mask covers the obstacle that is going to be detected.}\label{fig:cp02_mask_is_covering}
+\end{figure}
+
+However, in the processed images a big part of the pixels of each image represents the road, which is a soft surface without corners to be detected. These are just the areas where the obstacles should be detected and, when an obstacle appears, there are not control points. It occurs when the images are different in these areas due to a big difference, like an obstacle. So there is a big possibility of having a mask that does not cover it, as happens at figure \ref{fig:cp02_mask_not_covers}. To solve this, we use a projective transformation which is calculated using the matched points, but just for the pixels that are out the areas covered for these correspondences. This allows comparing also the areas where there are not matched corners, at the cost of not having the same precision in the transformation as that obtained in the rest of the image, but allowing detecting obstacles also in the not matched area. In general, this happens when an obstacle is very close to the vehicle, so the precision will not be as important as it is quite possible that an obstacle is in this area.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\textwidth]{maskNotCovers}
+\caption{Area covered by points is not enough to detect the obstacle.}\label{fig:cp02_mask_not_covers}
+\end{figure}
+
+\subsubsection{Obstacle detection}\label{ch:chapter02_01_03_02}
+
+The goal of this algorithm is the detection of the obstacles that are in the road by just using image comparison. As now the images are well adjusted, both images can be compared pixel by pixel to detect these differences. A first approach is to make a direct comparison between the pixels by calculating the absolute difference of the pixels in both images. If this difference is over a threshold $\tau$, this pixel is considered as part of an obstacle. The problem is that the only way to select the threshold $\tau$ is experimentally. In part due to this, the results obtained with this method are not quite good and, mainly, not very robust, so it is needed to find more advanced techniques.
+
+A more robust way to locate these changes is by performing a \ac{PCA}, by creating a bi-dimensional data set based on the brightness information from both images. The idea is that the brightness relation between the pixels at the same position in both images will be similar for all them, except for those in which the obstacle is represented. In other words, although the color of the elements in one image and the other can be different due to differences in the weather or the time in which they were taken, the relation between the colors in both images will be approximately constant for all the pixels that represent the same elements. When this relation differs from the relation present in the most of pixels, an obstacle is detected. It has to be taken into account that this fact is not always true. When there are different environment conditions, not all materials reflect the light in the same way. This can produce fake obstacles, but later they can be detected by just selecting those that are inside the road, which is a constant surface where the relation between the pixels should be similar in all the area covered by it (except when real obstacles are present).
+
+In that way it is possible to study the main correspondence between the gray levels from an image and the other one, considering the points in which their brightness difference differs from the main trend of the main trend of the whole points set as changes.
+
+To do that, a set of points $S$ is created.
+
+\begin{equation}\label{eq:cp02_brightness_relation}
+S = \{ p(I_1(x, y), I_2(x,y)) ~|~ x \in \{1 \dots W\}, y \in \{1 \dots H\} \}
+\end{equation}
+
+, where $W$, $H$ are the width and height of the images; and $I_i(x, y)$ is the brightness value of the image $i$ at point$(x,y)$. Set $S$ is represented in the chart in the left image of figure \ref{fig:cp02_pca}.
+
+After performing a PCA, a set $S'$ is obtained from this set $S$, which is represented in the central image of figure \ref{fig:cp02_pca}. It can be observed that there is a common trend of the pixels around the line. But there is a cluster of points that are no following this trend and are far from the line. If the distances of the points are represented at the original position of the image, an image like that shown at the right image at the same figure will be obtained, being the brightest points those with a bigger distance to the line. In other words, having a point $p(I_1(x, y), I_2(x, y)$ in the left chart, the represented value for the point $q(x, y)$ in the generated image will be the smaller distance of the point $p$ to the line shown in the central chart.
+
+\begin{figure}[h!]
+\centering
+\begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pca1}\label{fig:cp02_pca1}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pca2}\label{fig:cp02_pca2}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pca3}\label{fig:cp02_pca3}
+\end{minipage}
+\caption{Representation of the correspondences of the pixels gray level in both images before ($S$) and after applying PCA ($S’$). On the right, a representation of the distances of all the points in the sensed image is shown.}\label{fig:cp02_pca}
+\end{figure}
+
+A threshold that tells if a pixel belongs to an obstacle or not must be chosen, but before applying a threshold, some morphological operations should be performed to remove those points with a big distance to the line despite of not belonging to an obstacle.
+
+% TODO: Decir qué contienen las figuras
+This threshold will produce some clusters of pixels that are considered as obstacles. By using a contour detector these pixel clusters can be grouped into connected areas and reject those areas with a smaller size. In figures \todoref{XXX} and \todoref{XXX}, results are shown for different obstacles, coloring and brightness. In some cases fake obstacles are detected. But, as the algorithm is working with image sequences, fakes can be rejected, because if really there is not an obstacle, this difference is not going to appear in the following frames.
+
+\subsubsection{Selection of the desired obstacles}\label{ch:chapter02_01_03_03}
+
+Obstacles that are outside of the road are not interesting for this application. It is wanted to detect just those obstacles that could damage or be damaged by the vehicle, like other vehicles, cyclists, pedestrians, stones, etc. To do that it is needed to define a mask that indicates which part of the image belongs to the road. This segmentation is going to be performed over the image that is stored at the database. By doing this, the segmentation can be performed offline, expending all the computational time for image change detection tasks.
+
+In order to obtain this mask, the method described by \cite{arnay2009applying} was used. This technique consists on the employment of an \ac{ACO} based algorithm for solving the problem of detecting roads on unstructured environments. This algorithm assumes that, if the vehicle is on the road, the boundaries of the road are two curves that go from the bottom of the image to the horizon line. The problem solution is a pair of series of pixels, one for each boundary of the road.
+
+In real time, the same transformations aforementioned are applied to the mask to adapt it to the sensed image. This is a good idea, not just because the computational time needed for the road extraction is avoided, but also because if the database image is poorly warped, the obstacles that could be generated by parts which are outside of the road, and which after the transformation appear inside of it are going to be outside of the mask. Also, by positioning the mask over the other previously detected obstacles that are outside of the road (real or not) are rejected. We can see the result of this process at figure \ref{fig:cp02_mask_warped}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\textwidth]{maskWarped}
+\caption{Detected objects on the transformed mask.}\label{fig:cp02_mask_warped}
+\end{figure}
+
+\section{Results}\label{ch:chapter02_02}
+
+In order to know the behavior of our method, some tests have been performed. In the following sections we show the results obtained from them.
+
+\subsection{Image registration}\label{ch:chapter02_02_01}
+
+For the analysis of the behavior of the algorithm, more than 86000 image pairs at different resolutions ($800 \times 600$, $640 \times 480$, $320 \times 240$), distances and angle differences, and with diverse zoom and blurring factors applied to them have been tested. From this study a set of charts, shown at figure \ref{fig:cp02_matching_results} were obtained.
+
+\begin{figure*}[h!]
+        \centering
+        \begin{subfigure}[b]{0.45\textwidth}
+	    \includegraphics[width=\textwidth]{distVsMatches}
+	  \caption{Distance \emph{vs} matched points.}\label{fig:cp02_distance_vs_matched}
+        \end{subfigure}% 
+        ~
+        \begin{subfigure}[b]{0.45\textwidth}
+	    \includegraphics[width=\textwidth]{angleVsMatches}
+	  \caption{Angle \emph{vs} matched points.}\label{fig:cp02_angle_vs_matched}
+        \end{subfigure}%       
+        \\
+        \begin{subfigure}[b]{0.45\textwidth}
+	    \includegraphics[width=\textwidth]{blurVsMatches}
+	  \caption{Blur \emph{vs} matched points.}\label{fig:cp02_blur_vs_matched}
+        \end{subfigure}%    
+        ~
+        \begin{subfigure}[b]{0.45\textwidth}
+	    \includegraphics[width=\textwidth]{zoomVsMatches}
+	  \caption{Zoom \emph{vs} matched points.}\label{fig:cp02_zoom_vs_matched}
+        \end{subfigure}%    
+        \caption{Comparison of the number of matched points by considering several factors.}\label{fig:cp02_matching_results}
+\end{figure*}
+
+In this figure, four charts describing the difference of points matched attending on different variables are shown. Results obtained for the images at $320 \times 240$, $640 \times 480$ and $800 \times 600$ are represented by the red, blue and green lines, respectively.In those charts, we can see that the algorithm works properly when the euclidean distance between images is below than 1\,m, and the angle difference is under 5-10\textdegree. Over this limit, the algorithm still works, but results are not so good. So we have to be sure that our database is big enough to go beyond this values. Anyway, the width of the road where the prototype will work is about 3\,m and the driving direction should not change too much, so it is difficult to find a pair of images with such a big angular or euclidean difference.
+
+Also different sized windows of Gaussian blurring have been passed over the images to test the robustness of the algorithm, as can be observed in the figure \ref{fig:cp02_blur_vs_matched}, where we can observe that the algorithm is not too much sensitive to the blur. Similar results were obtained after applying different zoom percentages to the images used for the tests (figure \ref{fig:cp02_zoom_vs_matched}.
+
+As said before, to ensure that the method works well, the selection of the images is an important step in the whole process. One parameter that could affect several parts of the algorithm is the brightness difference. If this change is very big, the point matching stage could fail, and therefore the rest of the method. Also fake obstacles could appear. To minimize this effect, just images whose brightness difference to the current frame falls under certain threshold are retrieved from the database (see section \ref{ch:chapter02_01_01}). This brightness changes are strictly related to the hour in which they were obtained, but also there are a lot of factors that can affect, just like the weather, different shadows, etc. In the figure \ref{fig:cp02_brightness_vs_matches}, a chart shows how the number of points paired decreases as the brightness difference is getting bigger.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{brightness_vs_matches}
+\caption{Matches obtained related to the brightness difference of input images.}\label{fig:cp02_brightness_vs_matches}
+\end{figure}
+
+In this chart, it is possible to appreciate how when the database image becomes darker, less point pairs are found. Virtually no control points are found over a difference of 50\% for darker images, and 40\% for brighter images.
+
+With this information, it is easy to know that images 30\% darker or 20\% brighter than the current frame could not be suitable for the method. Images in which the number of detected pairs is over 30 are adequate for this algorithm. Being conservative, a threshold of an absolute difference of 20\% is being used (parameter $\tau_{\mu}$ of \ref{eq:cp02_eligible_images_by_brightness}).
+
+Also medium and maximal covered areas of the images have been studied. Apart of having a lot of features matched; these features should be distributed in the way that the bigger area of the images could be matched. A comparison of the covered areas at different image distances or angles is represented at figure \ref{fig:cp02_area_covered}. As can be seen, results are better for the nearest images, covering areas up to 90\% of the image.
+
+\begin{figure}[h!]
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.45\textwidth]{distance_vs_area}\label{fig:cp02_distance_vs_area} &
+\includegraphics[width=0.45\textwidth]{angle_vs_area}\label{fig:cp02_angle_vs_area}
+\end{tabular}
+\caption{Relation of the covered area of the image and the euclidean distance (upper image) and angle difference (lower image) between $I_{RT}$ and $I_{DB}$.}\label{fig:cp02_area_covered}
+\end{figure}
+
+In the other hand, to test the goodness of the adjustment made by the algorithm, images with no obstacles were used. If the algorithm works well, a low number of pixels marked as change should be obtained. For the images tested, the number of points detected as changes were under 5\% (there are always differences due to noise or bad adjustments, but in many cases they are usually dispersed by the image, without forming clusters).
+
+\subsection{Obstacle detection}\label{ch:chapter02_02_02}
+
+The final objective of the method is the detection of the obstacles in the environment of the vehicle. In order to evaluate this part of the algorithm, we have generated by hand the ground truth for a sequence recorded in the testing area. By comparing this ground truth with the obstacles found by the algorithm, we obtained the results in table \ref{table:cp02_fp_and_fp}.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+ \hline
+ Distance (m) & Angle (\textdegree) & False positives (\%)  & False negatives (\%) \\
+ \hline
+ −1 & 0 & 9.76 & 16.67 \\
+−1 & 5 & 12.50 & 8.33 \\
+−1 & 10 & 15.00 & 16.67 \\
+0 & −10 & 0 & 22.22 \\
+0 & −5 & 13.95 & 8.33 \\
+0 & 0 & 4.88 & 2.78 \\
+0 & 5 & 8.33 & 13.89 \\
+0 & 10 & 11.54 & 38.89 \\
+1 & −10 & 28.57 & 19.44 \\
+1 & −5 & 14.29 & 8.33 \\
+1 & 0 & 12.20 & 11.11 \\
+ \hline
+\end{tabular}
+\end{center}
+\caption{False positive and false negative results related to the distance and the angle between the compared images.}\label{table:cp02_fp_and_fp}
+\end{table}
+
+As seen, the rate of false positives is quite good inside the limits we defined in the previous section for the correct performance of the algorithm, obtaining the best results when the angle difference is low. Response of images with an angle difference over 10\textdegree is not as good. This reflects the importance of a well populated database: if the number of images increases, the probability of having images with a big angle difference decreases. However, as the road where the prototype will travel is not too wide, this probability is not quite big in comparison to that for having smaller angles. The best results are obtained in the case where the distance and angle to the sensed image is 0, as it would be expected.
+
+\subsection{Timing results}\label{ch:chapter02_02_03}
+
+One of the most critical parameters taken into account for the development of the method is the computational time that the algorithm needs for its execution. In figure \ref{fig:cp02_times}, a chart shows the times obtained when executing the method with series of image pairs, ordered by the total time needed.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{times}
+\caption{Times obtained after the execution of a big sequence of images, ordered by the total time measured.}\label{fig:cp02_times}
+\end{figure}
+
+As it shown there, practically all the times are below 200\,ms, time enough to allow the algorithm to use all the data reported by the \ac{GPS}, except from a small percentage of image pairs, with a maximal execution time of 210\,ms. However, the number of images over the threshold of 200\,ms is very small and these times are not extremely big. It is easy to appreciate that the part of the algorithm which consumes more time is that for the feature extraction and optical flow. The more features that are selected, the more time needed. To prevent the method from expending too much time in this stage, the number of features that can be selected is limited. In the other hand, image transformation and change detection methods have constant times, with a maximal computational time of 30\,ms and 20\,ms, respectively.
+
+\subsection{Qualitative results}\label{ch:chapter02_02_04}
+
+In this section, we will observe some examples of detections performed by the method. In figure ... % TODO
+
+\begin{figure*}[h!]
+        \centering
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline/fig5}\label{fig:pipelineA_1}
+        \end{subfigure}% 
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline/fig4}\label{fig:pipelineA_2}
+        \end{subfigure}%       
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline/fig2}\label{fig:pipelineA_3}
+        \end{subfigure}%    
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline/fig3}\label{fig:pipelineA_4}
+        \end{subfigure}%
+        \\
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline2/fig2}\label{fig:pipelineB_1}
+        \end{subfigure}% 
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline2/fig1}\label{fig:pipelineB_2}
+        \end{subfigure}%       
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline2/fig4}\label{fig:pipelineB_3}
+        \end{subfigure}%    
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{pipeline2/fig5}\label{fig:pipelineB_4}
+        \end{subfigure}%
+        \caption{Two examples of the pipeline explained in this chapter.}\label{fig:cp02_pipeline_example}
+\end{figure*}
+
+\begin{figure*}[h!]
+        \centering
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq1}\label{fig:seq1}
+        \end{subfigure}% 
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq2}\label{fig:seq2}
+        \end{subfigure}%       
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq3}\label{fig:seq3}
+        \end{subfigure}%    
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq4}\label{fig:seq4}
+        \end{subfigure}%
+        \\
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq5}\label{fig:seq5}
+        \end{subfigure}% 
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq6}\label{fig:seq6}
+        \end{subfigure}%       
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq7}\label{fig:seq7}
+        \end{subfigure}%    
+        ~
+        \begin{subfigure}[b]{0.24\columnwidth}
+	    \includegraphics[width=\textwidth]{sequence/seq8}\label{fig:seq8}
+        \end{subfigure}%
+        \caption{A sequence in which a vehicle is detected.}\label{fig:cp02_pipeline_example}
+\end{figure*}
+
+\section{Summary}\label{ch:chapter02_03}
+
+The presented algorithm is able to detect the obstacles that are in the road by integrating three different sensors: a \ac{GPS} device, an \ac{IMU} and a vision system. This algorithm has a high detection rate.
+
+The method accomplishes the objectives for which it was designed. It uses image registration techniques to solve the problem presented, trying to make the simpler use of them, without complex strategies, in order to get a real time execution in a 2009 on board PC computer. This method presents an alternative way to detect obstacles that works correctly and fast and it also could be used in other tasks, especially in video surveillance.
+
+The algorithm is made up by some very different stages which combines image registration and change detection techniques, among others. In the first stage, a complete database of geographically referenced images is created. Then, some methods for the localization of the best images to be used as input for the rest of the algorithm have been implemented and tested, always trying to get the best results. For these images, usual four image registration tasks are performed (feature detection, matching, transform model estimation and image resampling and transformation). Many methods have been studied for the development of these tasks. Sometimes good methods had to be rejected due to time limitations, selecting just those methods which gave the best results within acceptable times.
+
+The stages of mask generation, obstacle detection and selection gave good results, avoiding problems like those originated by brightness, contrast or color differences, but not for other problems like shadows or changes in the environment. All of this makes it robust and reliable, if the condition of a highly populated database is fulfilled. The method has been fully tested, both with the use of benchmarks, and also in real conditions, which validates the good behavior of the algorithm.
+
+However, this method still suffers from some of the weaknesses described in \ref{ch:chapter01_01}:
+\begin{enumerate}
+ \item We are still not able to locate the exact position of the obstacles in real world coordinates.
+ \item We need a highly populated image database in continuous update, with the maintenance problems related to such a system. If we also consider the need of having images associated to a scene in different illumination conditions, this system becomes really hard to be deployed with the current technology.
+ \item We are not tracking the obstacles, so we can not do an intelligent planning taking into account the behavior of the obstacles. 
+\end{enumerate}
+
+Anyway, we think that the image registration and change detection steps of the algorithm could be used successfully as improvement of change detection methods in aligned video sequences, like those presented by \cite{diego2011video, evangelidis2011slice, evangelidis2011efficient}. In the following chapters, we will see several approaches in which we avoid the problems enumerated. In the next chapter, we will try to solve the two first problems. Then, we will try to solve also the last one until reaching a solution able to do all at the same time without loosing the real time and obstacle detection requirements achieved with this method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 6d1e00a3f1dc6b7ad27177cc9d591cb48498d458
