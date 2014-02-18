@@ -44,7 +44,7 @@ Indentation Mode=normal
 Mode=LaTeX
 
 [document-settings,item:chapter02.tex]
-Bookmarks=
+Bookmarks=162,61,45,64
 Encoding=UTF-8
 FoldedColumns=
 FoldedLines=
@@ -138,13 +138,13 @@ order=-1
 
 [item:acronyms.tex]
 archive=true
-column=65
+column=29
 encoding=UTF-8
 highlight=LaTeX
-line=7
+line=31
 mode=LaTeX
 open=true
-order=3
+order=4
 
 [item:appendixA.tex]
 archive=true
@@ -168,13 +168,13 @@ order=-1
 
 [item:chapter00.tex]
 archive=true
-column=13
+column=684
 encoding=UTF-8
 highlight=LaTeX
-line=43
+line=70
 mode=LaTeX
-open=false
-order=-1
+open=true
+order=3
 
 [item:chapter01.tex]
 archive=true
@@ -188,23 +188,23 @@ order=3
 
 [item:chapter02.tex]
 archive=true
-column=56
+column=106
 encoding=UTF-8
 highlight=LaTeX
-line=10
+line=45
 mode=LaTeX
 open=true
 order=1
 
 [item:chapter04.tex]
 archive=true
-column=255
+column=15
 encoding=UTF-8
 highlight=LaTeX
-line=369
+line=673
 mode=LaTeX
-open=false
-order=2
+open=true
+order=5
 
 [item:chapter05.tex]
 archive=true
@@ -278,13 +278,13 @@ order=-1
 
 [item:references.bib]
 archive=true
-column=0
+column=1
 encoding=UTF-8
 highlight=BibTeX
-line=861
+line=1449
 mode=BibTeX
 open=true
-order=4
+order=2
 
 [item:thesis.kilepr]
 archive=true
@@ -298,23 +298,23 @@ order=-1
 
 [item:thesis.tex]
 archive=true
-column=16
+column=17
 encoding=UTF-8
 highlight=LaTeX
-line=241
+line=239
 mode=LaTeX
 open=true
 order=0
 
 [view-settings,view=0,item:acronyms.tex]
-CursorColumn=65
-CursorLine=7
+CursorColumn=29
+CursorLine=31
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter00.tex]
-CursorColumn=13
-CursorLine=43
+CursorColumn=684
+CursorLine=70
 JumpList=
 ViMarks=
 
@@ -325,14 +325,14 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter02.tex]
-CursorColumn=56
-CursorLine=10
+CursorColumn=106
+CursorLine=45
 JumpList=
-ViMarks=
+ViMarks=a,795,144,b,795,144,c,795,144,d,795,144,e,795,144,f,795,144,g,795,144,h,45,0,j,61,0,k,64,0,l,162,0
 
 [view-settings,view=0,item:chapter04.tex]
-CursorColumn=255
-CursorLine=369
+CursorColumn=15
+CursorLine=673
 JumpList=
 ViMarks=
 
@@ -355,13 +355,13 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:references.bib]
-CursorColumn=0
-CursorLine=861
+CursorColumn=1
+CursorLine=1449
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:thesis.tex]
-CursorColumn=16
-CursorLine=241
+CursorColumn=17
+CursorLine=239
 JumpList=
 ViMarks=a,198,0
