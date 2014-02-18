@@ -86,6 +86,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{pdflscape}
+\usepackage{footnote}
 
 % Tablas
 \usepackage{longtable} % notación
@@ -197,55 +198,56 @@ References with more than one author are ordered based on the first of them.\par
 % Estructura del documento
 \begin{document}
 
-% \frontmatter
-% \label{frontpage}\pdfbookmark{Doctoral Thesis}{frontpage}
-% \titlehead{
-% \includegraphics[height=1cm]{ull}
-%   \vskip 1em
-%   Facultad de F\'isica y Matem\'aticas \\
-%   Departamento de Ingenier\'ia de Sistemas y Autom\'atica y Arquitectura y Tecnolog\'ia de Computadores.}
-% \subject{Doctoral Thesis}
-% \title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
-% \author{N\'estor Morales Hern\'andez}
-% \renewcommand{\codirector}{Leopoldo Acosta S\'anchez\\Jonay T. Toledo Carrillo}
-% \date{2014}
-% \maketitle
-% 
-% \input{certificate}
-% \input{dedicatory}
-% \input{acknowledges}
-% 
-% \cleardoublepage
-% \pdfbookmark{\contentsname}{tableofcontents}
-% \tableofcontents
-% 
-% \cleardoublepage
-% \pdfbookmark{\listtablename}{listoftables}
-% \listoftables
-% 
-% \cleardoublepage
-% \pdfbookmark{\listfigurename}{listoffigures}
-% \listoffigures
-% 
-% \cleardoublepage
-% \pdfbookmark{\listalgorithmname}{listofalgorithms}
-% \listofalgorithms
+\frontmatter
+\label{frontpage}\pdfbookmark{Doctoral Thesis}{frontpage}
+\titlehead{
+\includegraphics[height=1cm]{ull}
+  \vskip 1em
+  Facultad de F\'isica y Matem\'aticas \\
+  Departamento de Ingenier\'ia de Sistemas y Autom\'atica y Arquitectura y Tecnolog\'ia de Computadores.}
+\subject{Doctoral Thesis}
+\title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
+\author{N\'estor Morales Hern\'andez}
+\renewcommand{\codirector}{Leopoldo Acosta S\'anchez\\Jonay T. Toledo Carrillo}
+\date{2014}
+\maketitle
+
+\input{certificate}
+\input{dedicatory}
+\input{acknowledges}
+
+\cleardoublepage
+\pdfbookmark{\contentsname}{tableofcontents}
+\tableofcontents
+
+\cleardoublepage
+\pdfbookmark{\listtablename}{listoftables}
+\listoftables
+
+\cleardoublepage
+\pdfbookmark{\listfigurename}{listoffigures}
+\listoffigures
+
+\cleardoublepage
+\pdfbookmark{\listalgorithmname}{listofalgorithms}
+\listofalgorithms
 % 
 \input{acronyms}
 % \input{notation}
 % 
-% \input{introduction}
+\input{introduction}
 
 \mainmatter
-% \input{chapter00}
-% \input{chapter01}
+\input{chapter00}
+\input{chapter01}
 \input{chapter02}
-% \input{chapter04}
-% \input{chapter05}
-% \input{chapter07}
+\input{chapter03}
+\input{chapter04}
+\input{chapter05}
+\input{chapter07}
 \acresetall
 
-% \input{conclusions}
+\input{conclusions}
 
 % \appendix
 % \input{appendixA}

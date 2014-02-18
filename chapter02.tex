@@ -256,7 +256,7 @@ interaction applications. In figure \ref{fig:cp02_videoCaptures} we show a set o
 named \textit{Method pipeline}}, in which it is possible to see the a representation of the output obtained by our 
 algorithm. For the sake of clarity, each trajectory is represented by a random different color, and not all of them 
 are depicted. Images are part of the dataset used in \cite{berclaz2011multiple}, available on the 
-web\footnote{http://cvlab.epfl.ch/data/pom}.
+web\footnote{\url{http://cvlab.epfl.ch/data/pom}}.
 
 \begin{figure*}[t]
         \centering
@@ -383,18 +383,18 @@ for each algorithm. As seen, best results are obtained for the BACKSA method, fo
 and BCCPDI methods have not so good results. Having a look to the Table \ref{table:fgAverage}, this behavior is also 
 reflected in the average of the measures of all the images.
 
-In fig. \ref{fig:cp02_precisionChart} it is observable that the best precision is shown for the BCCPDI, which does not 
+In figure \ref{fig:cp02_precisionChart} it is observable that the best precision is shown for the BCCPDI, which does not 
 differ too much from the results obtained for the hierFG and FSOM algorithms. It is noticeable also that, for these 
 three algorithms, the lowest value is above an 87\% of precision. Also, if having a look at Table \ref{table:fgAverage}, 
 the average precision values for hierFG and BCCPDI are above a 97\%.
 
-In the chart shown at fig. \ref{fig:cp02_f1Chart}, results are also quite good, being the minimum value for all the 
+In the chart shown at figure \ref{fig:cp02_f1Chart}, results are also quite good, being the minimum value for all the 
 algorithms above an 98\%, and where the best values are obtained for FSOM, not too far from the values of the BACKSA and 
 BCCPDI algorithms. Despite hierFG falls a little faster than the other three algorithms, results are also good for this 
 algorithm. This behavior is reflected by the values represented in Table \ref{table:fgAverage}, where all the averages 
 for this measure are above a 99\%.
 
-Finally, in the chart depicted in fig. \ref{fig:cp02_similarityChart}, hierFG, FSOM and BCCPDI show a similar behavior, 
+Finally, in the chart depicted in figure \ref{fig:cp02_similarityChart}, hierFG, FSOM and BCCPDI show a similar behavior, 
 although the response of BCCPDI is slightly better. Measures for BACKSA are not so good, which practically a 60\% of the 
 tested images are below a 95\% of similarity. Again, Table \ref{table:fgAverage} confirm these data, showing that best 
 results are obtained for BCCPDI.
@@ -402,7 +402,7 @@ results are obtained for BCCPDI.
 As seen, results are quite similar. In Table \ref{table:fgAverage}, it is possible to see that hierFG is the most 
 constant, with high values for all the measures. However, BCCPDI is a good candidate also, despite of the not so good 
 recall. There is not a clear candidate, so final decision must be performed based on the aspect of the retrieved masks. 
-In fig. \ref{fig:cp02_fgMasks} it is possible to see several examples of the obtained images.
+In figure \ref{fig:cp02_fgMasks} it is possible to see several examples of the obtained images.
 
 \begin{figure*}
         \centering
@@ -501,19 +501,19 @@ error = { { \sqrt{ \sum_{i=1}^N \| p_i - t_{corresp(i)}\| } } \over N }
 \end{equation}
 
 where $N$ is the number of matched points (unmatched points are not considered), $corresp(i)$ is the index of the correspondence in the ground truth dataset for the index $i$ in the transformed model data set, and $p$ and $t$ are points in the transformed model and ground truth datasets.
-In the chart of Fig. \ref{fig:cp02_errorChart}, it is possible that the best error rate is clearly found for the RPM-NRS 
+In the chart of figure \ref{fig:cp02_errorChart}, it is possible that the best error rate is clearly found for the RPM-NRS 
 algorithm, being followed by CPD.  The rest of algorithms present a similar behavior being, from the best to the 
 worst, TPS-RPM, ICP, DPPSM-MST and DPPSM-STAR. This is expectable, as the STAR is a simplification of MST in order to 
 have a better time performance.
 
-About the percentage of mismatches, in fig. \ref{fig:cp02_mismatchesChart} it is possible to see the results obtained. In 
+About the percentage of mismatches, in figure \ref{fig:cp02_mismatchesChart} it is possible to see the results obtained. In 
 this chart, the percentage of mismatches is shown. The number of mismatches is calculated using a ground truth, and the 
 percentage is obtained by dividing this value by the number of points in the smaller point set. The best algorithm in 
 this case is TPS-RPM, followed again by CPD. However, RPM-RNS, which presented the best results in the previous test, 
 has the worst results in this case. The relative behavior between ICP, DPPSM-MST and DPPSM-STAR in this test is 
 similar to that obtained in the previous one.
 
-Finally, in fig. \ref{fig:cp02_timesChart} it is possible to see the relative time needed by each algorithm, with respect to 
+Finally, in figure \ref{fig:cp02_timesChart} it is possible to see the relative time needed by each algorithm, with respect to 
 the maximal time obtained in all the tests. This value is shown ordered. In this case, the more time consuming is 
 DPPSM-MST. As expected, DPPSM-STAR is faster. The difference in efficiency shown in this chart demonstrates that worst 
 results in the previous tests are compensated by a faster algorithm. RPM-NRS shows a high speed in some tests, but it is 
@@ -540,7 +540,7 @@ database available in which there is a ground truth information about the corres
 an scene along the time. Because of that, we had to create an indirect way to measure the performance of our method. The 
 way in which we did that was by recording a sequence in which a person moves each part of its body using a Microsoft 
 Kinect \textregistered, and process it to obtain the skeleton using the method described in \cite{shotton2013real}, 
-which is implemented in the OpenNI libraries\footnote{http://www.openni.org/}.
+which is implemented in the OpenNI libraries\footnote{\url{http://www.openni.org/}}.
 
 The idea is the following: for each frame at time $t$, we have an initial skeleton provided by the Kinect, which is used as the initial configuration. From this skeleton, we repeat the following process for each joint $s_i$ in the skeleton $S$:
 \begin{itemize}
