@@ -8,7 +8,7 @@
 
 \graphicspath{{./images/chapter00/bmps/}{./images/chapter00/vects/}{./images/chapter00/}}
 
-\chapter{Problem Statement and Previous Work}\label{ch:chapter00}
+\addchap{Introduction}\label{ch:chapter00}
 
 \section{Problem Statement}\label{ch:chapter00_01}
 
@@ -56,9 +56,42 @@ From the images captured in real-time, obstacles are located and passed to the m
 \section{Previous Work}\label{ch:chapter00_02}
 
 Research on autonomous vehicles is a task being developed for a long time and for which a big effort has been carried on. A proof of that is the extensive literature existing about that topic, in special since the first of the DARPA Challenges (\cite{Buehler2007, Buehler2009}). Since then, the literature related to the topic has increased. Also, the interest on the use of Computer Vision in autonomous vehicles is growing, due to the possibilities that images offer when compared to other sensors, like \acp{LIDAR}.
-In 1996, the ARGO project... \todo{Continuar desde aquí, una vez tenga una especie de historia de los vehiculos autonomos, en la intro.}
-\todo{TerraMax, VIAC, Braive, Annieway y cualquier otro que pille por el camino.}
-As depicted from section \ref{ch:chapter00_01}, the topics described in this thesis are quite diverse, so it is fair to review the state-of-the art of each of these topics separately.
+
+A fast review of the history of autonomous vehicles is listed next:
+\begin{itemize}
+\item From 1987 to 1995, the EC EUREKA Prometheus Project conducted research on autonomous vehicles. Among its culmination points were the twin robot vehicles VITA-2 and VaMP, driving long distances in heavy traffic.
+\item In 1996, the ARGO project modified a Lancia Thema to follow the lane marks in an unmodified highway (\cite{Broggi1999}). The culmination of the project was a journey of (1900\,km) over six days on the motorways of northern Italy, with an average speed of 90 km/h. The car operated in fully automatic mode for 94\% of its journey, with the longest automatic stretch being 55\,km. The vehicle had only two black-and-white low-cost video cameras on board and used stereoscopic vision algorithms to understand its environment. 
+ \item In 2004, DARPA's Grand Challenge was held in the Mojave Desert region of the United States, along a 240\,km route. This competition consisted on an autonomous vehicles race that must reach to the goal without human intervention and using just a listing of check points between the start and the finish line. None of the robot vehicles finished the route.
+ \item In 2005, a second competition was held (\cite{Buehler2007}). This time, five vehicles successfully completed the course:
+ \begin{itemize}
+  \item \emph{Stanley} (\cite{thrun2006stanley}), from Standford University.
+  \item \emph{Sandstorm} and \emph{H1ghlander} (\cite{urmson2004high}), from the Carnegie Mellon University.
+  \item \emph{Kat-5} (\cite{trepagnier2006kat}), from the Gray Insurance Company.
+  \item \emph{TerraMax} (\cite{ozguner2004team}), from the Oshkosh Truck Corporation.
+ \end{itemize}
+ \item In 2007, the third driverless car competition of the DARPA Grand Challenge (\ref{Buehler2009}), more known as the DARPA Urban Challenge, was held in Victorville, California. This time, six teams successfully finished the entire course:
+ \begin{itemize}
+  \item \emph{Boss} (\cite{Urmson2008}), from the Carnegie Mellon University.
+  \item \emph{Junior} (\cite{Montemerlo2008}), from Standford University.
+  \item \emph{Odin} (\cite{Bacha2008}), from Virginia Tech.
+  \item \emph{Talos} (\cite{leonard2007team}), from the Massachusetts Institute of Technology.
+  \item \emph{Little Ben} (\cite{bohren2008little}), from University of Pennsylvania.
+  \item \emph{Skynet} (\cite{miller2008team}), from Cornell University.
+ \end{itemize}
+ \item In 2010, 2012 and 2013, the Korean Autonomous Vehicle Competition (AVC) took place.
+ \item In 2010, inside the VIAC Challenge, four autonomous vehicles drive from Italy to China on a 100-day 15900\,km trip with only limited human intervention (in traffic jams and when passing toll stations). At the time, this was the longest-ever journey conducted by an unmanned vehicle (\cite{Broggi2010VIAC}).
+ \item In 2011, under the Oxford University's WildCat Project, a Bowler Wildcat based prototype is capable of autonomous operation using a flexible and diverse sensor suite.
+ \item In 2011, the Freie Universität Berlin, Led by the AutoNOMOS group, developed two autonomous cars - \emph{Spirit of Berlin} (\cite{berlin2007spirit}) and \emph{MadeInGermany} (\cite{gohring2013semi}) - to drive in the innercity traffic of Berlin in Germany. They were able to handle intercity traffic, traffic lights and roundabouts between International Congress Centrum and Brandenburg Gate.
+ \item In 2012, Stanford's Dynamic Design Lab, in collaboration with the Volkswagen Electronics Research Lab, produced Shelley, an Audi TTS designed for high speed (greater than 160\,km/h) on a racetrack course.
+ \item In February 2013, Oxford University unveiled the RobotCar UK project, an inexpensive autonomous car capable of quickly switching from manual driving to autopilot on learned routes.
+ \item In July 2013 Vislab worldpremiered BRAiVE, a vehicle that moved autonomously on a mixed traffic route open to public traffic (\cite{grisleri2010braive}).
+ \item Currently, many major companies and research organizations have developed working prototype autonomous vehicles, including Mercedes-Benz, General Motors, Continental Automotive Systems, Autoliv Inc., Bosch, Nissan, Toyota, Audi, Vislab from University of Parma, Oxford University and Google.
+\end{itemize}
+ 
+As we can see, in the last years, the effort in the development of autonomous vehicles has been increased exponentially, opening a lot of research lines, some of them covered in this thesis. One of the hot topics in the field of Intelligent Transportation Systems is the detection and tracking of obstacles based on computer vision. This is proved by the high number of publications related to this topic, like \cite{Broggi2006, Broggi2010, primdahl2005change, Scharstein2002, Morales2011, Geiger2012, Steingrube2009, Morales2012, Morales2009, badino2009stixel, gunyel2012stixels, danescu2012particle, broggi2013}.
+Also, apart from sensing, a lot of work has been done for the planning and control of the vehicles in order to generate the trajectories that vehicles will follow to reach a certain goal, while avoiding the obstacles in the way. Some examples are the work of \cite{werling2010optimal, thrun2006stanley, chu2012local}.
+
+In this thesis, we have developed several approaches both for the detection and for the avoidance of the obstacles. These approaches are usually inspired in the work performed by other researchers in the last years. In the next sections, we will do a fast review of the state of the art of the different approaches in which we based our work. 
 
 \subsection{Change detection for obstacle localization in images}\label{ch:chapter00_02_01}
 
