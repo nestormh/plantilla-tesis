@@ -99,66 +99,6 @@ The other research line based on stixels is based on the computation of the free
 
 \notsure{In section \todoref{XXX}, we introduce a method for the tracking of the stixels based on \cite{gunyel2012stixels}, in which we do the tracking of the stixels using bipartite graphs instead of \ac{DP}, as well as other metrics different from \ac{SAD}, obtaining better results both in terms of computation time and performance.}
 
-
-
-% 
-% 
-% The first research line I've found is that followed by Benenson et al. [3,4,5]. They get a very huge frame rate (200 Hz in a CPU, 165 Hz when combined with a GPU objects detector). In this approach, there is no need to compute the SGM (or the chosen algorithm) for the whole image. This calculation is made with the use of a Sum of Absolute Differences cube, with a value for each row, column and disparity combination. Then, a model for the ground plane is obtained, which is linear, but can be changed by a nonlinear one. Using the points of the boundary in the ground, which is obtained as a DP problem, the stixels are obtained taking into account the limitations in height of the obstacles and left-to-right occlusion constraints. In this method, just one stixel is found by row.
-% Advantages:
-% It is fast and strong
-% There is no need of obtaining a previous depth map
-% The amount of data to be processed is highly reduced
-% Uses (u,v) for stixel calculation, not just u
-% Some examples in how to do classification
-% Disadvantages:
-% If ground plane detection fails, everything fails
-% If matching costs are ambiguous or inaccurate, the height estimation fails
-% Object height is restricted
-% Flat ground plane used
-% Just one stixel per column
-% Just horizontal or vertical elements considered
-% Parameter dependent (heigh constraint, for example)
-% Some ideas related to this approach:
-% Using a non-linear ground model
-% Dynamic height
-% More than one object per column
-% Object detection
-% Object “cleaning” (that is, for example in the case of pedestrians, we might have a silhouette of them instead of a square surrounding them)
-% Making it able to process data from other sensors
-% Tracking (Kalman or other method)
-% Some “weird” ideas:
-% Diagonal stixels
-% J-Linkage or similar in order to detect several stixels (too expensive, however)
-% 
-% The other approach is that being followed in Daimler [6,7,8,9,10]. In this approach, they try to solve problems related to a bad calculation of the freespace area and try to reduce the number of parameters via a global probabilistic scheme. They assume that:
-% the number of objects captured along every column is small.
-% there are not flying objects.
-% The upper objects have a higher depths than the lower ones.
-% The initial version is that shown at [6]. Then, in [7] it is improved by using three different stereo confidences: Peak-ratio Naive, Maximum Likelihood and Local Curve. These are used to improve the results obtained by the global probabilistic scheme. Local Curve shows the best results. In [8], they include a freespace computation scheme in order to reduce computational costs, and they do a simple tracking and clustering of the stixels based on Kalman filters. Also, in [9] they compute if there will be a collision or not in a roundabout, but the stixel related approach is similar to that shown previously, except from the clustering, which is done using DBSCAN, being able to use both position and orientation; and also freespace computation is done based in B-splines. Times obtained are around 40 ms + the time for obtaining the depth map.
-% In [10], the method is extended so they include existence estimation of the stixels, in order to avoid fake stixels in bad weather conditions.
-% 
-% Advantages:
-% In the final versions, they use a free space computation, so the amount of data to be processed is reduced. But not as much as in the Benenson et al. work.
-% A global probabilistic scheme
-% Reduced parameterization
-% Objects are allowed to be located at multiple depths
-% Able to process data from other sensors as well
-% Examples of how to track stixels and clustering
-% Disadvantages:
-% They need to obtain a depth map first
-% Just horizontal or vertical elements considered
-% Non-flying objects?
-% There is not a cuantitative comparison with other methods other than theirs
-% In tracking, stixels are not expected to move vertically
-% Some ideas related to this approach:
-% Use ELAS or ABBM instead of SGM, as they are faster and big quality is not so important (http://www.cvlibs.net/datasets/kitti/eval_stereo_flow_detail.php?benchmark=stereo&error=3&eval=all).
-% Combine with Benenson approach.
-% Object detection
-% Object “cleaning” (that is, for example in the case of pedestrians, we might have a silhouette of them instead of a square surrounding them)
-% Tracking (Kalman or other method)
-
-
-
 \subsection{3D object tracking}\label{ch:chapter00_02_05}
 
 By processing the data captured by sensors, it is desired to obtain the position, speed and size of an obstacle. However, usually sensors don't provide this information, so we need to process the information over time and do the tracking of detected obstacles. Many approaches that try to solve this problem, like \cite{danescu2012particle}, assume that obstacles have an standard geometry, and they are modeled as cuboids with associated position, size and speed vectors. This assumption is mostly correct in environments like highways, country roads, and certain urban scenarios, in which almost all the obstacles are cars, trucks or buses which can be simplified as cuboids. Also, these approaches tend to consider a flat ground.
@@ -184,20 +124,19 @@ Based on how much information they use, we can divide object tracking methods in
 
 \subsection{Global planning}\label{ch:chapter00_02_06}
 
-% Muchos estudios se han realizado en torno al problema de generacion de rutas globales. Aunque fue inicialmente propuesta para aplicaciones en robotica, ultimamente se ha usado con exito en aplicaciones de automocion.
-% 
-% Podemos dividir los algoritmos de planificacion en... (El resto esta en la libreta, en la parte de estado del arte de planificacion local)
-% 
-% 
-% Los algoritmos de planificacion pueden ser divididos en locales y globales:
-% Globales:
-%   La ruta global y los estados del vehiculo quedan determinados por la info proporcionada por un mapa digital y un sistema de localizacion
-% Locales:
-%   La ruta local puede ser generada entonces en la etapa de planificacion basada en la ruta global y la info del entorno del vehiculo obtenida por los sensores
-%   El paper se basa en local path planning que proporciona capacidades de evitacion de obstaculos a un vehiculo autonomo que sigue una ruta global predefinida
+The main goal of this thesis is the detection and avoidance of obstacles making use of the images obtained from a set of cameras mounted on a vehicle. Until now, we have seen the existing methods intended to detect objects in images, but we still do not know the existing ways for the avoidance of such objects. We consider two different levels for planning in the environment in which our testing platform will be driving. The first one, tries to get a safe and smooth trajectory that connects a certain point $A$ with a point $B$ into the map. As we are in a labyrinth-like environment, this can not be done trough a \ac{RNDF} and we have to compute that trajectory (global planner). The second level tries to follow this trajectory (local planner).
+Attending to global planning, existing approaches can be classified into two big groups: classic and heuristic methods. In \cite{masehian2007classic} a compilation of some of the most relevant methods developed for each of these groups is related.
+About classical methods, in general they can be considered as variations of some general approaches: Roadmap, Cell Decomposition, Potential Fields and Mathematical Programming. These methods are not mutually exclusive; in fact, a lot of approaches use combinations of them. A review of some classical methods can be checked out in \cite{hwang1992gross}.
+ 
+About heuristic methods, these are the answer given by researchers to the limitations of the classic methods. The most representative methods inside this classification are Probabilistic Roadmaps (PRM) \cite{kavraki1996probabilistic}, Rapidly Exploring Random Trees (RRT) \cite{lavalle2000rapidly}, Level set \cite{sethian1999level}, Linguistic Geometry (LG) \cite{stilman1993network}, Simulated Annealing (SA) \cite{zhu2006robot}, Artificial Neural Network (ANN) \cite{hossain2012real}, Genetic Algorithms (GA) \cite{zhang2007evolutionary}, Particle Swarm Optimization (PSO) \cite{chen2006smooth}, Ant Colony (ACO) \cite{mou2008modified} and its variants, like the RNA algorithm described in \cite{zhu2011new}, Stigmergy \cite{cazangi2006evolutionary}, Wavelet Theory \cite{doh2005systematic}, Fuzzy Logic (FL) \cite{kladis2011energy} and Tabu Search (TS) \cite{nguyen2012multi}. For more information, the review in \cite{masehian2007classic} can be checked.
 
-% Hablar de las bandadas de pájaros
+Regarding to Path Planning methods based on \ac{SVM}, several methods can be found in literature. The first one is the work presented in \cite{miura2006support}, where navigation is planned in environments in which the obstacles are known. Obstacles are randomly labeled into two classes: positive or negative. Using these two classes, a \ac{SVM} is trained and the decision boundary is used as a path. To increase the efficiency, a set of fake obstacles (guide samples) is generated at both sides of the current and the goal position, as well as in parallel to the line that joins both points (nominal line), with the objective of helping the \ac{SVM} to find a feasible path. The method works well, but it has two important limitations. The first one is that the method is highly dependent on how well fake obstacles are placed. The second one is that tentative paths are generated using different patterns (that is, some obstacles that were in the positive class are randomly labeled as negatives and vice versa) until the number of tried patterns exceeds a predetermined number and at least one feasible path is found. The consequence of using this strategy is that it is not possible to ensure that the obtained path is optimal, and the time needed to obtain at least one non-optimal path is highly dependent on the random patterns of positive/negative classes that are generated in execution time. Also, as just two classes are used, it is possible that the generated path falls too close to one of the obstacles. The original method has been optimized by the implementation described in \cite{xia2013semi}.
 
+In \cite{sarkar2008mobile} and \cite{tennety2009support} authors divide the whole set of objects in the map into two classes and the \ac{SVM} is used to determine the maximum margin hyperplane between the data sets belonging to the two classes. Data is assigned to one or another class depending on whether the points are on the left or on the right side of the robot. After the initial labels are assigned, further classification is done using the k-nearest neighbor algorithm, with k=1. The idea is to assign to each point the label of the closest of the already labeled points. The problem of this strategy is that paths are not optimal, as it assumes that the best path is that passing along the part of each obstacle which is more clear, but it could generate zigzagging paths in environments in which a straight trajectory is possible. It does not happen in the method described in \cite{qingyang2012local}, in which a path subdivision method and a \ac{SVM} is used. They use topological maps of local environments which are extracted with little expanded nodes. Next, candidate routes are optimized using the Support Vector Machine, where the candidate routes boundary points are defined as positive and negative samples. They also extend the original \ac{SVM} \cite{cortes1995support} in order to satisfy extra constraints such as vehicle position and heading. Unlike in our contribution, in which a more extended environment is used, \cite{sarkar2008mobile, tennety2009support, qingyang2012local} are methods designed to be used in local environment maps.
+
+One of the most important drawbacks of the method presented in \cite{miura2006support} is the need of performing a combinatorial search for the right pattern used as input for the training stage of the \ac{SVM}. A possible solution for that is using the method in \cite{yang2012safe}. In their work, a preprocessing step is used in which the Voronoi Diagram is generated using the obstacles in the map. That diagram is used to select the best path between the starting point of the robot and the goal. The path obtained using Voronoi is not smooth, so the \ac{SVM} is used to make this path smoother. The \ac{SVM} is trained using a dataset in which the sites that generated the Voronoi edges are classified as positive or negative depending on their position (left / right) regarding to the previously obtained path. The decision boundary of this \ac{SVM} will be the final path used.
+
+As can be seen, all methods existing in the literature using \ac{SVM} for path planning purposes use just two classes. In the method presented here, there are as many classes as obstacles in the map. With our method, we try to find a new alternative to the existent \ac{SVM} based path planning algorithms. In section \ref{sec:results_comparison}, we show the advantages of using our method in comparison with other \ac{SVM} based methods.
 
 \subsection{Local planning}\label{ch:chapter00_02_03}
 
