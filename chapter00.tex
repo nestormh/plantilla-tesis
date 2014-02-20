@@ -60,7 +60,7 @@ Research on autonomous vehicles is a task being developed for a long time and fo
 A fast review of the history of autonomous vehicles is listed next:
 \begin{itemize}
 \item From 1987 to 1995, the EC EUREKA Prometheus Project conducted research on autonomous vehicles. Among its culmination points were the twin robot vehicles VITA-2 and VaMP, driving long distances in heavy traffic.
-\item In 1996, the ARGO project modified a Lancia Thema to follow the lane marks in an unmodified highway (\cite{Broggi1999}). The culmination of the project was a journey of (1900\,km) over six days on the motorways of northern Italy, with an average speed of 90 km/h. The car operated in fully automatic mode for 94\% of its journey, with the longest automatic stretch being 55\,km. The vehicle had only two black-and-white low-cost video cameras on board and used stereoscopic vision algorithms to understand its environment. 
+\item In 1996, the ARGO project modified a Lancia Thema to follow the lane marks in an unmodified highway (\cite{Broggi1999}). The culmination of the project was a journey of (1,900\,km) over six days on the motorways of northern Italy, with an average speed of 90 km/h. The car operated in fully automatic mode for 94\% of its journey, with the longest automatic stretch being 55\,km. The vehicle had only two black-and-white low-cost video cameras on board and used stereoscopic vision algorithms to understand its environment. 
  \item In 2004, DARPA's Grand Challenge was held in the Mojave Desert region of the United States, along a 240\,km route. This competition consisted on an autonomous vehicles race that must reach to the goal without human intervention and using just a listing of check points between the start and the finish line. None of the robot vehicles finished the route.
  \item In 2005, a second competition was held (\cite{Buehler2007}). This time, five vehicles successfully completed the course:
  \begin{itemize}
@@ -69,7 +69,7 @@ A fast review of the history of autonomous vehicles is listed next:
   \item \emph{Kat-5} (\cite{trepagnier2006kat}), from the Gray Insurance Company.
   \item \emph{TerraMax} (\cite{ozguner2004team}), from the Oshkosh Truck Corporation.
  \end{itemize}
- \item In 2007, the third driverless car competition of the DARPA Grand Challenge (\ref{Buehler2009}), more known as the DARPA Urban Challenge, was held in Victorville, California. This time, six teams successfully finished the entire course:
+ \item In 2007, the third driverless car competition of the DARPA Grand Challenge (\cite{Buehler2009}), more known as the DARPA Urban Challenge, was held in Victorville, California. This time, six teams successfully finished the entire course:
  \begin{itemize}
   \item \emph{Boss} (\cite{Urmson2008}), from the Carnegie Mellon University.
   \item \emph{Junior} (\cite{Montemerlo2008}), from Standford University.
@@ -79,7 +79,7 @@ A fast review of the history of autonomous vehicles is listed next:
   \item \emph{Skynet} (\cite{miller2008team}), from Cornell University.
  \end{itemize}
  \item In 2010, 2012 and 2013, the Korean Autonomous Vehicle Competition (AVC) took place.
- \item In 2010, inside the VIAC Challenge, four autonomous vehicles drive from Italy to China on a 100-day 15900\,km trip with only limited human intervention (in traffic jams and when passing toll stations). At the time, this was the longest-ever journey conducted by an unmanned vehicle (\cite{Broggi2010VIAC}).
+ \item In 2010, inside the VIAC Challenge, four autonomous vehicles drive from Italy to China on a 100-day 15,900\,km trip with only limited human intervention (in traffic jams and when passing toll stations). At the time, this was the longest-ever journey conducted by an unmanned vehicle (\cite{Broggi2010VIAC}).
  \item In 2011, under the Oxford University's WildCat Project, a Bowler Wildcat based prototype is capable of autonomous operation using a flexible and diverse sensor suite.
  \item In 2011, the Freie Universität Berlin, Led by the AutoNOMOS group, developed two autonomous cars - \emph{Spirit of Berlin} (\cite{berlin2007spirit}) and \emph{MadeInGermany} (\cite{gohring2013semi}) - to drive in the innercity traffic of Berlin in Germany. They were able to handle intercity traffic, traffic lights and roundabouts between International Congress Centrum and Brandenburg Gate.
  \item In 2012, Stanford's Dynamic Design Lab, in collaboration with the Volkswagen Electronics Research Lab, produced Shelley, an Audi TTS designed for high speed (greater than 160\,km/h) on a racetrack course.
@@ -186,7 +186,56 @@ Some other methods, which are inside the discrete optimization approaches, are b
  \item In \cite{chu2012local}, also a set of candidate paths are generated, with endpoints in fixed positions at different offsets respect to the base frame, but they do not set this base frame in the center of the road, as it could be dangerous when computing the costs at certain scenarios. Instead of that, they use a security cost for each candidate path. Security of the path is computed by blurring the binary data of the obstacles. They also have into account certain criteria, as the smoothness cost or the path consistency between iterations.
 \end{itemize}
 
-\section{Summary}\label{ch:chapter00_03}
+\section{Testing platform}\label{ch:chapter00_03}
+
+
+The main goal of this thesis is the development of an obstacle detection and avoidance system. This system is intended to be used in our prototype Verdino\footnote{\url{http://verdino.webs.ull.es}}, which will be able to transport people around a bioclimatic urbanization situated in the ITER\footnote{\url{http://casas.iter.es/en}} facilities. This prototype is an own development of the Robotics Group from Universidad de La Laguna (GRULL), resulting from the projects funded by the Spanish Government GUISTUB (DPI 2004-06626), SIBTRA (DPI 2007-64137) and SAGENIA (DPI 2010-18349). During this project, we have modified a traditional golf cart into an unmanned vehicle. 
+This vehicle is an TXT-2 from EZ-GO\footnote{\url{http://www.ezgo.com}}, which has been electronically and mechanically modified to be controlled by an on-board computer. This vehicle, shown at figure \ref{fig:cp00_verdino}, by default is equipped with six $6\,V$ batteries, an speed controller, a $36\,Vcc$ electrical motor, mechanical brakes and steering, and has a maximal speed between 19 and 23\,Km/h.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{verdino}
+  \caption{Verdino prototype.}\label{fig:cp00_verdino}
+\end{figure}
+
+\comment{Muchos de estos términos se me escapan, échenle un ojo al inglés y a que no haya metido ninguna mentira involuntaria.}
+
+As said, the vehicle has been modified in order to make it autonomous. These modifications are listed next.
+
+\paragraph{Actuators}\label{ch:chapter00_03_00_00_01}
+\begin{itemize}
+ \item \emph{Steering system}: In order to allow the automatic movement of the steering of the vehicle, we tied its steering axis to a DC motor controlled by a \ac{PID}, which is able to set the electric voltage needed to put the steering in the correct angle. An optical encoder is used to know its exact position, so the control loop is closed.
+ \item \emph{Braking system}: Brakes are controlled through a pneumatic system, composed by a cylinder, a commutation valve, two flow controllers and an air compressor. The pneumatic cylinder acts over the brake cables, that make pressure over the brake drums. A compressor gives the air pressure needed for this process.
+ \item \emph{Speed System}: A microcontroller generates three different signals, that simulate the original devices installed in the vehicle. These correspond to a switch relay, which turns on the motor when the user pushes the acceleration pedal; the sense of speed (forward or backward); and the desired voltage.
+ \item \emph{Safety switch}: Allows changing between automatic and manual behavior. When switched off, the vehicle behaves as it was before the modifications.
+\end{itemize}
+
+\paragraph{Sensors}\label{ch:chapter00_03_00_00_02}
+
+~\\~\\This first group of sensors are intended to be used in localization tasks:
+
+\begin{itemize}
+ \item \emph{Odometry}: This system measures the independent movement of the two rear wheels, which are attached to an optical encoder. This allows computing incrementally the position, orientation and speed of the prototype.
+ \item \emph{\acf{IMU}}: It is comprised by 9 sensors (3 accelerometers, 3 gyroscopes and 3 magnetometers), which are fused in real time in order to get the three-dimensional orientation of the vehicle. The model of the sensor is a \emph{Xsens Mti}\footnote{\url{http://www.xsens.com}}.
+ \item \emph{\acf{DGPS}}: Allows positioning the vehicle with centimetric accuracy. It is composed by two different devices, the reference station, which is fixed in a known place, and the rover station, which is installed on the vehicle. The model used is a \emph{JAVAD GNSS Triumph-1}\footnote{\url{http://www.javad.com}}, which has an horizontal precision under 1\,cm and a vertical precision around 1.5\,cm using \ac{DGPS}, at a frequency of $5\,Hz$.
+\end{itemize}
+
+This second group of sensors are oriented to the detection of the obstacles in the environment:
+
+\begin{itemize}
+ \item \emph{\acf{LIDAR}}: Each of this sensors is able to detect the objects in the way of the vehicle, at the plane in which the sensor is mounted. The advantages of these sensors are that they have a high speed an precision. However, they are just able to detect obstacles that crosses that plane defined by the sensor. Because of this, we have equipped the vehicle with 5 \acp{LIDAR}. Two of them are located at the same plane in the front corners of the vehicle, at a height of 50\,cm. Each of these covers an angle of 270\textdegree. Another one is located in the front side of the vehicle, at a height of 20\,cm, slightly tilted upwards, in order to detect the small obstacles or non traversable areas. Another is in the top of the vehicle, also in the front side of the vehicle, tilted to the ground and covering the blind areas left by the other sensors. Finally, the last sensor is situated in the back side of the vehicle, and it is used for backwards maneuvers. The used sensors are of the model \emph{SICK LMS 100} and \emph{SICK LMS 111}\footnote{\url{http://www.sick.com}}, allowing a maximal detection distance of 20\,m, a precision of 10-35\,mm, a maximal angular resolution of 0.25\textdegree and a maximal rate of $50\,Hz$.
+ \item \notsure{Velodyne???}
+ \item \emph{IR cameras}: Infrared cameras are used to detect pedestrians or animals based on their temperature. We have a pair of them installed on a \ac{PTZ} system attached to the top front side of the vehicle. The model used is a \emph{MobiR\textregistered~M3}\footnote{\url{http://www.guide-infrared.com}}, which is able to detect objects in the range $8\sim14\mu m$, at a resolution of $160 \times 120\,px$.
+ \item \emph{Visible cameras}: A set of three cameras is also installed in the \ac{PTZ} structure. These are used for the detection and tracking of the objects, which is one of the goals of this thesis. Also, they are currently being used for the detection of the borders of the road (\cite{arnay2009applying}). The model of the cameras is a \emph{GoPro\textregistered Hero 3 silver edition}\footnote{\url{http://gopro.com}}, with a $1920 \times 1080 \, px$ maximal video resolution and a 170\textdegree field of view at a maximal rate of 60\,fps.
+\end{itemize}
+
+\paragraph{Control}\label{ch:chapter00_03_00_00_03}
+
+~\\~\\The vehicle is controlled, at high level, by an on board computer equipped with an \emph{i7-3770K} processor, 16\,Gb of \emph{RAM DDR-3} memory and a \emph{SSD} storage. At low level, a set of own developed electronic devices receive commands from the computer and transform them into the right signal, understandable by the actuators described before.
+
+\todo{Poner imágenes de todo esto}
+
+\section{Summary}\label{ch:chapter00_04}
 
 In this chapter, we have described a general idea of the work presented in this Thesis. Also, the pipeline of the final developed application is introduced. All this information will be explained in more detail in the following sections, including implementation details together with some results and a discussion of the advantages/disadvantages of the different methods.
 
