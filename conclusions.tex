@@ -1,74 +1,41 @@
 %%
-%% conclusiones.tex - Memoria de la tesis
+%%  chapter00.tex - Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques
 %%
-%%   Copyright 2009-2010 Jesús Torres <jmtorres@ull.es>
+%%  Copyright 2014 Néstor Morales <nestor@isaatc.ull.es>
 %%
-%% Esta obra está bajo licencia Creative Commons Reconocimiento 3.0 Unported
+%%  This work is licensed under a Creative Commons Attribution 4.0 International License.
 %%
-\addchap{Conclusiones}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut vestibulum
-massa. Aliquam non magna sapien, a blandit mi. Fusce nec tellus tellus.
-Vestibulum eu turpis eget ligula consequat ullamcorper. Cum sociis natoque
-penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis risus
-nisl, feugiat eget tempor a, lacinia eget nibh. Fusce sodales tristique
-dapibus. Cras urna mi, iaculis in dapibus in, iaculis quis dui. Fusce
-fringilla fermentum elementum. Phasellus fermentum quam at purus convallis et
-placerat tortor rutrum. Vivamus sapien purus, placerat at sagittis at, lacinia
-nec sapien. Donec consectetur aliquet mauris eu porta. Ut hendrerit faucibus
-consequat. Nulla elit augue, sollicitudin hendrerit luctus quis, faucibus
-vitae mauris. Phasellus ultrices feugiat purus vitae pellentesque. Aenean
-vulputate sapien a sem rhoncus commodo. Maecenas eu elit felis. Maecenas
-semper consequat risus sed hendrerit. Donec ac nisl ut eros laoreet accumsan
-sed et arcu \cite{Bentley1980}.
 
-Morbi tempor tortor id urna facilisis gravida sagittis augue iaculis. Sed nec
-lacus ac velit consequat semper et vitae odio. Cras pellentesque laoreet
-venenatis. In ante augue, cursus sagittis semper quis, lacinia at eros. Morbi
-dapibus, nisi non egestas aliquam, neque leo tempor orci, sit amet vehicula
-tellus tortor in nisi. Integer posuere, quam quis posuere vestibulum, quam
-purus tristique nisl, in venenatis justo tortor eu risus. Sed nec tincidunt
-libero. Aenean molestie pretium dolor, vehicula consequat diam cursus vitae.
-Aliquam erat volutpat. Nullam consectetur pharetra nisi id pulvinar. Maecenas
-commodo dui id ante condimentum eu elementum magna euismod. Nulla leo erat,
-pulvinar et mattis vitae, vestibulum quis mauris. Ut pretium pulvinar dolor,
-vitae ornare tellus faucibus eu. Donec ullamcorper tincidunt nibh at euismod.
-Donec dolor leo, mollis eget euismod vel, varius ac nunc. ~---Vivamus iaculis,
-lorem vitae hendrerit tristique~---, neque magna vehicula arcu, id pulvinar
-dolor dolor a justo. Phasellus leo sapien, vehicula eu lacinia a, aliquet at
-leo. Nunc tempus rhoncus ligula eget tincidunt. Quisque elementum tortor nec
-nisl euismod adipiscing.
+\addchap{Conclusions}
 
-\addsec{Líneas abiertas}
-Muris tortor odio, facilisis vitae varius quis, pharetra sit amet tortor.
-Aliquam eu augue urna. Praesent lorem lectus, pretium suscipit fermentum
-lobortis, fermentum vel massa. Pellentesque habitant morbi tristique senectus
-et netus et malesuada fames ac turpis egestas. Quisque volutpat lacus sapien.
-Pellentesque auctor orci et nisi auctor sagittis. Donec lobortis quam id arcu
-ullamcorper nec ullamcorper nisi feugiat. Phasellus quis commodo nibh. Quisque
-elit sem, imperdiet quis rutrum sed, sodales ac eros. Nulla facilisi. Praesent
-nec diam at tellus varius ornare. Proin magna lacus, blandit a fermentum in,
-volutpat ut elit. Vestibulum eget eros dui, a vulputate tellus. Cum sociis
-natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+In this thesis, four different object detection tracking approaches, two methods for global and local path planning and a evaluation of two state-of-the-art algorithms with different configurations have been presented. Based on this, the goal of this thesis, the study of computer vision methods for obstacle detection and their avoidance for the Verdino prototype, is achieved.
 
-Vivamus magna tellus, egestas mollis porttitor eget, condimentum non turpis.
-Vivamus aliquam bibendum enim quis laoreet. Vivamus ultricies lorem a metus
-malesuada imperdiet. Pellentesque at feugiat risus. Quisque ipsum nunc,
-bibendum eget mollis eget, euismod id massa. Integer et dolor non mauris
-sodales mattis vitae sit amet urna. Maecenas id tempus enim. Maecenas eget
-risus libero. Quisque vel arcu dui. Lorem ipsum dolor sit amet, consectetur
-adipiscing elit. Sed varius odio eget est volutpat vel posuere erat ultricies.
-Pellentesque elementum pharetra lacus non ornare. Mauris ut nunc ac justo
-congue tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et
-ultrices posuere cubilia Curae; Cras ultricies ipsum tincidunt risus dapibus
-sit amet volutpat sapien varius. In hac habitasse platea dictumst.
+The first of these approaches was based on the generation of a database in which each image had geographical information associated. In real time, the vehicle captured images from the onboard images and those were compared with the nearest image in the database by using classical image registration techniques. The changes detected were the obstacles in the way of the vehicle. 
 
-Aliquam viverra egestas tortor, eget feugiat dolor bibendum vitae. Suspendisse
-laoreet scelerisque augue, non placerat metus interdum elementum. Donec
-porttitor magna sit amet quam vestibulum hendrerit. Aenean quis ipsum nisl.
-Donec nec tellus sit amet nisl molestie fringilla. Nullam id libero massa,
-eget sodales nulla. Suspendisse lacus nisl, euismod ac feugiat eu, porta
-tincidunt sem. In hac habitasse platea dictumst. Fusce ultricies, velit sed
-porta dignissim, dolor tellus consequat purus, a tempor tortor ante eget
-magna. Phasellus adipiscing lacus diam, a egestas neque. Integer sodales enim
-ut felis euismod quis faucibus libero ullamcorper. Phasellus facilisis feugiat
-venenatis.
+With this approach, we evaluated the influence of the distance and angle difference between the compared images to the quality of the results. Conclusions were that the method works properly if distance is below 1\,m and the angle difference is below 10\textdegree. We also evaluated the influence of the illumination difference between images, concluding that the best results were obtained when this difference was below 20\%.
+
+However, this approach has some limitations that can not be overcome using image registration techniques. First, we need a highly populated database if we want to be sure that we fulfill the distance and brightness difference limitations established. Also, as we are working with just an image of the camera, we can not locate the obstacles detected in real world coordinates. Finally, we know where the obstacles are, but we do not know were are they going to, so we need a tracking mechanism.
+
+With these limitations in mind, we decided to isolate the last problem and develop a method for the tracking of generic obstacles without the need of a model in scenes captured by static cameras. The peculiarity of this method is that we do not track the obstacles as a whole object but we detect the trajectory followed by each part of them independently, detecting the flow of their contour.
+
+The method consisted on the segmentation of the foreground of the scene using some state-of-the-art methods, extracting the contour of the obstacles. This contour was tracked between frames using a non rigid point set registration method, getting a match between points of different frames. These matches, joined along the frames, formed the trajectories of the points.
+
+With this method, we demonstrated that is was possible to do such a tracking by using just geometrical information. Also, we evaluated the behavior of four different foreground segmentation methods (\cite{lopez2011stochastic, lopez2011foreground, guo2011hierarchical, reddy2012improved}), demonstrating that that from \cite{reddy2012improved} was the one that fulfilled the most our needs. Same was done for the six non rigid point set registration methods, of which the Coherent Point Drift was the one that gave the best results. Also, we compared our method with a simple optical flow tracker and a Kinect based method, showing that our method gave better results in certain circumstances.
+
+However, the method is still not enough for our goal. It depends on static cameras, while we want to use the tracker with the images captured by the onboard cameras. Because of that, we started exploring some 3D reconstruction algorithms, and we found different approaches. Most of them were based on dense reconstruction, while some of them did a simplification of the reconstructed world by assuming certain conditions.
+
+Inside the dense reconstruction methods, there were many different algorithms, making the choice difficult. One of the contributions of this thesis is the development of a automatized framework for the evaluation of dense reconstruction algorithms. This framework allows testing the algorithms using long sequences, at different weather and illumination conditions. This solved the problem existing for other previous evaluations in which the testing images were taken in laboratories, under controlled conditions; or in which sequences were too short with a ground truth edited by hand.
+
+In these evaluation tests, we concluded that...
+
+
+\addsec{Future Work}
+
+Usar otras características que permitan aumentar el ángulo -> Hablar de SURF y la GPU
+Usar el método para el análisis de cambios en vídeos
+
+Usar la salida para hacer algo
+Pasar al 3D mediante la segmentación bg/fg de imágenes dinámicas
+Permitir una mayor cantidad de dimensiones mediante una implementación eficiente del CPD
+Usar info del color
+Usar la técnica empleada en la fase de evaluación para 

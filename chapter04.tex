@@ -134,7 +134,7 @@ For this stage, we made some assumptions:
 \begin{itemize}
  \item First, we assume that all stixels have been properly estimated.
  \item The maximal speed of the objects is limited, so we limit the search range between stixels to a certain threshold. This range depends on the distance of the stixel at the current frame and the frame rate. As there is just one stixel per column, we can limit also the matching process to a search into the $u$ direction.
- \item There is not a big temporal difference between two consecutive frames. That means that the same stixel at time $t$ and $t - 1$ should be similar. Also their height in meters should be similar. \notsure{As shown in section \ref{ch:chapter04_02_03_02}, this temporary consistence is more or less restrictive depending on the approach finally used for the tracking process.}
+ \item There is not a big temporal difference between two consecutive frames. That means that the same stixel at time $t$ and $t - 1$ should be similar. Also their height in meters should be similar. As shown in section \ref{ch:chapter04_02_03_02}, this temporary consistence is more or less restrictive depending on the approach finally used for the tracking process.
 \end{itemize}
 
 \subsubsection{Stixels-level tracking}\label{ch:chapter04_01_03_01}
