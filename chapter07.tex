@@ -390,8 +390,8 @@ As $R = 1 / \kappa$, we just need to compute the curvature for the first $\rho_{
 
 In this chapter, we have seen a method able to efficiently follow a given trajectory while avoiding the potential obstacles in the way. The use of a curvilinear coordinate system for the generation of a set of candidate trajectories simplifies the calculations while allows creating soft paths that makes the vehicle to converge to the followed track as smooth as possible. Also, these paths are generated with different lateral offsets regarding to the global plan, so we are able to avoid an obstacle even if it is in the middle of the path. Finally, as speed is out the model used for the generation of the tracks, it is reduced to the computation of a set of parameters that define a third order polynomial. Speed and steering angle is then computed based on the shape of the winner path, which is chosen based on a cost function.
 
-As future work, we can study the inclusion of new costs or long-term control strategies, as those used in \cite{werling2010optimal}. Also, the computation of the steering angle based on the winner path is quite rudimentary. We propose as future work the use of a PID controller or even a predictive one, as that explained in \todocite{XXX-espelosin}.
+As future work, we can study the inclusion of new costs or long-term control strategies, as those used in \cite{werling2010optimal}. Also, the computation of the steering angle based on the winner path is quite rudimentary. We propose as future work the use of a \ac{PID} controller or even a predictive one, as that explained in \todocite{XXX-espelosin}.
 
-In the next chapter, we will show how this method will be integrated with the obstacles detected in the previous stages, concluding the work presented in this Thesis.
+In the next chapter, we will see the results obtained for all the methods described before, and how they can be joined together in order to reach the goal initially proposed for this thesis.
 
 
