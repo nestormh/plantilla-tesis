@@ -40,21 +40,27 @@ With all these methods working, we put the best of them all together, showing th
 
 \addsec{Future Work}
 
-Usar otras características que permitan aumentar el ángulo -> Hablar de SURF y la GPU
-Usar el método para el análisis de cambios en vídeos
+However, there is still much work to do and many things that could be improved. 
 
-Usar la salida para hacer algo
-Pasar al 3D mediante la segmentación bg/fg de imágenes dinámicas
-Permitir una mayor cantidad de dimensiones mediante una implementación eficiente del CPD
-Usar info del color
-Usar la técnica empleada en la fase de evaluación para 
+\begin{itemize}
+ \item We saw that one of the limitations of the method is the maximal distance and angle between the images. Because of that, we think that using other method for the matching of features between images is possible. In fact, we have done some tests in which we used the \ac{GPU} for the computation and matching of \ac{SURF} features (\cite{bay2008speeded}), in which the times obtained were suitable for such approach.
+ \item This method could be used also for other tasks as the improvement of some of the existing change detection methods for aligned video sequences, like those presented by \cite{diego2011video, evangelidis2011slice, evangelidis2011efficient}.
+ \item The output obtained for the non rigid contour tracking method described is still not being used at all. We think that this output could be used for many applications, not just related to \ac{ADAS}, but also to motion analysis in videos or \ac{HMI} systems.
+ \item We would like to go beyond the use of static bidimensional image sequences, and extend the method to 3D. A way to do that would the segmentation of a disparity map, in which the contours used would be the borders of the segmented regions. Then, these could be easily transformed to real world coordinates.
+ \item Another way to do that would be through the addition of new dimensions to the points used in the non-rigid point set registration step. Despite the Coherent Point Drift algorithm allows doing that, it would require the optimization of the current implementation we are using of this method. This will also allow including color information easily. We started a \ac{CUDA} based implementation of this method, with promising results.
+ \item Despite the method used in the results section for the evaluation of this tracking method is reset each frame, we would like to extend it in order to use it for the analysis of the movement of an object. This would require to generate a model of the tracked object, but the analysis of its movement could be done through this method.
+ \item About the evaluation of the dense reconstruction methods, the use of a third camera was promising, but results were not as good as expected. In the future, we expect to use different metrics to measure the similarity between the control camera and virtual images. Also more experiments could be performed, including sequences with different atmospheric conditions like other hours in a day.
+ \item We also want to try new methods for stixels computation. A possibility would be using the polar rectification for the combination of tracking and reconstruction in a single process. 
+ \item We could use the tracking output as a clue for the clustering process, in which we just use the stixels for which a correspondence is found for the clustering process.
+ \item The particle filter based approach is using just position information for the tracking of the obstacles. We think that results would be improved if color information is used. This will avoid the use of sensors different from stereo cameras, but we could think on an schema in which several sensors are joined, being a stereo pair one of them.
+ \item We also would like to track the trajectories of the obstacles along the sequences, which is not being done right now.
+ \item We also want to do a parallel implementation of the method, which should be easy to perform and will give better results in term of time used.
+ \item Regarding to the path planning methods, there also some work that could be done. For example, new clustering strategies could be applied for the global planner.
+ \item Also, the use of \ac{MSVM} could be combined with other classical approaches.
+ \item New cost of long-term control strategies could be applied for the generation and selection of the candidate paths in the local planner.
+ \item The final selection of the applied steering angle and speed could be improved. Some approaches we have considered are the use of a \ac{PID} controller or even more complex control strategies, as a predictive controller.
+\end{itemize}
 
-The use of a third camera for evaluation (section \ref{ch:chapter03_03}) is conceptually appealing, but in practice has shown to produce poor results. Further testing will be needed to assess its real effectiveness in real-world scenarios. In the future, we expect to perform more experiments including more sequences with different atmospheric conditions like other hours in a day, as well as the use of different metrics to measure the similarity between the control camera and virtual images.
+Finally, with all these systems working, it would be interesting to do a more tight combination of them in which, based on the tracked obstacles, Verdino will be able to predict the future motion of the obstacles, giving it a behavior quite close to that followed by humans.
 
-In the future, we want to try to improve the way in which stixels are computed. We think that using the polar rectification for combining tracking and reconstruction could give good results. Also, the use of a measure of the goodness of the tracks at stixel level should help to improve the results obtained for the clustering process.
-
-In the future, we plan to do further research in order to improve the results given by the method. Some ideas are related to the use of color ( despite it would affect to the modularity of our system) as using more information should improve the output. We also think that using a polar voxel grid instead of a cartesian one would improve some results. Also, it would be a good idea to use a Kalman filter in order to track the detected obstacles, so we would know not just their position and current speed, but also their movement along the frames. Finally, we could take advantage of the big amount of operations that are done individually for each voxel and do a parallelized implementation that allows improving the algorithm frequency a little bit more or using a bigger number of particles.
-
-Para el global planner, explorar estrategias de clustering. Combinar el uso de MSVM con Voronoi
-
-As future work, we can study the inclusion of new costs or long-term control strategies, as those used in \cite{werling2010optimal}. Also, the computation of the steering angle based on the winner path is quite rudimentary. We propose as future work the use of a PID controller or even a predictive one, as that explained in \todocite{XXX-espelosin}.
+And then, maybe humans will not have to drive.
