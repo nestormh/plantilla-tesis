@@ -65,19 +65,19 @@ Cost values out from occupied cells decrease with distance using the following e
 In this expression, $\alpha$ is a scaling factor that allows increasing or decreasing the decay rate of the cost of the obstacle. $\|c_{ij}-\vec{o}\|$ is the distance between the cell $c_{ij} \in \mathcal{C}$ (where $\mathcal{C}$ is the set of cells in the costmap) and the obstacle. Finally, $\rho_{inscribed}$ is the inscribed radius, which is the inner circle of the limits of the car. This radius is depicted in the figure \ref{fig:cp07_costmap_concepts}.
 
 \begin{figure}[h!]
-\begin{tabular}{cc}
-  \begin{subfigure}[b]{0.5\textwidth}
+\begin{tabular}{c}
+  \begin{subfigure}[b]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{inscribed_circumscribed}
-    \caption{$\tau_{inscribed}$ and $\tau_{circumscribed}$.}
-    \label{fig:cp07_inscribed_circumscribed}
-  \end{subfigure} &
-  \begin{subfigure}[b]{0.5\textwidth}
-    \centering
-    \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{cost_levels}
+    \includegraphics[width=\textwidth]{cost_levels}
     \caption{Cost levels.}
     \label{fig:cp07_cost_levels}
-  \end{subfigure}% 
+  \end{subfigure}\\ 
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{inscribed_circumscribed}
+    \caption{$\rho_{inscribed}$ and $\rho_{circumscribed}$.}
+    \label{fig:cp07_inscribed_circumscribed}
+  \end{subfigure}
 \end{tabular}
 \caption{Costmap computation concepts.}\label{fig:cp07_costmap_concepts}
 \end{figure}
@@ -348,7 +348,7 @@ This equation is better explained if we look at figure \ref{fig:cp07_consistency
 
 \begin{figure}[h!]
   \centering
-  \includegraphics{consistency_cost}
+  \includegraphics[width=\textwidth]{consistency_cost}
   \caption{Representation of the way in which the consistency cost is computed.}\label{fig:cp07_consistency_cost}
 \end{figure}
 
@@ -368,15 +368,16 @@ Four paths are evolved in a parameterized time $t$, considering a low speed. Two
 
 \subsection{Computation of the vehicle commands}\label{ch:chapter07_01_03}
 
-When using this method for path generation, the computation of the speed and steering commands is not straightforward. We have a path that departs from the current position of the vehicle. However, we still have to think how to follow it. The way in which this is done is taking advantage of the bike dynamics model.
+\todo{Esto se hace por medio de un PID}
+% When using this method for path generation, the computation of the speed and steering commands is not straightforward. We have a path that departs from the current position of the vehicle. However, we still have to think how to follow it. The way in which this is done is taking advantage of the bike dynamics model.
 
-This model is represented in figure \ref{fig:cp07_vehicle_commands}.
+% This model is represented in figure \ref{fig:cp07_vehicle_commands}.
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics{vehicle_commands}
-  \caption{Representation of the model used to recover the steering angle and the speed from a path.}\label{fig:cp07_vehicle_commands}
-\end{figure}
+% \begin{figure}[h!]
+%   \centering
+%   \includegraphics{vehicle_commands}
+%   \caption{Representation of the model used to recover the steering angle and the speed from a path.}\label{fig:cp07_vehicle_commands}
+% \end{figure}
 
 As $R = 1 / \kappa$, we just need to compute the curvature for the first $\rho_{steering}$\,m of the winner path. This value will be the steering angle at current time $t$, $\alpha_{t}$, of the vehicle. From this value, we get the speed which is obtained as a linear function of the required steering change.
 
