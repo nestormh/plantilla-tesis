@@ -235,8 +235,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.18862327"
-     inkscape:cx="902.72334"
-     inkscape:cy="2156.8481"
+     inkscape:cx="979.59116"
+     inkscape:cy="1698.7834"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -443,7 +443,7 @@
          x="2611.4524"
          style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic"
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
            y="-1600.0707"
            x="2611.4524"
            id="tspan6959"
@@ -455,14 +455,14 @@
          x="2611.4519"
          style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic"
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
            y="-805.92352"
            x="2611.4519"
            id="tspan6959-4"
            sodipodi:role="line">t-1</tspan></text>
     </g>
     <g
-       id="g7099">
+       id="g3214">
       <text
          sodipodi:linespacing="125%"
          id="text6957-9"
@@ -470,13 +470,13 @@
          x="12.157166"
          style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic"
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
            y="-1844.4192"
            x="12.157166"
            id="tspan6959-0"
            sodipodi:role="line">u<tspan
    id="tspan7003"
-   style="font-size:65.00091553%;baseline-shift:sub">p</tspan></tspan></text>
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:MathJax_Main Italic;font-family:MathJax_Main;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">p</tspan></tspan></text>
       <text
          sodipodi:linespacing="125%"
          id="text6957-9-9"
@@ -484,13 +484,13 @@
          x="641.41455"
          style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic"
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
            y="-1844.4196"
            x="641.41455"
            id="tspan6959-0-7"
            sodipodi:role="line">u<tspan
    id="tspan7003-2"
-   style="font-size:65.00091553%;baseline-shift:sub">p+1</tspan></tspan></text>
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:MathJax_Main Italic;font-family:MathJax_Main;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">p+1</tspan></tspan></text>
       <text
          sodipodi:linespacing="125%"
          id="text6957-9-4"
@@ -498,132 +498,138 @@
          x="1372.8431"
          style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic"
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
            y="-1844.4192"
            x="1372.8431"
            id="tspan6959-0-0"
            sodipodi:role="line">u<tspan
    id="tspan7003-3"
-   style="font-size:65.00091553%;baseline-shift:sub">p+2</tspan></tspan></text>
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:MathJax_Main Italic;font-family:MathJax_Main;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">p+2</tspan></tspan></text>
     </g>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-352.87115"
-       y="-655.84814"
-       id="text6957-9-8"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan6959-0-4"
+    <g
+       id="g3225">
+      <text
+         sodipodi:linespacing="125%"
+         id="text6957-9-8"
+         y="-655.84814"
          x="-352.87115"
-         y="-655.84814"
-         style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic">u<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
-   id="tspan7051">q</tspan></tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="275.70029"
-       y="-655.84796"
-       id="text6957-9-8-3"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan6959-0-4-0"
-         x="275.70029"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
+           y="-655.84814"
+           x="-352.87115"
+           id="tspan6959-0-4"
+           sodipodi:role="line">u<tspan
+   id="tspan7051"
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:MathJax_Main Italic;font-family:MathJax_Main;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">q</tspan></tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-3"
          y="-655.84796"
-         style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic">u<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
-   id="tspan7051-0">q+1</tspan></tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="1001.4146"
-       y="-655.84802"
-       id="text6957-9-8-1"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan6959-0-4-4"
-         x="1001.4146"
+         x="275.70029"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
+           y="-655.84796"
+           x="275.70029"
+           id="tspan6959-0-4-0"
+           sodipodi:role="line">u<tspan
+   id="tspan7051-0"
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:MathJax_Main Italic;font-family:MathJax_Main;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">q+1</tspan></tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-1"
          y="-655.84802"
-         style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic">u<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
-   id="tspan7051-06">q+2</tspan></tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="1749.9861"
-       y="-655.84814"
-       id="text6957-9-8-9"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan6959-0-4-8"
-         x="1749.9861"
+         x="1001.4146"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
+           y="-655.84802"
+           x="1001.4146"
+           id="tspan6959-0-4-4"
+           sodipodi:role="line">u<tspan
+   id="tspan7051-06"
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:MathJax_Main Italic;font-family:MathJax_Main;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">q+2</tspan></tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-9"
          y="-655.84814"
-         style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic">u<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
-   id="tspan7051-9">q+3</tspan></tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
-       id="text6957-9-8-7"
-       sodipodi:linespacing="125%"
-       transform="translate(31.409019,-257.46823)"><textPath
-         xlink:href="#path6743"
-         id="textPath7158"
-         style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic;fill:#333333">ωp,q</textPath></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
-       id="text6957-9-8-7-7"
-       sodipodi:linespacing="125%"
-       transform="translate(213.21185,313.19229)"><textPath
-         xlink:href="#path6745"
-         id="textPath7273"
-         style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic;fill:#333333">ωp,q+1</textPath></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
-       id="text6957-9-8-7-7-1"
-       sodipodi:linespacing="125%"
-       transform="translate(56.413907,-83.931015)"><textPath
-         xlink:href="#path6749"
-         id="textPath7277"
-         style="font-size:125.00091553000000033px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic;fill:#333333">ωp+1,q</textPath></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
-       id="text6957-9-8-7-7-2"
-       sodipodi:linespacing="125%"
-       transform="translate(386.78815,213.21185)"><textPath
-         xlink:href="#path6747"
-         id="textPath7281"
-         style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic;fill:#333333">ωp,q+2</textPath></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
-       id="text6957-9-8-7-7-5"
-       sodipodi:linespacing="125%"
-       transform="translate(40.364475,-6.078761)"><textPath
-         xlink:href="#path6751"
-         id="textPath7285"
-         style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic;fill:#333333">ωp+1,q+2</textPath></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
-       id="text6957-9-8-7-7-4"
-       sodipodi:linespacing="125%"
-       transform="translate(16.413908,-103.22162)"><textPath
-         xlink:href="#path6753"
-         id="textPath7289"
-         style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic;fill:#333333">ωp+2,q+2</textPath></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
-       id="text6957-9-8-7-7-41"
-       sodipodi:linespacing="125%"
-       transform="translate(129.6453,179.98045)"><textPath
-         xlink:href="#path6755"
-         id="textPath7293"
-         style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_SansSerif;-inkscape-font-specification:MathJax_SansSerif Italic;fill:#333333">ωp+2,q+3</textPath></text>
+         x="1749.9861"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-size:200px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic"
+           y="-655.84814"
+           x="1749.9861"
+           id="tspan6959-0-4-8"
+           sodipodi:role="line">u<tspan
+   id="tspan7051-9"
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:MathJax_Main Italic;font-family:MathJax_Main;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">q+3</tspan></tspan></text>
+    </g>
+    <g
+       id="g3239">
+      <text
+         transform="translate(31.409019,-257.46823)"
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-7"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><textPath
+           style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic;fill:#333333"
+           id="textPath7158"
+           xlink:href="#path6743">ωp,q</textPath></text>
+      <text
+         transform="translate(213.21185,313.19229)"
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-7-7"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><textPath
+           style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic;fill:#333333"
+           id="textPath7273"
+           xlink:href="#path6745">ωp,q+1</textPath></text>
+      <text
+         transform="translate(56.413907,-83.931015)"
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-7-7-1"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><textPath
+           style="font-size:125.00091553000000033px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic;fill:#333333"
+           id="textPath7277"
+           xlink:href="#path6749">ωp+1,q</textPath></text>
+      <text
+         transform="translate(386.78815,213.21185)"
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-7-7-2"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><textPath
+           style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic;fill:#333333"
+           id="textPath7281"
+           xlink:href="#path6747">ωp,q+2</textPath></text>
+      <text
+         transform="translate(40.364475,-6.078761)"
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-7-7-5"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><textPath
+           style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic;fill:#333333"
+           id="textPath7285"
+           xlink:href="#path6751">ωp+1,q+2</textPath></text>
+      <text
+         transform="translate(16.413908,-103.22162)"
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-7-7-4"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><textPath
+           style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic;fill:#333333"
+           id="textPath7289"
+           xlink:href="#path6753">ωp+2,q+2</textPath></text>
+      <text
+         transform="translate(129.6453,179.98045)"
+         sodipodi:linespacing="125%"
+         id="text6957-9-8-7-7-41"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><textPath
+           style="font-size:125px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;baseline-shift:sub;font-family:MathJax_Main;-inkscape-font-specification:MathJax_Main Italic;fill:#333333"
+           id="textPath7293"
+           xlink:href="#path6755">ωp+2,q+3</textPath></text>
+    </g>
   </g>
 </svg>
