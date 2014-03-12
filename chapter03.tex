@@ -10,19 +10,19 @@
 
 \chapter{Evaluation of stereo 3D reconstruction algorithms}\label{ch:chapter03}
 
-Environment mapping is one of the most critical tasks in the development of \ac{ADAS} and stereo vision has been widely used to accomplish it. However, there are very few datasets that allow assessing the performance of a specific method in a real world application. Most datasets have been created in controlled conditions, thus neglecting scenarios that are impossible to reproduce in a laboratory. In this paper, we present the results of the evaluation of three different dense reconstruction algorithm implementations using a number of well-known strategies that represent different trade-offs in terms of cost, set up time and accuracy. In our tests, we evaluated two variants of the \acf{SGM} algorithm, and the \acf{ELAS} method, as well as different combinations of additional filters in order to assess their influence on the final behavior of the algorithms.
+Environment mapping is one of the most critical tasks in the development of \ac{ADAS} and some of the most fruitful techniques used are based on stereo vision. However, there are very few datasets that allow assessing the performance of a specific method in a real world application. Most datasets have been created in controlled conditions, thus neglecting scenarios that are impossible to reproduce in a laboratory. In this paper, we present the results of the evaluation of three different dense reconstruction algorithm implementations using a number of well-known strategies that represent different trade-offs in terms of cost, set up time and accuracy. In our tests, we evaluated two variants of the \acf{SGM} algorithm, and the \acf{ELAS} method, as well as different combinations of additional filters in order to assess their influence on the final behavior of the algorithms.
 
-In this chapter, we will compare the performance level of some state-of-the-art stereovision-based 3D mapping algorithms in automotive scenarios, using both evaluation sets available in literature and data specifically collected from a dedicated recording platform. One of the algorithms will also be analyzed in greater detail, and a number of variations will be tested in order to determine an improved configuration.
+In this chapter, we will describe a set of automatized strategies for the comparison of the performance level of some state-of-the-art stereovision-based 3D mapping algorithms in automotive scenarios, using both evaluation sets available in literature and data specifically collected from a dedicated recording platform. One of the algorithms will also be analyzed in greater detail, and a number of variations will be tested in order to determine an improved configuration.
 
 \section{Experimental Setup}\label{ch:chapter03_01}
 
-Real world scenarios come with little or no data to use as ground-truth, so one solution \cite{Morales2011, Geiger2012} is to use a high-end \ac{LIDAR} unit\footnote{\url{http://velodynelidar.com/lidar/hdlproducts/hdl64e.aspx}} to directly map the area surrounding the vehicle: depth measurements usually have centimeter-level accuracy over the range 5-100\,m, and produce reasonably dense maps, with up to 64 horizontal scanning planes. Another option is to exploit a prior over the data-set, such as the presence of freespace in front of a manually driven vehicle \cite{Steingrube2009} to detect wrongly reconstructed points (false stereo correspondences) over an extended period of time. Finally, a virtual view synthesized from the reconstructed environment geometry can be compared with the actual data recorded by a third, suitably positioned physical camera \cite{Morales2011, Morales2009}.
-In this evaluation the algorithms have been tested using all the mentioned approaches, in order to get a better understanding of their behavior in real-world applications. Some of the tests have been carried out on data acquired using the vehicle depicted in figure \ref{fig:cp03_VIAC}, which has been equipped with a forward-looking Point Grey Bumblebee® XB3-13S2C color camera with 3.5\,mm optics working at a resolution of 1280$\times$960 pixels. The imaging system is synchronized to a SICK LD-MRS-400001 4-plane LIDAR unit running at 12.5\,Hz, with an angular resolution of 0.125$^\circ$ and a field of view of 85$^\circ$, integrated in the front bull-bar. GPS and INS information are provided by a Topcon AGI-3 unit, and are used to predict the vehicle trajectory.
+Real world scenarios come with little or no data to use as ground-truth, so one solution \citep{Morales2011, Geiger2012} is to use a high-end \ac{LIDAR} unit\footnote{\url{http://velodynelidar.com/lidar/hdlproducts/hdl64e.aspx}} to directly map the area surrounding the vehicle: depth measurements usually have centimeter-level accuracy over the range 5-100\,m, and produce reasonably dense maps, with up to 64 horizontal scanning planes. Another option is to exploit a prior over the data-set, such as the presence of freespace in front of a manually driven vehicle \cite{Steingrube2009} to detect wrongly reconstructed points (false stereo correspondences) over an extended period of time. Finally, a virtual view synthesized from the reconstructed environment geometry can be compared with the actual data recorded by a third, suitably positioned physical camera \cite{Morales2011, Morales2009}.
+In this evaluation the algorithms have been tested using some of these approaches, in order to get a better understanding of their behavior in real-world applications. Some of the tests have been carried out on data acquired using the vehicle depicted in figure \ref{fig:cp03_VIAC}, which has been equipped with a forward-looking Point Grey Bumblebee® XB3-13S2C color camera with 3.5\,mm optics working at a resolution of 1280$\times$960 pixels. The imaging system is synchronized to a SICK LD-MRS-400001 4-plane LIDAR unit running at 12.5\,Hz, with an angular resolution of 0.125$^\circ$ and a field of view of 85$^\circ$, integrated in the front bull-bar. GPS and INS information are provided by a Topcon AGI-3 unit, and are used to predict the vehicle trajectory.
 
-\begin{figure}[thpb]
+\begin{figure}[h]
       \centering
       \includegraphics[width=\textwidth, trim=0 0 0 40,clip]{viac}
-      \caption{ The recording platform. Data has been collected using one of the electric vans a) which had been set up in 2010 to take part to the VisLab Intercontinental Autonomous Challenge (VIAC) \cite{Broggi2010VIAC}. b) The imaging unit  is synchronized to a LIDAR c) working at a frequency of 12.5\,Hz. }      
+      \caption{ The recording platform. Data has been collected using one of the electric vans a) which had been set up in 2010 to take part to the VisLab Intercontinental Autonomous Challenge (VIAC) \citep{Broggi2010VIAC}. b) The imaging unit  is synchronized to a LIDAR c) working at a frequency of 12.5\,Hz. }      
       \label{fig:cp03_VIAC}
 \end{figure}
 
@@ -108,9 +108,9 @@ This benchmark is an adaptation of one of the techniques described in \cite{Stei
 \caption{False correspondences estimation example. In pink, the object-free volume which is present in front of the vehicle and, in red, the points falling within said area, produced by false matches.}\label{fig:cp03_fc}
 \end{figure}
 
-\subsection{Normalized cross correlation}\label{ch:chapter03_03}
+\subsection{\acf{NCC}}\label{ch:chapter03_03}
 
-The approaches introduced so far have some limitations: LIDAR-based ground truth still takes time to be produced, so it cannot be provided for large data-sets, while leading vehicle measurement can be easily performed even on long sequences, but it is an indirect performance metric, albeit a relevant one. As an alternative, the use of a third camera \cite{Morales2009}, as illustrated in figure \ref{fig:cp03_trinocular_setup}, allows to directly compare a reconstructed view with the actual images without any manual intervention. 
+The approaches introduced so far have some limitations: LIDAR-based ground truth still takes time to be produced, so it cannot be provided for large data-sets, while leading vehicle measurement can be easily performed even on long sequences, but it is an indirect performance metric, albeit a relevant one. As an alternative, the use of a third camera \citep{Morales2009}, as illustrated in figure \ref{fig:cp03_trinocular_setup}, allows to directly compare a reconstructed view with the actual images without any manual intervention. 
 
 \begin{figure}[h!]
 \centering
@@ -118,7 +118,7 @@ The approaches introduced so far have some limitations: LIDAR-based ground truth
 \caption{Trinocular camera setup for stereo evaluation. The reference and match cameras ($C_{ref}$ and $C_{match}$ respectively) are used to produce a virtual image $I_{virt}$ in the control camera’s reference system that can be compared to the actual recorded image $I_{ctrl}$.}\label{fig:cp03_trinocular_setup}
 \end{figure}
    
-The computed disparity map is used to transform image pixels taken from the reference camera into control camera coordinates, thus effectively creating a virtual image (figure \ref{fig:cp03_lidarGTOriginal}) that can be compared with that recorded by the control camera (figure \ref{fig:cp03_lidarGT}) to produce a cross correlation map (figure \ref{fig:cp03_lidarErrMap}). 
+The computed disparity map is used to transform image pixels taken from the reference camera into control camera coordinates, thus effectively creating a virtual image (figure \ref{fig:cp03_ncc_virtual_img}) that can be compared with that recorded by the control camera (figure \ref{fig:cp03_ncc_control_img}) to produce a cross correlation map (figure \ref{fig:cp03_ncc_comparison}). 
 
 \begin{figure*}[h!]
         \centering
@@ -126,27 +126,27 @@ The computed disparity map is used to transform image pixels taken from the refe
 	  \begin{tabular}{c}
 	    \includegraphics[width=\textwidth]{reprojection}
 	  \end{tabular}
-	  \caption{}\label{fig:cp03_lidarGTOriginal}
+	  \caption{Virtual image.}\label{fig:cp03_ncc_virtual_img}
         \end{subfigure}% 
         ~
         \begin{subfigure}[b]{0.3\textwidth}
 	  \begin{tabular}{c}
 	    \includegraphics[width=\textwidth]{leftNCC}
 	  \end{tabular}
-	  \caption{}\label{fig:cp03_lidarGT}
+	  \caption{Control Image.}\label{fig:cp03_ncc_control_img}
         \end{subfigure}%       
         ~
         \begin{subfigure}[b]{0.3\textwidth}
 	  \begin{tabular}{c}
 	    \includegraphics[width=\textwidth]{ncc}
 	  \end{tabular}
-	  \caption{}\label{fig:cp03_lidarErrMap}
+	  \caption{Representation of the \ac{NCC}}\label{fig:cp03_ncc_comparison}
         \end{subfigure}%    
         
-        \caption{TODO. Cambiar labels, también}\label{fig:cp03_lidarGT}
+        \caption{Virtual and control images. The third image represents the correlation between images shown at pixel level.}\label{fig:cp03_ncc}
 \end{figure*}
 
-However, care must be taken to ensure that the results are meaningful: camera calibration is a source of error which must be kept to a minimum, and the occasional presence of obstacles within the object-free volume must be handled as well. The chosen metric is the Normalized Cross Correlation (NCC), computed as:
+However, care must be taken to ensure that the results are meaningful: camera calibration is a source of error which must be kept to a minimum, and the occasional presence of obstacles within the object-free volume must be handled as well. The chosen metric is the \ac{NCC}, computed as:
 
 \begin{equation}\label{eq:cp03_NCC}
 NCC(I_v,I_c) = {{{1} \over {\Omega}}  \sum_{(x,y) \in \Omega} {{[I_c(x,y)-\mu_c][I_v(x,y)-\mu_v]} \over {\sigma_c \sigma_v}}}
@@ -169,7 +169,7 @@ The calibration procedure starts with an initial rough alignment step; after tha
 \underset{[R|t]}{\arg\min} \sum_{i} \lVert p_i - K[R|t] w_i \rVert^2
 \end{equation}
 
-with $[R|t]$ being the unknown rototranslation matrix to estimate, $p$ a given 2D (undistorted) image pixel and $w$ the corresponding world point. Assuming to operate under a pin-hole camera model, $K$ is the camera projection matrix. As a non-linear solver, the Levenberg-Marquardt (\cite{Levenberg1944}) approach has been chosen, given its robustness an relatively fast convergence times.
+with $[R|t]$ being the unknown rototranslation matrix to estimate, $p$ a given 2D (undistorted) image pixel and $w$ the corresponding world point. Assuming to operate under a pin-hole camera model, $K$ is the camera projection matrix. As a non-linear solver, the Levenberg-Marquardt (\cite{Levenberg1944}) approach has been chosen, given its robustness and relatively fast convergence times.
 
 \subsection{Camera-to-camera calibration}\label{ch:chapter03_02_02}
 
@@ -181,7 +181,7 @@ Let $P_{mw}$ and $P_{ms}$ be two homogeneous disparity points on the right (matc
 & P_{ms} = (u_{rs} - d_{rs}, v_{rs}, -d_{rs}, 1)
 \end{align}
 
-then there exist a 3D homography matrix H so that $P_{ms} = HHP_{mw}$ , in the form:
+, then there exist a 3D homography matrix H so that $P_{ms} = HHP_{mw}$ , in the form:
 
 \begin{equation}\label{eq:cp03_homographyMatrix}
 H = Q_s^{-1} \left[ \begin{array}{cc}
@@ -193,7 +193,7 @@ R & t \\
 
 \section{Algorithms}\label{ch:chapter03_03}
 
-In order to have a broad range of performance statistics, three different dense reconstruction algorithm implementations have been tested. The first two are both based on the so-called Semi-Global Matching approach (in short, SGM) first presented in \cite{Hirschmuller2005}, albeit exploiting different metrics for cost volume initialization, while the latter \cite{Geiger2011} matches sparse features in the left and right images to restrict the search range of a local window-based approach.
+In order to have a broad range of performance statistics, three different dense reconstruction algorithm implementations have been tested. The first two are both based on the so-called Semi-Global Matching approach (in short, SGM) first presented in \cite{Hirschmuller2005}, albeit exploiting different metrics for cost volume initialization, while the latter \citep{Geiger2011} matches sparse features in the left and right images to restrict the search range of a local window-based approach.
 
 \subsection{Semi-Global Matching}\label{ch:chapter03_03_01}
 
@@ -203,7 +203,7 @@ The Semi-Global Matching approach aims at identifying the disparity map $D$ that
 E(D) = E_{data}(D) + E_{smooth}(D)
 \end{equation}
 
-with $E_{data}(D)$ representing the pixel-wise matching cost and Esmooth(D) a smoothness constraint.
+with $E_{data}(D)$ representing the pixel-wise matching cost and $E_{smooth}(D)$ a smoothness constraint.
 
 In particular, the $E_{data}(D)$ term is the sum of all pixel matching costs $C$ for the disparities of $D$:
 
@@ -261,7 +261,7 @@ Each position $C(p, d)$ of the cost volume is then initialized with the number o
 
 \subsubsection{Birchfield-Tomasi cost metric}\label{ch:chapter03_03_01_02}
 
-The freely available OpenCV SGM implementation \footnote{\url{http://www.opencv.org}} (BT-SGM in the following) uses the Birchfield-Tomasi pixel dissimilarity metric \cite{Birchfield1998} to initialize the cost volume.
+The freely available OpenCV SGM implementation \footnote{\url{http://www.opencv.org}} (BT-SGM in the following) uses the Birchfield-Tomasi pixel dissimilarity metric \citep{Birchfield1998} to initialize the cost volume.
 
 Let $I_L$ and $I_R$ be the 1D functions representing the intensity values along a given scan-line in the left and right images respectively, and $\hat{I}_L(x_L)$, $\hat{I}_R(x_R)$ the linearly interpolated functions between the sample points around $x_L$ and $x_R$. It is then possible to determine how well the intensity at $x_L$ fits into the linearly interpolated region surrounding $x_R$.
 
@@ -286,7 +286,7 @@ and is used to initialize the cost volume for any given pixel and disparity valu
 
 \subsection{Efficient Large-Scale Stereo Matching}\label{ch:chapter03_03_02}
 
-This method, proposed in \cite{Geiger2011} and referred to as ELAS in the following is particularly suited for handling the high disparity ranges which can arise by using large baselines or very high resolutions images.
+This method, proposed in \cite{Geiger2011} and referred to as ELAS in the following, is particularly suited for handling the high disparity ranges which can arise by using large baselines or very high resolutions images.
 
 It exploits sparse, robustly matched control points to generate a 2D mesh via Delaunay triangulation, which in turn is leveraged to create a prior that is used to reduce the disparity search range for the remaining pixels. Said prior is formed by computing a piecewise linear function induced by the support point disparities and the triangulated mesh.
 
@@ -300,15 +300,17 @@ A number of pre- and post-processing filters, and their combinations, have been 
 \item Ternarized Census. In order to improve the amount of information about the local image structure encoded in the resulting images, the Census transform function has been modified to return three different symbols $(00, 01, 11)$, instead of just $0, 1$.
 \item Hamming scores aggregation. As suggested in \cite{Pantilie2012}, a 5$\times$5 window centered around each pixel is used to preprocess each score in the input cube.
 \item Uniqueness constraint. The ratio between the first and second minima of the aggregated cost function for a given pixel is used to determine whether a match is reliable or not: higher ratios correspond to a strong minimum, which is more likely to be correct.
-\item Adaptive mean. An 8$\times$8 adaptive mean filter \cite{Geiger2011} is applied over the resulting disparity map $D$.
+\item Adaptive mean. An 8$\times$8 adaptive mean filter \citep{Geiger2011} is applied over the resulting disparity map $D$.
 \item Despeckle filter. Small disparity image patches with values very different from their neighborhood are usually likely to correspond to wrong associations, so the strategy proposed in \cite{Hirschmuller2008} is used to identify and remove them.
-\item Gap filter. Constant interpolation along 1D horizontal and vertical paths in the disparity image is performed in order to fill small ($\leq 3$\,px) areas with missing disparity values \cite{Geiger2011}.
+\item Gap filter. Constant interpolation along 1D horizontal and vertical paths in the disparity image is performed in order to fill small ($\leq 3$\,px) areas with missing disparity values \citep{Geiger2011}.
 \end{itemize}
 
 Each filter has been tested individually against the Census-SGM baseline configuration, and three promising setups have been selected. Each setup has then been compared against other approaches, which also share some of the same filtering strategies, as detailed in Tab. \ref{table:cp03_algorithms}. For the BT-SGM and ELAS algorithms the setups suggested in \cite{Geiger2012} have been followed.
 
+In section \ref{ch:chapter03_04} of chapter \ref{ch:chapter08}, the results obtained for the algorithms described using the proposed evaluation methods are detailed.
+
 \begin{savenotes}
-\begin{table}[h]
+\begin{table}[h!]
 \begin{center}
 \resizebox{\columnwidth}{!} {
 \begin{tabular}{|l|c|c|c|c|c|}
@@ -340,14 +342,12 @@ Each filter has been tested individually against the Census-SGM baseline configu
 
 \section{Summary}\label{ch:chapter03_05}
 
-The tests conducted so far have quantitatively confirmed how targeted filtering strategies can substantially reduce the amount of wrong pixels computed during stereo reconstruction, while also improving the results accuracy.
-
-In particular, the Census-SGM configuration 2 described in section \ref{ch:chapter03_03_01_01} reduces the number of bad pixels by 7.5\% at the 90th percentile, while also improving the average error by 0.15\,px, making it the candidate of choice among those tested.
+As we will see in chapter \ref{ch:chapter08}, the tests conducted so far have quantitatively confirmed how targeted filtering strategies can substantially reduce the amount of wrong pixels computed during stereo reconstruction, while also improving the results accuracy.
 
 This evaluation also served to validate the strategies employed. While LIDAR-based ground truth (see section \ref{ch:chapter03_01_01}) is very effective at producing reliable statistics, it remains quite expensive to carry out, both in terms of the equipment required and of the manual post-processing that has to be performed to produce each frame.
 
 As an alternative, the use of a prior on the vehicle movement (section \ref{ch:chapter03_02}) can be successfully exploited to identify a portion of the wrongly reconstructed points. The advantage of this approach is that it can be effectively used to evaluate the behavior of an algorithm on big data-sets, thus covering a broad range of environmental conditions. On the other hand, the portion of space that can be checked is limited to the area in front of a moving vehicle, which often times is the most critical, but nonetheless can introduce a bias in the resulting statistics.
 
-The use of a third camera for evaluation (section \ref{ch:chapter03_03}) is conceptually appealing, but in practice has shown to produce poor results. Further testing will be needed to assess its real effectiveness in real-world scenarios. In the future, we expect to perform more experiments including more sequences with different atmospheric conditions like other hours in a day, as well as the use of different metrics to measure the similarity between the control camera and virtual images.
+The use of a third camera for evaluation (section \ref{ch:chapter03_03}) is conceptually appealing, but in practice has shown to produce poor results (see section \ref{ch:chapter03_04}). Further testing will be needed to assess its real effectiveness in real-world scenarios. In the future, we expect to perform more experiments including more sequences with different atmospheric conditions like other hours in a day, as well as the use of different metrics to measure the similarity between the control camera and virtual images.
 
 The algorithms shown here and their associated filters are used for a dense reconstruction of the world. However, in order to save computational costs, there are other approaches for 3D reconstruction of the environment of the vehicle which avoid the full reconstruction of the environment. In the next chapter, we will see one of these approaches, which is based on the Stixel World decribed by \cite{badino2009stixel}.
