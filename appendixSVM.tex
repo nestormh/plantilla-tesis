@@ -10,15 +10,15 @@
 
 \chapter{Support Vector Machines}\label{ch:appendixSVM}
 
-\acf{SVM} are a set of linear classifiers that are usually employed both for classification and regression, which are based on methods of supervised learning. This technique is based on the Vapnik Chervonenkis (VC) dimension from the statistical learning theory and Structural Risk Minimization.
-The original algorithm was developed by Vladimir Vapnik \cite{vapnik1998statistical}, but the most currently used version (soft margin) was proposed together by Vapnik and Corinna Cortes in 1995 \cite{cortes1995support}.
+\acfp{SVM} are a set of linear classifiers usually employed both for classification and regression, which are based on methods of supervised learning. This technique is based on the Vapnik Chervonenkis (VC) dimension from the statistical learning theory and Structural Risk Minimization.
+The original algorithm was developed by Vladimir Vapnik \citep{vapnik1998statistical}, but the most currently used version (soft margin) was proposed together by Vapnik and Corinna Cortes in 1995 \citep{cortes1995support}.
 
 \section{Margin Maximization}\label{ch:appendixSVM_01}
 
 Let $(x_1,y_1),\dots,(x_N,y_N)$, with $\begin{array}{l c r}  
   x_k \in \mathbb{R}^m & y_k \in {-1,1} & k=1,\dots,N 
 \end{array}$ be the set of samples separated by the hyperplane $w^T \cdot x + b = 0$, where $x$ is a $N$-dimensional point and $w$ is a vector of weights. This hyperplane divides data, in the way that $w^T \cdot x_k + b > 0$ for the $x_k$ in a class, and $w^T \cdot x_k + b < 0$ for the $x_k$ in the other class. If data is separable, it is quite likely to have more than one way to do that. From all possible solutions, the \ac{SVM} selects that with the biggest distance from the hyperplane to the nearest data points. The described method takes advantage of this fact.
-If the training points are labeled in the way that $y_k \in \{ -1, +1\}$, where $+1$ is a positive sample, and $-1$ a negative sample, the following expression is obtained:
+If training points are labeled in the way that $y_k \in \{ -1, +1\}$, where $+1$ is a positive sample, and $-1$ a negative sample, the following expression is obtained:
 
 \begin{equation}\label{eq:appendixSVM_hyperplane_scaled}
   \begin{array}{l r}
@@ -36,7 +36,7 @@ Based on this, both classes can be separated by two hyperplanes, $H_1: w^T \cdot
 y_k (w^T \cdot x_k + b) \geq 1 & \forall k \in \{1, \dots, N \}
 \end{array} $.
 
-To solve this problem, the dual problem must be obtained. After a few calculations, we obtain the following dual formulation:
+To solve this, the dual problem must be obtained. After a few calculations, we obtain the following formulation:
 
 \begin{equation}\label{eq:appendixSVM_dual_formulation}
  L_D (\alpha) = \sum_{k=1}^N \alpha_k - {1 \over 2} \sum_{k = 1, l=1}^N \alpha_k \alpha_l y_k y_l x_k^T x_l
@@ -61,7 +61,7 @@ In these cases, the objective function \ref{eq:appendixSVM_objective_function} c
 
 , where $\xi_k$ is the error allowed in the classification.
 
-The solution to this problem can also be obtained solving the dual problem, similar to the linear case. The non-zero $\alpha_k$ corresponds to the next two cases:
+The solution of this problem can also be obtained through the dual formulation, as we did for the linear case. The non-zero $\alpha_k$ corresponds to the next two cases:
 \begin{itemize}
  \item For SVs on either of two hyperplanes, $0 < \alpha_k < C$.
  \item For SVs inside the hyperplanes, $\alpha_k = C $.
@@ -69,7 +69,7 @@ The solution to this problem can also be obtained solving the dual problem, simi
 
 \section{Non-linear \ac{SVM}}\label{ch:appendixSVM_03}
 
-\acp{SVM} can also be used to determine non-linear separable surfaces. To do that it is possible to use kernel based techniques. Using the appropriate kernel function we can find the separating hyperplane using higher dimensions. This kernel function allows changing the problem of locating a non-linear separating surface in the original space by finding a separating hyperplane inside the high-dimensional space, allowing reducing the calculation costs and, at the same time, obtaining an optimal non-linear separating surface inside the original space, as described at \cite{burges1998tutorial}.
+\acp{SVM} can also be used to determine non-linear separable surfaces. To do that, it is possible to use kernel based techniques. Using the appropriate kernel function we can find the separating hyperplane by using higher dimensions. This kernel function allows changing the problem of finding a non-linear separating surface in the original space by computing a separating hyperplane inside the high-dimensional space, allowing reducing the calculation costs and, at the same time, obtaining an optimal non-linear separating surface inside the original space, as described at \cite{burges1998tutorial}.
 
 Let $\pi$ be the mapping of the data from the original space to higher dimensions. This mapping is given by several functions $K$:
 
@@ -89,7 +89,7 @@ And the discriminative function:
  y = sign \left( \sum_{k \in S} \alpha_k y_k K(x_k, x) + b \right)
 \end{equation}
 
-Function K can take several forms, being the most common those listed next:
+Function $K$ can take several forms, being the most common those listed next:
 \begin{itemize}
  \item Linear: $K(x_k, x_l) = x_k^T \cdot x_l$.
  \item Polynomial: $K(x_k, x_l) = (\gamma \cdot x_k^T \cdot x_l + r)^d$.
@@ -97,14 +97,4 @@ Function K can take several forms, being the most common those listed next:
  \item Sigmoid: $K(x_k, x_l) = \tanh(\gamma \cdot x_k^T \cdot x_l + r)$
 \end{itemize}
 
-In our contribution, we use the Gaussian \acf{RBF}, as it it the most suitable for our purpose, as it is able to produce continuous soft decision boundaries, which is the objective of our method.
-
-In general, the main advantages of using \ac{SVM}  are listed in \cite{miura2006support}:
-
-\begin{enumerate}
-\item With \ac{SVM}, it is possible to generate non-linear hyperplanes which limit areas in the ground, allowing generating smooth paths.
-\item Margin maximization allows performing a safe search strategy, ensuring that the path is always going to be distant enough to the obstacles.
-\item By using \acp{SVM}, the uncertainty due to the errors introduced by sensors is reduced, since they try to maximize the distance to the points that define different obstacles. If it is not possible to define a line that clearly divides two different objects, a function that tries to minimize this effect is generated.
-\end{enumerate}
-
-In addition to these features, the use of Multiclass Support Vector Machines adds another advantage.  By using them, \emph{all} possible routes in a map can be generated ensuring that they will be safe (the distance to the obstacles will be optimal) and smooth.
+In the method described in chapter \ref{ch:chapter06}, we use the Gaussian \acf{RBF}, as it is able to produce continuous soft decision boundaries, making it the most suitable for application.

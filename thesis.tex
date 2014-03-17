@@ -5,15 +5,15 @@
 %%
 %% Esta obra está bajo licencia Creative Commons Reconocimiento 3.0 Unported
 %%
-\documentclass[b5paper,twoside,11pt,DIV=calc]{scrbook}
-\KOMAoptions{open=right,cleardoublepage=empty,headings=big,headsepline=true,
-  chapterprefix,bibliography=totoc,captions=tableheading,numbers=enddot,
-  draft=false}
-
-% \documentclass[a4paper,oneside,11pt,DIV=25]{scrbook}
-% \KOMAoptions{cleardoublepage=empty,headings=big,headsepline=true,
+% \documentclass[b5paper,twoside,11pt,DIV=calc]{scrbook}
+% \KOMAoptions{open=right,cleardoublepage=empty,headings=big,headsepline=true,
 %   chapterprefix,bibliography=totoc,captions=tableheading,numbers=enddot,
 %   draft=false}
+
+\documentclass[a4paper,oneside,11pt,DIV=25]{scrbook}
+\KOMAoptions{cleardoublepage=empty,headings=big,headsepline=true,
+  chapterprefix,bibliography=totoc,captions=tableheading,numbers=enddot,
+  draft=false}
 
 
 % Idioma
@@ -93,7 +93,7 @@
 \usepackage{pdflscape}
 \usepackage{footnote}
 \usepackage{xtab}
-\usepackage{placeins}
+\usepackage[section]{placeins}
 
 
 % Tablas
@@ -242,13 +242,13 @@ References with more than one author are ordered based on the first of them.\par
 % \pdfbookmark{\listalgorithmname}{listofalgorithms}
 % \listofalgorithms
 % 
-% \input{acronyms}
+\input{acronyms}
 % \input{notation}
 
 % \input{chapter00}
 
 % \mainmatter
-% \part{Obstacle detection}
+% \part{Obstacle detection}.
 % \input{chapter01}
 % \input{chapter02}
 % \input{chapter03}
@@ -256,15 +256,15 @@ References with more than one author are ordered based on the first of them.\par
 % \input{chapter05}
 % \part{Obstacle avoidance and planning}
 % \input{chapter06}
-% \input{chapter07}
+\input{chapter07}
 % \acresetall
-% 
+
 % \input{results}
 % 
 % \input{conclusions}
 % 
-\appendix
-\input{appendixPolarCalib}
+% \appendix
+% \input{appendixPolarCalib}
 % \input{appendixSVM}
 
 \backmatter
