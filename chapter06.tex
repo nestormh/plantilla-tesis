@@ -26,7 +26,7 @@ In general, the main advantages of using \ac{SVM}  are listed in \cite{miura2006
 
 In addition to these features, the use of \acl{MSVM} adds another advantage.  By using them, \emph{all} possible routes in a map can be generated ensuring that they will be safe (the distance to the obstacles will be optimal) and smooth.
 
-The method has been implemented and the code\footnote{\comment{Pasar a github: \url{http://nmorales.webs.ull.es/MSVMPP}}}, as well as a set of videos (\url{http://youtu.be/f-tdMnHPhM8}, \url{http://youtu.be/qyqLH1huePw}) showing the performance of the algorithm and some comparisons with other methods, are available. In our implementation, we have developed a set of subroutines based on \ac{CUDA}. libraries\footnote{\url{http://www.nvidia.com}}. This allowed us taking advantage of the parallel processing capabilities of the \ac{GPU} of the computer, allowing us to achieve a good performance without the need of expensive hardware.
+The method has been implemented and the code\footnote{\url{https://github.com/nestormh/svm_path_planner}}, as well as a set of videos (\url{http://youtu.be/f-tdMnHPhM8}, \url{http://youtu.be/qyqLH1huePw}) showing the performance of the algorithm and some comparisons with other methods, are available. In our implementation, we have developed a set of subroutines based on \ac{CUDA}. libraries\footnote{\url{http://www.nvidia.com}}. This allowed us taking advantage of the parallel processing capabilities of the \ac{GPU} of the computer, allowing us to achieve a good performance without the need of expensive hardware.
 
 \section{Method}\label{ch:chapter06_01}
 
@@ -68,7 +68,7 @@ In our implementation, we have considered the world map as a grid of a certain r
 
 The boundaries obtained in the previous step are used as input for the obstacles clustering stage. At this point, we have a cloud of points $\mathcal{P}$ from which we do not know if they belong to the same obstacle or not. This clustering is done using the method described in \cite{rusu2009semantic}. The procedure is the following:
 
-\begin{algorithm}
+\begin{algorithm}[h!]
 \caption{Obstacles clustering}
 \label{alg:obstacles_clustering}
 \begin{algorithmic}

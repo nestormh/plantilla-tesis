@@ -5,15 +5,15 @@
 %%
 %% Esta obra está bajo licencia Creative Commons Reconocimiento 3.0 Unported
 %%
-% \documentclass[b5paper,twoside,11pt,DIV=calc]{scrbook}
-% \KOMAoptions{open=right,cleardoublepage=empty,headings=big,headsepline=true,
-%   chapterprefix,bibliography=totoc,captions=tableheading,numbers=enddot,
-%   draft=false}
-
-\documentclass[a4paper,oneside,11pt,DIV=25]{scrbook}
-\KOMAoptions{cleardoublepage=empty,headings=big,headsepline=true,
+\documentclass[b5paper,twoside,11pt,DIV=calc]{scrbook}
+\KOMAoptions{open=right,cleardoublepage=empty,headings=big,headsepline=true,
   chapterprefix,bibliography=totoc,captions=tableheading,numbers=enddot,
   draft=false}
+
+% \documentclass[a4paper,oneside,11pt,DIV=25]{scrbook}
+% \KOMAoptions{cleardoublepage=empty,headings=big,headsepline=true,
+%   chapterprefix,bibliography=totoc,captions=tableheading,numbers=enddot,
+%   draft=false}
 
 
 % Idioma
@@ -153,8 +153,7 @@
 \usepackage[sort]{natbib}
 \bibliographystyle{abbrvnat}
 \bibpunct{(}{)}{;}{a}{,}{,}
-\setbibpreamble{References shown next are presented in alphabetic order by author. 
-References with more than one author are ordered based on the first of them.\par\bigskip}
+\setbibpreamble{The following references are author-ordered.\par\bigskip}
 
 % Referencias
 \usepackage[english]{varioref}
@@ -175,7 +174,7 @@ References with more than one author are ordered based on the first of them.\par
   pdftitle={Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques},
   pdfauthor={N\'estor Morales Hern\'andez},
   pdfsubject={Doctoral Thesis},
-  pdfkeywords={XXX, please, add, the, keywords}
+  pdfkeywords={Obstacle Detection and Tracking, Path Planning, Autonomous Vehicles, Image Registration, Background Removal, Non Rigid Point Set Registration, Stereo Vision, Long Sequences Automatic Evaluation, Stixel World, Particle Filter, Voxelization, Support Vector Machines, Multiclass Support Vector Machines, Trajectory Generation, Local Path Planner, Frenét Space}
   ]{hyperref}
   
   \usepackage{breakurl} 
@@ -208,64 +207,65 @@ References with more than one author are ordered based on the first of them.\par
 % Estructura del documento
 \begin{document}
 
-% \frontmatter
-% \label{frontpage}\pdfbookmark{Doctoral Thesis}{frontpage}
-% \titlehead{
-% \includegraphics[height=1cm]{ull}
-%   \vskip 1em
-%   Facultad de F\'isica y Matem\'aticas \\
-%   Departamento de Ingenier\'ia de Sistemas y Autom\'atica y Arquitectura y Tecnolog\'ia de Computadores.}
+\frontmatter
+\label{frontpage}\pdfbookmark{Front Page}{frontpage}
+\titlehead{
+\includegraphics[height=1cm]{ull}
+  \vskip 1em
+  Facultad de F\'isica y Matem\'aticas \\
+  Departamento de Ingenier\'ia Inform\'atica}
 % \subject{Doctoral Thesis}
-% \title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
-% \author{N\'estor Morales Hern\'andez}
-% \renewcommand{\codirector}{Leopoldo Acosta S\'anchez\\Jonay T. Toledo Carrillo}
-% \date{2014}
-% \maketitle
-% 
-% \input{certificate}
-% \input{dedicatory}
-% \input{acknowledges}
-% 
-% \cleardoublepage
-% \pdfbookmark{\contentsname}{tableofcontents}
-% \tableofcontents
-% 
-% \cleardoublepage
-% \pdfbookmark{\listtablename}{listoftables}
-% \listoftables
-% 
-% \cleardoublepage
-% \pdfbookmark{\listfigurename}{listoffigures}
-% \listoffigures
-% 
-% \cleardoublepage
-% \pdfbookmark{\listalgorithmname}{listofalgorithms}
-% \listofalgorithms
-% 
+\title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
+\author{N\'estor Morales Hern\'andez}
+\renewcommand{\codirector}{Leopoldo Acosta S\'anchez\\Jonay T. Toledo Carrillo}
+\date{2014}
+\maketitle
+
+\input{certificate}
+\input{dedicatory}
+\input{acknowledges}
+
+\cleardoublepage
+\pdfbookmark{\contentsname}{tableofcontents}
+\tableofcontents
+
+\cleardoublepage
+\pdfbookmark{\listtablename}{listoftables}
+\listoftables
+
+\cleardoublepage
+\pdfbookmark{\listfigurename}{listoffigures}
+\listoffigures
+
+\cleardoublepage
+\pdfbookmark{\listalgorithmname}{listofalgorithms}
+\listofalgorithms
+
 \input{acronyms}
 % \input{notation}
 
-% \input{chapter00}
+\cleardoublepage
+\input{chapter00}
 
-% \mainmatter
-% \part{Obstacle detection}.
-% \input{chapter01}
-% \input{chapter02}
-% \input{chapter03}
-% \input{chapter04}
-% \input{chapter05}
-% \part{Obstacle avoidance and planning}
-% \input{chapter06}
+\mainmatter
+\part{Obstacle detection}
+\input{chapter01}
+\input{chapter02}
+\input{chapter03}
+\input{chapter04}
+\input{chapter05}
+\part{Obstacle avoidance and planning}
+\input{chapter06}
 \input{chapter07}
-% \acresetall
+\acresetall
 
-% \input{results}
-% 
-% \input{conclusions}
-% 
-% \appendix
-% \input{appendixPolarCalib}
-% \input{appendixSVM}
+\input{results}
+
+\input{conclusions}
+
+\appendix
+\input{appendixPolarCalib}
+\input{appendixSVM}
 
 \backmatter
 \bibliography{references}

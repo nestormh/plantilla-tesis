@@ -2,7 +2,7 @@
 
 \chapter{Stixel World}\label{ch:chapter04}
 
-In the previous chapter, we saw a set of algorithms and configurations able to construct a disparity map from a pair of stereo images. These methods are useful for the reconstruction of the environment. However, this reconstruction is dense, which leads to an intensive usage of the computer resources. In order to solve this problem, some authors propose approaches that try to minimize the area of the image being processed by doing a simpler reconstruction than that done with dense 3D reconstruction algorithms. In this sense, \cite{badino2009stixel} proposed to represent the world by a set of rectangular sticks named \emph{stixels} (from \emph{stick} and \emph{pixel}). Each stixel is defined by its 3D position relative to the camera and stands vertically on the ground, having a certain height.
+In the previous chapter, we presented a set of algorithms and configurations able to construct a disparity map from a pair of stereo images. These methods are useful for the reconstruction of the environment. However, this reconstruction is dense, which leads to an intensive usage of the computer resources. In order to solve this problem, some authors propose approaches that try to minimize the area of the image being processed by doing a simpler reconstruction than that done with dense 3D reconstruction algorithms. In this sense, \cite{badino2009stixel} proposed a representation of the world based on a set of rectangular sticks named \emph{stixels} (from \emph{stick} and \emph{pixel}). Each stixel is defined by its 3D position relative to the camera and stands vertically on the ground, having a certain height.
 This compact but flexible representation of the world can be used as the common basis for the scene understanding tasks. The main advantages of using such an approach are listed next:
 \begin{itemize}
  \item \emph{Compact}. Significant reduction of the data volume.
@@ -11,17 +11,17 @@ This compact but flexible representation of the world can be used as the common 
  \item \emph{Robust}. Outliers must have minimal or no impact on the resulting representation.
 \end{itemize}
 
-The method described in this chapter is based in the fast stixels implementation described in \cite{benenson2012pedestrian}. One of the main advantages of this implementation is that there is no need of obtaining a previous depth map. This fact is also the main reason for which we did not use the original implementation from \cite{badino2009stixel} or that from \cite{pfeiffer2010efficient}. Based on the output of this method, we do the tracking of the stixels using a two-level based tracking system, where each level is supported by a bipartite-graph method based on a certain cost metric. We have tested several cost metrics, described in the following sections.
+The method described in this chapter is based in the fast stixels implementation described in \cite{benenson2012pedestrian}. One of the main advantages of this implementation is that there is no need of obtaining a previous depth map. This fact is also the main reason for which we did not use the original implementation from \cite{badino2009stixel} or that from \cite{pfeiffer2010efficient}. Based on the output of this method, we track stixels using a two-level based tracking system, where each level is supported by a bipartite-graph method based on a certain cost metric. We have tested several cost metrics, described in the following sections.
 
-Our tracking method is based on the contribution by \cite{gunyel2012stixels}. There, movement is just computed for the areas covered by stixels. It has been demonstrated that stixels are good enough to do a representation of the surroundings of a vehicle, and that they have a enough detail level for the movement detection. Traditionally, this movement detection is carried out through the computation of the optical flow between two frames, which is computationally expensive. In this chapter, we will see how this movement can be computed also using the stixel world representation, by extending the method of \cite{gunyel2012stixels}. For that, we have used two different but related approaches, each with its own benefits and drawbacks. The first tries to cluster the stixels in objects, so the tracking is performed at object level; the second joins the stixel tracking with the object tracking in a two level tracking scheme.
+Our tracking method is based on the contribution by \cite{gunyel2012stixels}, where movement performed by stixels between frames is computed. It has been demonstrated that stixels are good enough to do a representation of the surroundings of a vehicle, and that they have a enough detail level for movement detection. Traditionally, this movement detection is carried out through the computation of the optical flow between two frames, which is computationally expensive. In this chapter, we will see how this movement can be computed also using the stixel world representation, by extending the method of \cite{gunyel2012stixels}. For that, we have used two different but related approaches, each with its own benefits and drawbacks. The first tries to cluster the stixels in objects, so the tracking is performed at object level; the second joins the stixel tracking with the object tracking in a two level tracking scheme.
 
 The contribution of this work is summarized next:
 \begin{enumerate}
- \item Improvement of the reconstruction quality obtained by the stixels, specially in terms of the computed depth. The free space computation without the use of a disparity map have some drawbacks. Some of them are related to the fact that the precision in the reconstruction of the obstacles is not good enough. The object reconstruction detection scheme proposed in this chapter allows the correction of the stixel depths and the removal of some of the fake obstacles, as described in sections \ref{ch:chapter04_02_01} and \ref{ch:chapter04_02_02}.
- \item Improvement of the results obtained by the method described in \cite{gunyel2012stixels}, in both object and two-level tracking approaches. We modified the method by using a graph-based approach instead of a \ac{DP} based method, as they did. 
+ \item Improvement of the reconstruction quality obtained by the stixels, specially in terms of the computed depth. Free space computation without the use of a disparity map have some drawbacks. Some of them are related to the fact that precision in the reconstruction of the obstacles is not good enough. Object reconstruction detection scheme proposed in this chapter allows the correction of the stixel depths and the removal of some of the fake obstacles, as described in sections \ref{ch:chapter04_02_01} and \ref{ch:chapter04_02_02}.
+ \item Improvement of results obtained by the method described in \cite{gunyel2012stixels}, in both object and two-level tracking approaches. We modified the method by using a graph-based approach instead of a \ac{DP} based method, as they did. 
  \item Different cost metrics for the tracking have been tested, with promising results. 
- \item Faster tracking. As we will see in section \ref{ch:chapter04_02_04}, the speed achieved with our implementation is higher, specially in the object based tracking. The two-level tracking is also a little bit faster, thanks to the usage of a bipartite graph based method for the matching of the stixels between frames. \comment{No estoy considerando el tiempo empleado tanto por la calibración polar como por la transformación entre imágenes de OpenCV y las Graphical Image Library de Boost (que se toma su tiempo)}
- \item Our method is slightly more robust after changes between images (for example, in presence of a low framerate), specially in the case of the approach in which just the object level is used. \comment{No es que la diferencia sea para tirar cohetes, pero haberla la hay.}
+ \item Faster tracking. As we will see in section \ref{ch:chapter04_02_04}, the speed achieved with our implementation is higher, specially in the object based tracking. The two-level tracking is also a little bit faster, thanks to the usage of a bipartite graph based method for the matching of the stixels between frames.
+ \item Our method is slightly more robust after changes between images (for example, in presence of a low framerate), specially in the case of the approach in which just the object level is used.
 \end{enumerate}
 
 In the following section, the pipeline followed by the method is detailed. We also have developed a set of tests in order to determine the quality and the performance of the method. These results are detailed in section \ref{ch:chapter04_02} in chapter \ref{ch:chapter08}.
@@ -30,13 +30,14 @@ In the following section, the pipeline followed by the method is detailed. We al
 
 The method follows the pipeline represented in figure \ref{fig:cp04_pipeline}. First, from a given pair of images, the free space in front of the vehicle is computed in order to estimate the ground plane. From it, stixels are obtained. Then, a two-level tracking approach begins. The first level is that corresponding to the tracking of the stixels. This stage is inspired in the work described in \cite{gunyel2012stixels}. The set of stixels computed in the current frame are compared with those from the previous frame. Based on this comparison, some of them are matched. At the same time, we cluster stixels based on their position once projected in the 3d world. Using the clusters and the tracked stixels, we start a new tracking step in which the tracking is performed at object level. Once it is finished, we will know the obstacles in the scene and their velocities, as well as an historic of the path followed by them that could be useful for future movement estimation.
 
-We also propose another solution in which just the object level tracking is performed. In this case, instead of doing a comparison at stixel level, we compare each obstacle to the obstacles detected in the previous frame, so the stixel level tracking is not needed anymore. In section \ref{ch:chapter04_02}, we will see the advantages and drawbacks of using one or another approach. In the video available at \url{http://youtu.be/RYFwzWGAmNI}, the pipeline of the two-level based tracking is described. As we will see later, this pipeline is also valid for the just object tracking case if we ignore the first step of the algorithm. Moreover, an implementation of the method described in this chapter is available at \url{https://github.com/nestormh/stixel_world}, together with a version of the polar registration described in appendix \ref{ch:appendix_polar_calib}, which is available at \url{https://github.com/nestormh/PolarCalibration}.
-
 \begin{figure}[h!]
   \centering
-  \includegraphics{pipeline}
+  \includegraphics[width=\textwidth,height=\textwidth]{pipeline}
   \caption{Pipeline of the stixels tracking method described in this chapter.}\label{fig:cp04_pipeline}
 \end{figure}
+
+We also propose another solution in which just the object level tracking is performed. In this case, instead of doing a comparison at stixel level, we compare each obstacle to the obstacles detected in the previous frame, so the stixel level tracking is not needed anymore. In section \ref{ch:chapter04_02}, we will see the advantages and drawbacks of using one or another approach. In the video available at \url{http://youtu.be/RYFwzWGAmNI}, the pipeline of the two-level based tracking is described. As we will see later, this pipeline is also valid for the just object tracking case if we ignore the first step of the algorithm. Moreover, an implementation of the method described in this chapter is available at \url{https://github.com/nestormh/stixel_world}, together with a version of the polar registration described in appendix \ref{ch:appendix_polar_calib}, which is available at \url{https://github.com/nestormh/PolarCalibration}.
+
 
 \subsection{Free space computation}\label{ch:chapter04_01_01}
 
@@ -177,8 +178,8 @@ Here, $\alpha_{SAD} + \alpha_{hist} + \alpha_{height} = 1$. $f_{SAD}(u_i\{t\}, u
 This cost is computed as the pixel-wise \acl{SAD} over the RGB color scheme between $u_i\{t\}$ and $u_j\{t - 1\}$, following the expression
 
 \begin{equation}\label{eq:cp04_stixel_movement_sad_cost}
-\tiny
-f_{SAD}(u_i\{t\}, u_j\{t - 1\}) = 
+\scriptsize
+f_{SAD}(u_i\{t\}, u_j\{t - 1\}) =
 \overset{v_b(q_i\{t\})}{\underset{v_1=v_a(q_i\{t\})}{\sum}}
 \overset{v_b(q_j\{t - 1\})}{\underset{v_2=v_a(q_i\{t - 1\})}{\sum}}
 | I_L\{t\}(u_i\{t\}, v_1) - I_L\{t - 1\}(u_j\{t - 1\}, v_2) |
@@ -216,7 +217,6 @@ In our tests, we have tried different values for $\alpha_{SAD}$, $\alpha_{hist}$
 
 Over this graph, we solve the following minimization problem:
 
-\comment{No estoy seguro de esta notación}
 \begin{equation}\label{eq:cp04_match_minimization}
 \mathcal{\hat{M}}=\underset{\mathcal{M}}{\arg\min} \underset{(i, j) \in \mathcal{M}}{\sum} \omega_{i,j}, 
 ~~~~\exists! (i, \cdot) \wedge \exists! (\cdot, j)
@@ -299,8 +299,6 @@ If we look again at figure \ref{fig:cp04_clustering_aggregation}, we will notice
 
 In order to distinguish real from fake obstacles, we register the images obtained between frames, so we can distinguish the movement. This movement can be originated both by the movement of the obstacle itself (i.e. a person walking), or by the movement of the camera respect to the obstacles. This makes occluded or changing areas to appear, which allows detecting the border of the obstacles we want to avoid.
 
-The best way to do such a registration is through a polar rectification process, described at appendix \ref{ch:appendix_polar_calib}. With it, we will be able to align the current frame at time $t$ with another frame at time $t - k$. Using the aligned images, we get the pixel-wise absolute difference of both images, so we can detect pixels for which there are changes. This difference image is projected back to the current image coordinates. Then, this difference is thresholded and binarized, rejecting the small differences produced by noise. The result of this process is shown at the top of figure \ref{fig:cp04_obstacle_filtering}. Then, for each obstacle, we get the associated \ac{ROI}. For each \ac{ROI}, we reject the top half of it, so we just look for movement in the area of the obstacle that is touching the ground. There are two reasons for that: the first one is that obstacles that move over the ground usually present more movement in their lower half (for instance, legs or wheel movements). In the case of static obstacles, the movement due to the camera change is more or less similar in the whole object, so we are not loosing information. The second reason is that the stixels reconstruction assumes a planar ground in front of the camera, and that they are lying on it. As there should not be changes due to perspective over this planar ground, it is easier to do a discrimination in those areas.
-
 \begin{figure}[h!]
   \begin{minipage}{\textwidth}
     \centering
@@ -341,10 +339,12 @@ The best way to do such a registration is through a polar rectification process,
   \caption{Object filtering process. In the top, the binarized motion image is shown ($k=0.2$). In the bottom, the occupancy maps generated for each candidate obstacle.}\label{fig:cp04_obstacle_filtering}
 \end{figure}
 
+The best way to do such a registration is through a polar rectification process, described at appendix \ref{ch:appendix_polar_calib}. With it, we will be able to align the current frame at time $t$ with another frame at time $t - k$. Using the aligned images, we get the pixel-wise absolute difference of both images, so we can detect pixels for which there are changes. This difference image is projected back to the current image coordinates. Then, this difference is thresholded and binarized, rejecting the small differences produced by noise. The result of this process is shown at the top of figure \ref{fig:cp04_obstacle_filtering}. Then, for each obstacle, we get the associated \ac{ROI}. For each \ac{ROI}, we reject the top half of it, so we just look for movement in the area of the obstacle that is touching the ground. There are two reasons for that: the first one is that obstacles that move over the ground usually present more movement in their lower half (for instance, legs or wheel movements). In the case of static obstacles, the movement due to the camera change is more or less similar in the whole object, so we are not loosing information. The second reason is that the stixels reconstruction assumes a planar ground in front of the camera, and that they are lying on it. As there should not be changes due to perspective over this planar ground, it is easier to do a discrimination in those areas.
+
 Each region is transformed into real world coordinates and the points resulting after the thresholding process are located in their corresponding position. In this 3D space, the region is divided in cells (in our tests, of $10\times10\,cm$). For each cell, if there is at least one point falling inside it in the plane $XY$, the cell is marked as occupied. An example of the occupancy grids obtained, together with their associated \ac{ROI} in the motion image, are shown in the table included in figure \ref{fig:cp04_obstacle_filtering}. \acs{ROI} are in the first row, and occupancy maps in the second. It is easy to notice that real obstacles, like for example obstacle number 5 or number 7, present a higher density if compared with, for example, the obstacle number 4. Also, if we look at obstacle 2, the motion of the man in a black suit (which complicates the motion detection using absolute differencing due to the low color values), is properly detected. In order to ensure the detection of this kind of obstacles, it is important to choose a value for $k$ big enough. In our tests, we decided to use $k = 0.2\,s$, so we are sure that differences are appreciable, but being conservative at the same time. At the end of the process, we decide if the obstacle is rejected or not through the following equation:
 
 \begin{equation}\label{eq:cp04_fake_obstacles}
-\Large
+\large
   fake(o) = 
   \begin{align*}
     \begin{cases}
@@ -392,7 +392,7 @@ Two objects can be associated between frames if there is at least one stixel cor
 
 After this process, we will have the set of pairs $\mathcal{\hat{C}}$. In our implementation, we maintain an internal structure that associates each track to an obstacle of the last tracked frame. The number of tracks is extended in order to allow the inclusion of new objects. In figure \ref{fig:cp04_tracking_examples_two_level}, we can see several examples of the results obtained. For more information about the performance obtained, please check the results in section \ref{ch:chapter04_02}. In the video available at \url{http://youtu.be/RYFwzWGAmNI}, the pipeline followed, as well as some qualitative results, are shown.
 
-\begin{figure}[h!]
+\begin{figure}[b]
     \centering
     \begin{tabular}{ cc }
       \includegraphics[width=0.45\textwidth]{sequenceTwoLevel/twolevel30}\label{fig:cp04_two_level_example_15} &

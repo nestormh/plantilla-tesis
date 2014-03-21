@@ -8,7 +8,7 @@
 
 \graphicspath{{./images/chapter02/bmps/}{./images/chapter02/vects/}{./images/chapter02/}}
 
-\chapter{Non-rigid Contour Tracking}\label{ch:chapter02}
+\chapter{Non-Rigid Contour Tracking}\label{ch:chapter02}
 
 In the previous chapter, we saw a method that was able to detect obstacles as the changes between the images obtained from the onboard cameras and a set of images stored in a database. We also saw that it had several drawbacks, mainly related to the localization and tracking of the obstacles in world coordinates. In order to solve some of these problems, we decided to try a different solution based on a set of static monocular cameras installed all around the testing area. By doing so, we can isolate the tracking problem from the rest of the problems by doing the tracking of a set of obstacles that are detected through foreground extraction methods.
 The idea behind this method is having complete information of the trajectory followed by each point belonging to the contour of these obstacles. The peculiarity of our method is that the tracking is done in a non-rigid way, so we can have information not just about the moving of a certain obstacle but also about the local movement of each part of its body.
@@ -279,7 +279,7 @@ web\footnote{\url{http://cvlab.epfl.ch/data/pom}}.
                 \caption{~}
                 \label{fig:cp02_videoCapture4}
         \end{subfigure}%
-        \caption{Captures from the attached video corresponding to the frames 1695, 1715, 3669 and 3789 of the dataset used by \cite{berclaz2011multiple}}\label{fig:cp02_videoCaptures}
+        \caption{Captures from the attached video corresponding to the frames 1695, 1715, 3669 and 3789 of the dataset used by \cite{berclaz2011multiple}.}\label{fig:cp02_videoCaptures}
 \end{figure*}
 
 \subsection{Localization}\label{ch:chapter02_01_03}

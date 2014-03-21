@@ -5,12 +5,13 @@
 %%
 %%  This work is licensed under a Creative Commons Attribution 4.0 International License.
 %%
-
 \graphicspath{{./images/chapter03/bmps/}{./images/chapter03/vects/}{./images/chapter03/}}
 
-\chapter{Evaluation of stereo 3D reconstruction algorithms}\label{ch:chapter03}
+\chapter{Evaluation Of Stereo 3D Reconstruction Algorithms}\label{ch:chapter03}
 
-Environment mapping is one of the most critical tasks in the development of \ac{ADAS} and some of the most fruitful techniques used are based on stereo vision. However, there are very few datasets that allow assessing the performance of a specific method in a real world application. Most datasets have been created in controlled conditions, thus neglecting scenarios that are impossible to reproduce in a laboratory. In this paper, we present the results of the evaluation of three different dense reconstruction algorithm implementations using a number of well-known strategies that represent different trade-offs in terms of cost, set up time and accuracy. In our tests, we evaluated two variants of the \acf{SGM} algorithm, and the \acf{ELAS} method, as well as different combinations of additional filters in order to assess their influence on the final behavior of the algorithms.
+In the last two chapters, we have seen two different strategies for the detection of obstacles, oriented to their use in \ac{UAV} applications. In none of them, serious attempts have been done in order to locate the obstacles in the map. Furthermore, just one of them is oriented to the use non static cameras, but it is highly dependent on the creation of a well populated image database. Because of that, we thought that the use of stereo vision algorithms for the whole reconstruction of the world could help us to improve our detection mechanisms. This reconstructed world will allow us to detect the harmful objects and track them along the time. But before that, we must decide which stereo reconstruction method is the most suitable for our algorithms. 
+
+Initially, we wanted to use dense stereo reconstruction algorithms, which were used for the method described in chapter \ref{ch:chapter05}. However, as we will see in chapter \ref{ch:chapter04}, we also explored other approaches in which this reconstruction is simplified. But at this point, we wanted to know which was the most suitable algorithm for our application. However, there are very few datasets that allow assessing the performance of a specific method in a real world application. Most datasets have been created in controlled conditions, thus neglecting scenarios that are impossible to reproduce in a laboratory. In this chapter, we present the results of the evaluation of three different dense reconstruction algorithm implementations using a number of well-known strategies that represent different trade-offs in terms of cost, set up time and accuracy. In our tests, we evaluated two variants of the \acf{SGM} algorithm, and the \acf{ELAS} method, as well as different combinations of additional filters in order to assess their influence on the final behavior of the algorithms.
 
 In this chapter, we will describe a set of automatized strategies for the comparison of the performance level of some state-of-the-art stereovision-based 3D mapping algorithms in automotive scenarios, using both evaluation sets available in literature and data specifically collected from a dedicated recording platform. One of the algorithms will also be analyzed in greater detail, and a number of variations will be tested in order to determine an improved configuration.
 
@@ -100,7 +101,7 @@ However, in this work scores are being computed in a slightly different manner, 
 
 \subsection{False correspondences estimation}\label{ch:chapter03_02}
 
-This benchmark is an adaptation of one of the techniques described in \cite{Steingrube2009}: when driving manually, a safety distance of about 1\,s is usually kept from a leading vehicle; this means that a (speed-dependent) volume of free space is present at all times in front of the ego-vehicle, and any reconstructed point falling within said area must be considered as an erroneous estimate, as shown in figure \ref{fig:cp03_fc}. The false correspondences percentage $m_{fc} = 100 \times N_{fc} / N$ is then the ratio of points inside the object-free volume with respect to the total number of 3D points.
+This benchmark is an adaptation of one of the techniques described in \cite{Steingrube2009}: when driving manually, a safety distance of about 1\,s is usually kept from a leading vehicle; this means that a (speed-dependent) volume of free space is present at all times in front of the ego-vehicle, and any reconstructed point falling within said area must be considered as an erroneous estimate, as shown in figure \ref{fig:cp03_fc}. This image is a frame extracted from the video available at \url{http://youtu.be/_YEj_gf95Qg}. The false correspondences percentage $m_{fc} = 100 \times N_{fc} / N$ is then the ratio of points inside the object-free volume with respect to the total number of 3D points. 
 
 \begin{figure}[h!]
 \centering
@@ -118,7 +119,7 @@ The approaches introduced so far have some limitations: LIDAR-based ground truth
 \caption{Trinocular camera setup for stereo evaluation. The reference and match cameras ($C_{ref}$ and $C_{match}$ respectively) are used to produce a virtual image $I_{virt}$ in the control camera’s reference system that can be compared to the actual recorded image $I_{ctrl}$.}\label{fig:cp03_trinocular_setup}
 \end{figure}
    
-The computed disparity map is used to transform image pixels taken from the reference camera into control camera coordinates, thus effectively creating a virtual image (figure \ref{fig:cp03_ncc_virtual_img}) that can be compared with that recorded by the control camera (figure \ref{fig:cp03_ncc_control_img}) to produce a cross correlation map (figure \ref{fig:cp03_ncc_comparison}). 
+The computed disparity map is used to transform image pixels taken from the reference camera into control camera coordinates, thus effectively creating a virtual image (figure \ref{fig:cp03_ncc_virtual_img}) that can be compared with that recorded by the control camera (figure \ref{fig:cp03_ncc_control_img}) to produce a cross correlation map (figure \ref{fig:cp03_ncc_comparison}). This process is better shown in the video available at \url{http://youtu.be/xzP83dkiH_c}.
 
 \begin{figure*}[h!]
         \centering
@@ -126,21 +127,21 @@ The computed disparity map is used to transform image pixels taken from the refe
 	  \begin{tabular}{c}
 	    \includegraphics[width=\textwidth]{reprojection}
 	  \end{tabular}
-	  \caption{Virtual image.}\label{fig:cp03_ncc_virtual_img}
+	  \caption{Virtual image}\label{fig:cp03_ncc_virtual_img}
         \end{subfigure}% 
         ~
         \begin{subfigure}[b]{0.3\textwidth}
 	  \begin{tabular}{c}
 	    \includegraphics[width=\textwidth]{leftNCC}
 	  \end{tabular}
-	  \caption{Control Image.}\label{fig:cp03_ncc_control_img}
+	  \caption{Control Image}\label{fig:cp03_ncc_control_img}
         \end{subfigure}%       
         ~
         \begin{subfigure}[b]{0.3\textwidth}
 	  \begin{tabular}{c}
 	    \includegraphics[width=\textwidth]{ncc}
 	  \end{tabular}
-	  \caption{Representation of the \ac{NCC}}\label{fig:cp03_ncc_comparison}
+	  \caption{\ac{NCC} representation}\label{fig:cp03_ncc_comparison}
         \end{subfigure}%    
         
         \caption{Virtual and control images. The third image represents the correlation between images shown at pixel level.}\label{fig:cp03_ncc}
