@@ -18,7 +18,7 @@ In order to know the behavior of this method, some tests have been performed. In
 
 \subsection{Image registration}\label{ch:chapter01_02_01}
 
-For the analysis of the behavior of the algorithm, more than 86,000 image pairs at different resolutions ($800 \times 600$, $640 \times 480$, $320 \times 240$), distances and angle differences, and with diverse zoom and blurring factors applied to them have been tested. From this study a set of charts, shown at figure \ref{fig:cp01_matching_results} were obtained.
+For the analysis of the behavior of the algorithm, more than 86,000 images at different resolutions ($800 \times 600$, $640 \times 480$, $320 \times 240$), distances, angle differences and with diverse zoom and blurring factors applied to them have been tested. From this study a set of charts, shown at figure \ref{fig:cp01_matching_results} were obtained.
 
 \begin{figure*}[t]
         \centering
@@ -44,7 +44,7 @@ For the analysis of the behavior of the algorithm, more than 86,000 image pairs 
         \caption{Comparison of the number of matched points with several factors.}\label{fig:cp01_matching_results}
 \end{figure*}
 
-In this figure, four charts describing the difference of points matched attending on different variables are shown. Results obtained for the images at $320 \times 240$, $640 \times 480$ and $800 \times 600$ are represented by the red, blue and green lines, respectively. In those charts, we can see that the algorithm works properly when the euclidean distance between images is below 1\,m, and the angle difference is under 5-10\textdegree. Over this limit, the algorithm still works, but results are not so good. So we must be sure that our database is big enough to avoid going beyond these values. Anyway, the width of the road where the prototype will work is of about 3\,m and the driving direction usually does not change too much, so it is difficult to find a pair of images with such a big angular or euclidean difference.
+In this figure, four charts describing the difference of points matched attending on different variables are shown. Results obtained for the images at $320 \times 240$, $640 \times 480$ and $800 \times 600$ are represented by the red, blue and green lines, respectively. In those charts, we can see that the algorithm works properly when the euclidean distance between images is below 1\,m, and the angle difference is under 5-10\textdegree. Over this limit, the algorithm still works, but results are not so good. So we must be sure that our database is big enough to avoid going beyond these values. Anyway, the width of the road where the prototype will work is of about 3\,m and the driving direction usually does not change too much, so it is easy to find a pair of images inside these margins.
 
 Also different sized windows of Gaussian blurring have been passed over the images to test the robustness of the algorithm, as can be observed in the figure \ref{fig:cp01_blur_vs_matched}, where we notice that the algorithm is not too sensitive to the blurring. Similar results were obtained after applying different zoom percentages to the images used in tests (figure \ref{fig:cp01_zoom_vs_matched}).
 
@@ -109,7 +109,7 @@ As seen, the rate of false positives is quite good inside the expected limits, o
 
 \subsection{Timing results}\label{ch:chapter01_02_03}
 
-One of the most critical parameters taken into account for the development of the method is the computational time that the algorithm needs for its execution. In figure \ref{fig:cp01_times}, a chart shows the times obtained when executing the method for some image pairs, ordered by the total time required.
+One of the most critical parameters taken into account for development of the method is the computational time that the algorithm needs for its execution. In figure \ref{fig:cp01_times}, a chart shows the times obtained when executing the method for some image pairs, ordered by the total time required.
 
 \begin{figure}[t]
 \centering
@@ -117,7 +117,7 @@ One of the most critical parameters taken into account for the development of th
 \caption{Times obtained after the execution of a big sequence of images, ordered by the total time measured.}\label{fig:cp01_times}
 \end{figure}
 
-As shown there, almost all the times are below 200\,ms, enough time to allow the algorithm to avoid loosing data reported by the \ac{GPS}, except from a small percentage of image pairs, with a maximal execution time of 210\,ms. However, the number of images over the threshold of 200\,ms is very small and these times are not extremely big. It is easy to notice that the part of the algorithm which consumes more time is that for the feature extraction and optical flow steps. The more features that are selected, the more time needed. To prevent the method from expending too much time in this stage, the number of features that can be selected is limited. In the other hand, image transformation and change detection methods have constant times, with a maximal computational time of 30\,ms and 20\,ms, respectively.
+As shown there, almost all times are below 200\,ms, enough time to allow the algorithm to avoid loosing data reported by the \ac{GPS}, except from a small percentage of image pairs, with a maximal execution time of 210\,ms. However, the number of images over the threshold of 200\,ms is very small and these times are not extremely big. It is easy to notice that the part of the algorithm which consumes more time is that for the feature extraction and optical flow steps. The more features that are selected, the more time needed. To prevent the method from expending too much time in this stage, the number of features that can be selected is limited. In the other hand, image transformation and change detection methods have constant times, with a maximal computational time of 30\,ms and 20\,ms, respectively.
 
 \subsection{Qualitative results}\label{ch:chapter01_02_04}
 
@@ -206,7 +206,7 @@ In this section, related to the methods described in chapter \ref{ch:chapter02},
 
 \subsection{Foreground segmentation}\label{ch:chapter02_02_01}
 
-For the evaluation of the methods taken into account for the foreground segmentation stage, the accuracy metrics considered were the \textit{Recall}, \textit{Precision}, \textit{$F_1$} and \textit{Similarity} \citep{maddalena2008self}, which are used as follows:
+For evaluation of the methods taken into account for foreground segmentation stage, the accuracy metrics considered were the \textit{Recall}, \textit{Precision}, \textit{$F_1$} and \textit{Similarity} \citep{maddalena2008self}, which are used as follows:
 
 \begin{equation}\label{eq_Recall}
 Recall = { tp \over { tp + fn } }
@@ -360,8 +360,8 @@ as FSOM produces holes in some frames, which is not appropriate behavior for the
 \subsection{Nonrigid point set matching}\label{ch:chapter02_02_02}
 
 In order to select the best of the tested algorithms, several tests were performed using the data provided by 
-\cite{chui2000new}. Using this dataset, the error of the obtained registration and the number of mismatches obtained for 
-each test was calculated. Also, as the bottleneck of this application is in the point set registration algorithms, we 
+\cite{chui2000new}. Using this dataset, the error of obtained registration and the number of mismatches obtained for 
+each test was calculated. Also, as the bottleneck of this application is in the point set registration step, we 
 tested the relative computing time needed by each algorithm.
 
 \begin{figure*}[t]
@@ -405,7 +405,7 @@ In the chart of figure \ref{fig:cp02_errorChart}, it is possible to notice that 
 algorithm, followed by the CPD.  The rest of algorithms present a similar behavior being, from the best to the 
 worst, TPS-RPM, ICP, DPPSM-MST and DPPSM-STAR. The similarity between the last two algorithms is expectable, as the STAR is a simplification of MST in order to have a better time performance.
 
-About the percentage of mismatches, in figure \ref{fig:cp02_mismatchesChart} it is possible to see the results obtained. In 
+About the percentage of mismatches, in figure \ref{fig:cp02_mismatchesChart} it is possible to see obtained results. In 
 this chart, the percentage of mismatches is shown. The number of mismatches is calculated using a ground truth, and this 
 percentage is obtained by dividing this value by the number of points in the smaller point set. The best algorithm in 
 this case is TPS-RPM, followed again by CPD. However, RPM-RNS, which presented the best results in the previous test, 
@@ -558,7 +558,7 @@ $\beta$, except when its value is $1$. In this case, the contribution of $\lambd
 
 The combination $\beta = 5$, $\lambda = 1$ is also a good choice, but if we have a look on figures \ref{fig:cp02_err_measure_lambda_omega} and \ref{fig:cp02_err_measure_omega_beta}, it is pretty clear that best results are obtained when $\beta=5$, $\lambda=5$, and $\omega=0.1$. This is quite surprising, as we assume that the error in the input data is quite high. However, worst results are obtained when $\omega=1$, with an average distance above 2.6\,pixels.
 
-\subsubsection{Comparison with other methods}\label{ch:chapter02_02_03}
+\subsubsection{Comparison with other methods}\label{ch:chapter02_02_03_03}
 
 \begin{figure*}[t]
         \centering
@@ -586,23 +586,23 @@ The combination $\beta = 5$, $\lambda = 1$ is also a good choice, but if we have
         \caption{Comparison of the behavior in different joints.}\label{fig:cp02_comparison}
 \end{figure*}
 
-This is the first method that uses geometrical nonrigid point set 
-registration methods to perform a contour tracking. One of the main contributions of our method is that we demonstrate 
-that it is possible to perform such a task by using just geometrical information. Because of that, we compare our method 
-with the output of the OpenNI algorithm that makes use of the Kinect, and with a simple Computer Vision based method. The 
-former is considered as ground truth, because we have not found data which includes the information of 
-the contour correspondences between frames at point level. 
-
-However, as we will see, this method fails in certain circumstances. Due to that, we will pay attention to the frames in which the output of 
-our algorithm and Kinect's diverge, in order to know what is happening. For the tests, we have calibrated the sensor in 
-the way that the skeleton generated from the depth map obtained by the Kinect device is perfectly aligned with the $2D$ 
-image obtained by its visible camera.
+% This is the first method that uses geometrical nonrigid point set registration methods to perform a contour tracking. 
+% One of the main contributions of our method is that we demonstrate that it is possible to perform such a task by using just geometrical information.
+One of the main contributions of our method is that we demonstrate that it is possible to perform a contour tracking by just using geometrical information. 
+Because of that, we compare our method 
+with the output of the OpenNI algorithm that makes use of the Kinect, and with a simple Computer Vision based method. 
 
 The Computer Vision based algorithm works as follows: starting from the set $X$, obtained with the method described in 
 section \ref{ch:chapter02_01_01}, we apply the Lucas-Kanade \citep{bouguet2001pyramidal} optical flow 
 method between the current and the next frame, obtaining the set $Y$. At this point, we have a set of correspondences 
 equivalent to the set $\Phi$ described in section \ref{ch:chapter02_01_02_02}. Then, the process is similar to 
 that described for our method.
+
+The Kinect based method is considered as ground truth, because we have not found data which includes the information of 
+the contour correspondences between frames at point level. However, as we will see, this method fails in certain circumstances. Due to that, we will pay attention to the frames in which the output of 
+our algorithm and Kinect's diverge, in order to know what is happening. For the tests, we have calibrated the sensor in 
+the way that the skeleton generated from the depth map obtained by the Kinect device is perfectly aligned with the $2D$ 
+image obtained by its visible camera.
 
 In figure \ref{fig:cp02_comparison}, several charts show the behavior of our method compared with the other two, for three 
 representative joints. In each of them, the absolute increment is shown separately for $x$ and $y$ coordinates in the 
@@ -623,27 +623,7 @@ the movement of the arm is mostly up to down. In this figure, correspondences ar
 them, where the blue dots represent the points of the set $Y$ for which a correspondence was found. Joints are represented by the red circles, and in magenta 
 we show the trajectory calculated for each of them. 
 
-Also in figure 
-\ref{fig:cp02_comparison_oflow_fails_elbow_lk_side} we can appreciate that the 
-orientation of the correspondences is not the same for all of them, even when they belong to the same rigid part of the 
-body. Likewise, if these results are compared with the tracking performed by the BCCPDI-CPD method, shown in figure 
-\ref{fig:cp02_comparison_oflow_fails_elbow_cpd_side}, we can see that there are a lot of missing correspondences, specially 
-in the upper side of the arm. A similar example is shown in figure \ref{fig:cp02_comparison_oflow_fails_knee_cpd_side} for 
-the frame $226$, where we can see what is happening in the set of frames between $210$ and $230$, for which a 
-different behavior is found for BCCCPDI-LK in figure \ref{fig:cp02_comparison_left_knee}. As happened in figure 
-\ref{fig:cp02_comparison_oflow_fails_elbow_lk_side}, some correspondences are missing in the upper part of the thigh and some 
-others are mismatches.
-
-If we have a look at the upper chart in figure \ref{fig:cp02_comparison_left_elbow}, there is a set of frames in which the 
-absolute increment of $x$ between frames is similar for BCCPDI-CPD and BCCPDI-LK. As said, Kinect is not perfect and 
-there are some situations in which our method gives better results. This is one of these cases. 
-
-In figure \ref{fig:cp02_comparison_kinect_fails} (frame $199$), we represent in blue the skeleton calculated by the 
-Kinect method, and in green the skeleton generated by our method. In these frames, the person in the 
-image was performing a lateral displacement. As can be seen, the skeleton provided by our method is better aligned with
-the person than the obtained using the Kinect. 
-
-\begin{figure*}[t]
+\begin{figure*}[h!]
         \centering
 
         \begin{subfigure}[b]{0.45\textwidth}
@@ -674,46 +654,66 @@ the person than the obtained using the Kinect.
                 \label{fig:cp02_comparison_oflow_fails_knee_lk_side}
         \end{subfigure}%     
 
-        \caption{Some frames in which BCCPDI-LK has a poor performance.}\label{fig:cp02_comparison}
+        \caption{Some frames in which BCCPDI-LK has a poor performance. Blue dots: points in the set $Y$; green lines: trajectory, for each point in $Y$, from their last position in the previous frame; red circles: joints;  magenta: trajectory of each joint from the last frame.}\label{fig:cp02_bccpdi_lk_fails}
 \end{figure*}
 
-\begin{figure*}[h]
+Also in figure 
+\ref{fig:cp02_comparison_oflow_fails_elbow_lk_side} we can appreciate that the 
+orientation of the correspondences is not the same for all of them, even when they belong to the same rigid part of the 
+body. Likewise, if these results are compared with the tracking performed by the BCCPDI-CPD method, shown in figure 
+\ref{fig:cp02_comparison_oflow_fails_elbow_cpd_side}, we can see that there are a lot of missing correspondences, specially 
+in the upper side of the arm. A similar example is shown in figure \ref{fig:cp02_comparison_oflow_fails_knee_cpd_side} for 
+the frame $226$, where we can see what is happening in the set of frames between $210$ and $230$, for which a 
+different behavior is found for BCCCPDI-LK in figure \ref{fig:cp02_comparison_left_knee}. As happened in figure 
+\ref{fig:cp02_comparison_oflow_fails_elbow_lk_side}, some correspondences are missing in the upper part of the thigh and some 
+others are mismatches.
+
+If we have a look at the upper chart in figure \ref{fig:cp02_comparison_left_elbow}, there is a set of frames in which the 
+absolute increment of $x$ between frames is similar for BCCPDI-CPD and BCCPDI-LK. As said, Kinect is not perfect and 
+there are some situations in which our method gives better results. This is one of these cases. 
+
+In figure \ref{fig:cp02_comparison_kinect_fails} (frame $199$), we represent in blue the skeleton calculated by the 
+Kinect method, and in green the skeleton generated by our method. In these frames, the person in the 
+image was performing a lateral displacement. As can be seen, the skeleton provided by our method is better aligned with
+the person than the obtained using the Kinect. 
+
+\begin{figure*}[h!]
   \centering
   \includegraphics[width=0.5\columnwidth, trim=0 0 0 0,clip]{fig34.jpg}
-  \caption{An example in which our method outperforms Kinect output.}
+  \caption{An example in which our method outperforms Kinect output. In green, the skeleton obtained with our method; in blue the skeleton obtained by Kinect based approach.}
   \label{fig:cp02_comparison_kinect_fails}
 \end{figure*}
 
 In the video at \url{http://youtu.be/ZXSqKC07xJE} it is possible to see the full sequence and the output obtained by each different algorithm.
 
-\FloatBarrier
+% \FloatBarrier
 
 \graphicspath{{./images/chapter03/bmps/}{./images/chapter03/vects/}{./images/chapter03/}}
 \section{Evaluation of stereo 3D reconstruction algorithms}\label{ch:chapter03_04}
 
-In this section, full performance graphs are presented showing the results obtained for the tests performed using the methods described in section \ref{ch:chapter03}. For the sake of brevity, the following notations will be used:
+In this section, some graphs are presented showing the performance obtained for the tests carried on using the methods described in section \ref{ch:chapter03}. For the sake of brevity, the following notations will be used:
 \begin{itemize}
  \item LGT – LIDAR-based ground truth evaluation (section \ref{ch:chapter03_01_01}).
  \item NFC – Number of false correspondences (section \ref{ch:chapter03_02}).
  \item NCC – Normalized cross correlation (section \ref{ch:chapter03_03}).
 \end{itemize}
 
+To make the data easier to understand, it will be plotted in a graph with the independent variable (x-axis) representing the measured value, and the dependent one (y-axis) the percentage of frames falling below it. Better-performing algorithms are those with a lower x value for a given frame percentage (e.g. y = 90\%).
+
 \subsection{Isolated filters}\label{ch:chapter03_04_01}
 
-LGT evaluation results for each single filter presented in section \ref{ch:chapter03_03_03} are plotted in figure \ref{fig:cp03_isolated_LGT_bpp} and \ref{fig:cp03_isolated_LGT_avg}. Biggest improvements can be obtained through the use of the despeckle filter; the uniqueness constraint with a strict threshold is also quite effective at removing spurious values, albeit at the cost of a reduced density. Adaptive mean consistently reduces the average reconstruction error, even if on a relatively small scale (around 0.1\,px). At the level of sub-pixel error the gap filter produces worse results, which can be explained by the fact that the constant value interpolation that it performs is not accurate enough to capture pixel to pixel variations in the disparity values. Figure \ref{fig:cp03_isolated_NFC} shows the results for the NFC test: the despeckle and uniqueness filters still show clear improvements, as it does the adaptive mean, reinforcing the idea that their combined use is likely to boost the reconstruction performance. Results 
-for 
-the NCC test are plotted in figure \ref{fig:cp03_isolated_NCC}: unfortunately, the scores obtained from the different filters are almost overlapping. This behavior is not easily explained, although some factors are likely to contribute to it:
+LGT evaluation results for each single filter presented in section \ref{ch:chapter03_03_03} are plotted in figure \ref{fig:cp03_isolated_LGT_bpp} and \ref{fig:cp03_isolated_LGT_avg}. Biggest improvements can be obtained through the use of the despeckle filter; the uniqueness constraint with a strict threshold is also quite effective at removing spurious values, albeit at the cost of a reduced density. Adaptive mean consistently reduces the average reconstruction error, even if on a relatively small scale (around 0.1\,px). At the level of sub-pixel error the gap filter produces worse results, which can be explained by the fact that the constant value interpolation associated is not accurate enough to capture pixel to pixel variations in the disparity values. Figure \ref{fig:cp03_isolated_NFC} shows the results for the NFC test: the despeckle and uniqueness filters still show clear improvements, as it does the adaptive mean, reinforcing the idea that their combined use is likely to boost the reconstruction performance. Results for the NCC test are plotted in figure \ref{fig:cp03_isolated_NCC}: unfortunately, the scores obtained from the different filters are almost overlapping. This behavior is not easily explained, although some factors are likely to contribute to it:
 \begin{itemize}
  \item NCC scores are normalized with respect to the average image luminance, but local luminance variations still affect the resulting error value, so wrong reconstructions are not evenly weighted;
  \item the relatively small baseline in use reduces the measurable effects of reconstruction errors;
  \item the reconstruction quality is always quite good when using the algorithms described in section \ref{ch:chapter03_03} irrespective of the filters applied, and the test scores might be dominated by other error sources, such as the calibration.
 \end{itemize}
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
       \centering
       \begin{subfigure}[h]{\textwidth}
 	\centering
-	\includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{filt_bpp}
+	\includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{filt_bpp}
 	
 	\caption{ Bad pixels percentage.}
 	\label{fig:cp03_isolated_LGT_bpp} 
@@ -721,23 +721,23 @@ the NCC test are plotted in figure \ref{fig:cp03_isolated_NCC}: unfortunately, t
       
       \begin{subfigure}[h]{\textwidth}
 	\centering
-	\includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{filt_avg}
+	\includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{filt_avg}
 	\caption{ Average error using LGT. }
 	\label{fig:cp03_isolated_LGT_avg}
       \end{subfigure}%  
       \caption{ Isolated filters LGT performance. }
 \end{figure*}
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
-  \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{filt_nfc_perc}
+  \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{filt_nfc_perc}
   \caption{ Isolated filters NFC performance.}
   \label{fig:cp03_isolated_NFC}
 \end{figure*}%        
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
-  \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{filt_ncc}
+  \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{filt_ncc}
   \caption{ Isolated filters NCC performance.}
   \label{fig:cp03_isolated_NCC}
 \end{figure*}%  
@@ -747,98 +747,102 @@ the NCC test are plotted in figure \ref{fig:cp03_isolated_NCC}: unfortunately, t
 By combining different filters it is possible to obtain even better performances than when using them separately. Figure \ref{fig:cp03_composite_LGT_bpp}, \ref{fig:cp03_composite_LGT_avg} and \ref{fig:cp03_composite_LGT_dens} plot the results for the three Census-SGM configurations described in table \ref{table:cp03_algorithms} under the LGT test. Looking at the 90th percentile of figure \ref{fig:cp03_composite_LGT_bpp} it can be observed an improvement of around 6\% in the number of pixels exceeding the endpoint error for configurations 2 and 3; the average pixels error, instead, decreases by around 0.175\,px for the same two configurations (figure \ref{fig:cp03_composite_LGT_avg}). These improvements, however, come at the cost of a decreased disparity map density, as it is apparent in figure \ref{fig:cp03_composite_LGT_dens}: configuration 3, at the 90th percentile, has a density of around 58\%, while configuration 2 scores better, at about 65\%, which can still be considered acceptable for autonomous driving tasks; for comparison, the baseline 
 method has a density close to 78\%, with 12\% bad pixels. Configurations 2 and 3 also produce the best results in the NFC test (figure \ref{fig:cp03_composite_NFC}), effectively reducing the number of wrong reconstructions falling within the vehicle trajectory to a negligible amount. The NCC test, instead, seems to indicate an opposite behavior across the tested configurations (figure \ref{fig:cp03_composite_NCC}), but as explained in section \ref{ch:chapter03_04_01} this data is likely to be very loosely related to the configuration in use.
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
   \begin{subfigure}[h]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{comp_bpp}
+    \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{comp_bpp}
     \caption{ Bad pixels percentage. }
     \label{fig:cp03_composite_LGT_bpp}
   \end{subfigure}%
   
   \begin{subfigure}[h]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{comp_avg}
+    \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{comp_avg}
     \caption{ Average error. }
     \label{fig:cp03_composite_LGT_avg}
   \end{subfigure}%        
   \phantomcaption % new inserted command
 \end{figure*}
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \ContinuedFloat
   \begin{subfigure}[h]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{comp_dens}
+    \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{comp_dens}
     \caption{ Output density. }
     \label{fig:cp03_composite_LGT_dens}
   \end{subfigure}%    
   \caption{ Composite filters LGT performance. }
 \end{figure*}
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
-  \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{comp_nfc_perc}
+  \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{comp_nfc_perc}
   \caption{ Composite filters NFC performance.}
   \label{fig:cp03_composite_NFC}
 \end{figure*}%  
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
-  \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{comp_ncc}
+  \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{comp_ncc}
   \caption{ Composite filters NCC performance.}
   \label{fig:cp03_composite_NCC}
 \end{figure*}%  
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
   \begin{subfigure}[h]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{algo_bpp_ee3}
+    \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{algo_bpp_ee3}
     \caption{ Bad pixels percentage. }
     \label{fig:cp03_algorithms_LGT_bpp}
   \end{subfigure}%        
   \phantomcaption % new inserted command
 \end{figure*}
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \ContinuedFloat
   \begin{subfigure}[h]{\textwidth}
     \centering
 %       \framebox{\parbox{3in}{\centering \includegraphics[width=3in, trim=50 60 80 60,clip]{algo_avg_ee3}}}
-    \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0, clip]{algo_avg_ee3}
+    \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0, clip]{algo_avg_ee3}
     \caption{ Average error. }
     \label{fig:cp03_algorithms_LGT_avg}
   \end{subfigure}%        
 
   \begin{subfigure}[h]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{algo_dens_ee3}
+    \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{algo_dens_ee3}
     \caption{ Output density. }
     \label{fig:cp03_algorithms_LGT_dens}
   \end{subfigure}%    
   \caption{ Algorithms LGT performance. }
 \end{figure*}
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
-  \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{algo_nfc_perc}
+  \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{algo_nfc_perc}
   \caption{  Algorithms NFC performance.}
   \label{fig:cp03_algorithms_NFC}
 \end{figure*}%  
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
   \centering
-  \includegraphics[width=\textwidth, height=0.5\textwidth, trim=0 0 0 0,clip]{algo_ncc}
+  \includegraphics[width=\textwidth, height=0.4\textheight, trim=0 0 0 0,clip]{algo_ncc}
   \caption{ Algorithms NCC performance.}
   \label{fig:cp03_algorithms_NCC}
 \end{figure*}% 
 
 \subsection{Algorithms comparison}\label{ch:chapter03_04_03}
 
-Census-SGM configuration 2 has been selected as the best compromise between reconstruction quality and map density, and the following graphs illustrate its performance compared to that of the other two approaches described in section \ref{ch:chapter03_03}. LGT evaluation (figure \ref{fig:cp03_algorithms_LGT_bpp}, \ref{fig:cp03_algorithms_LGT_avg}, and \ref{fig:cp03_algorithms_LGT_dens}) shows that the bad pixel percentage is cut by around 7.5\% at the 90th percentile with respect to the baseline configuration, and by about 4.5\% if compared to the BT-SGM algorithm. The average error is also reduced by 0.15\,px, when using Census-SGM configuration 2, making it in line with the values obtained by ELAS. The missing pixels percentage increases to around 35\%, which is 12\% more than the baseline setup; however, a substantial portion of the additional unreconstructed points is due to the improved error suppression capabilities of the algorithm, and as such is expected behavior.
+Census-SGM configuration 2 has been selected as the best compromise between reconstruction quality and map density, and the following graphs illustrate its performance compared to the other two approaches described in section \ref{ch:chapter03_03}. LGT evaluation (figure \ref{fig:cp03_algorithms_LGT_bpp}, \ref{fig:cp03_algorithms_LGT_avg}, and \ref{fig:cp03_algorithms_LGT_dens}) shows that the bad pixel percentage is cut by around 7.5\% at the 90th percentile with respect to the baseline configuration, and by about 4.5\% if compared to the BT-SGM algorithm. The average error is also reduced by 0.15\,px, when using Census-SGM configuration 2, making it in line with the values obtained by ELAS. The missing pixels percentage increases to around 35\%, which is 12\% more than the baseline setup; however, a substantial portion of the additional unreconstructed points is due to the improved error suppression capabilities of the algorithm, and as such is expected behavior.
 NFC evaluation (figure \ref{fig:cp03_algorithms_NFC}) produces results which are in line with the one obtained with the LGT test, which means that Census-SGM configuration 2 is measurably and consistently better than the alternative approaches, and as such the winning algorithm in this comparison.
 NCC scores for the ELAS and BT-SGM algorithms are quite close (figure \ref{fig:cp03_algorithms_NCC}), and better than the Census-SGM baseline configuration (as expected), but the placement of Census-SGM configuration 2 looks suspicious (i.e. worse than the Census-SGM baseline configuration). For this reason, data coming from this test will have to undergo further investigation before it can be trusted as a reliable indicator of an algorithm's performance.
+
+From these results, we can conclude that the used evaluation strategies can be successfully used for the automatic evaluation of stereo reconstruction algorithms. Results obtained with the Lidar Ground Truth support the conclusions obtained from the NFC based evaluation. However, the use of a third camera for evaluation is not very discriminative, further tests including other metrics should be done in order to improve the results and get a more reliable evaluation schema.
+
+About algorithms, it seems pretty clear that best results are obtained with the \emph{Census-SGM Conf 2}, with the best balance between the quality of the reconstruction and the number of valid points. The choice between \emph{ELAS} and \emph{BT-SGM}, depends on the requirements of the application. In section \ref{ch:chapter05_02_01}, we do a new evaluation for the comparison of these two algorithms, in order to know which is the most suitable for the application described in chapter \ref{ch:chapter05}.
 
 \FloatBarrier
 
@@ -886,7 +890,7 @@ In figure \ref{fig:cp04_clustering_comparison}, we can see the projected 3d outp
 
 \subsection{Stixel accuracy}\label{ch:chapter04_02_02}
 
-In this section, we want to show the accuracy found in the depth computation for the stixels related to our reconstruction after the clustering. For that, we used a disparity map obtained using the \ac{ELAS} algorithm as ground truth. In figure \ref{fig:cp04_disparity_comparison}, we compare the disparity error of the reconstructed disparity map related to the percentage of frames below this error. Red line represents the stixels error. This grows faster than the error of the clustered obstacles. If we look at the $x-coordinates$, we can see that approximately a 95\% of the images have a disparity error below a 10\%, while this error is just found for a 60\% of the images when the reconstruction is made by just the original stixel computation.
+In this section, we want to show the accuracy found in the depth computation of stixels related to our reconstruction after clustering. For that, we used a disparity map obtained using the \ac{ELAS} algorithm as ground truth. In figure \ref{fig:cp04_disparity_comparison}, we compare the disparity error of the reconstructed disparity map related to the percentage of frames below this error. Red line represents the stixels error. This grows faster than the error of the clustered obstacles. If we look at the $x-coordinates$, we can see that approximately a 95\% of the images have a disparity error below a 10\%, while this error is just found for a 60\% of the images when the reconstruction is made by just the original stixel computation.
 
 \begin{figure*}[h!]
         \centering
@@ -968,7 +972,7 @@ For the evaluation of the tracking capabilities of the method, we followed the s
 \caption{Comparison of the recall obtained for the different configurations.}\label{fig:cp04_recall_vs_delta_frames}
 \end{figure}
 
-In this chart, we can see that the \cite{gunyel2012stixels} method falls quite fast, with a recall below 50\% just after 5 frames have passed. Also, the contribution of $\alpha_{height}$ is not clear. About the two-level tracking methods, results are better, specially those in which $\alpha_{hist} \neq 0$. There are many reasons for that. Moreover, the use of a second level for the tracking instead of just the stixels filters a lot of noise, making the tracking more reliable. This is confirmed if we look at figure \ref{fig:cp04_tracking_examples}, where we can see the tracking performed by \emph{Configuration 1}, \emph{Configuration 5} and \emph{Configuration 7}. If we look at the first two images, we can see that the trajectories obtained for the \emph{Configuration 5} are longer, and smoother. Also, we can see the effect of avoiding multiple matches to the same stixel. In \emph{Configuration 1}, we can see the trajectories of many stixels are started from the same single stixel in the past. About the difference between using $\alpha_{hist}$ or $\alpha_{SAD}$, the histograms being used are normalized just before the matching, while the sum of absolute differences is done pixel by pixel, without considering illumination changes.
+In this chart, we can see that the \cite{gunyel2012stixels} method falls quite fast, with a recall below 50\% just after 5 frames have passed. Also, the contribution of $\alpha_{height}$ is not clear. About the two-level tracking methods, results are better, specially those in which $\alpha_{hist} \neq 0$. There are many reasons for that. Moreover, the use of a second level for the tracking instead of just the stixels filters a lot of noise, making the tracking more reliable. This is confirmed if we look at figure \ref{fig:cp04_tracking_examples}, where we can see the tracking performed by \emph{Configuration 1}, \emph{Configuration 5} and \emph{Configuration 7}. If we look at the first two images, we can see that the trajectories obtained for the \emph{Configuration 5} are longer, and smoother. Also, we can see the effect of avoiding multiple matches to the same stixel. In \emph{Configuration 1}, we can see that trajectories of many stixels are started from the same single stixel in the past. About the difference between using $\alpha_{hist}$ or $\alpha_{SAD}$, the histograms being used are normalized just before the matching, while the sum of absolute differences is done pixel by pixel, without considering illumination changes.
 
 Finally, object based tracking shows good results for the first frames, but it falls a little bit faster than the two-level based tracking methods. We think the most likely reason for that is that the two-level tracking is more tolerant to the clustering errors. For example, if in one frame we consider as part of the obstacle a relatively big fraction of the background, the aspect of the histogram will change, so the matching score could be small. Looking again at figure \ref{fig:cp04_tracking_examples}, we can see that the quality of the tracks both in configurations 5 and 7 is comparable, but the length of the former is bigger.
 
@@ -999,7 +1003,7 @@ Finally, object based tracking shows good results for the first frames, but it f
 
 \subsubsection{Performance at different frame increments}\label{ch:chapter04_02_03_02}
 
-We also wanted to know method was the most tolerant to low frame rate sequences, as one of the assumptions taken is that the temporal difference between frames is not too big. Based on this, we evaluated the relation existing between the recall, \emph{$\Delta$ frames} and the time step between frames. So we repeated the tests, but this time increasing $k$ frames each time, with $k=0.06,\dots,1.2\,s$ (corresponding to 1 up to 20 frames at $15\,Hz$). Then, we evaluated the variation in the results. First, we did a few preliminary tests with just the first 200 frames in which we wanted to know the variation in the recall related to the time step. Results of these tests are represented in the chart shown at figure \ref{fig:cp04_recall_vs_step}. In this chart, we show the tracking values presented by the different configurations with just one frame increment at the time step shown in the $x$ axis. There, we can detect four different profiles, which are again related to the configurations 1-2, 3-4; 5-6, and 7. Again, we confirm that the contribution offered by $\alpha_{height}$ is negligible. We also observe that the most tolerant of the configurations is \emph{Configuration 7}, as expected. This configuration does the tracking just at object level, so it is able to deal with slightly bigger changes than the stixel level tracking. However, there is a surprise, as the tracking based in just the stixel level presents better values. The reason for that is that tracking using this method gets slightly better results in the first few frames, but the recall falls faster along the frames.
+We also wanted to know what method is the most tolerant to low frame rate sequences, as one of the assumptions is that the temporal difference between frames is not too big. Based on this, we evaluated the relation existing between the recall, \emph{$\Delta$ frames} and the time step between frames. So we repeated the tests, but this time increasing $k$ frames each time, with $k=0.06,\dots,1.2\,s$ (corresponding to 1 up to 20 frames at $15\,Hz$). Then, we evaluated the variation in the results. First, we did a few preliminary tests with just the first 200 frames in which we wanted to know the variation in the recall related to the time step. Results of these tests are represented in the chart shown at figure \ref{fig:cp04_recall_vs_step}. In this chart, we show the tracking values presented by the different configurations with just one frame increment at the time step shown in the $x$ axis. There, we can detect four different profiles, which are again related to the configurations 1-2, 3-4; 5-6, and 7. Again, we confirm that the contribution offered by $\alpha_{height}$ is negligible. We also observe that the most tolerant of the configurations is \emph{Configuration 7}, as expected. This configuration does the tracking just at object level, so it is able to deal with slightly bigger changes than the stixel level tracking. However, there is a surprise, as the tracking based in just the stixel level presents better values. The reason for this is that tracking using this method gets slightly better results in the first few frames, but the recall falls faster along the frames.
 
 \begin{figure}[t]
 \centering
@@ -1030,11 +1034,15 @@ In figure \ref{fig:cp04_times_average}, we can see that, as expected, the faster
 \graphicspath{{./images/chapter05/bmps/}{./images/chapter05/vects/}{./images/chapter05/}}
 \section{Particle filter based object tracking}\label{ch:chapter05_02}
 
-In this section, a few representative results of the behavior of the algorithm described in chapter \ref{ch:chapter05} are shown. These results are divided in four sections: In the first one, we evaluate the best choice for the generation of the input point cloud, taking in consideration some of the results obtained in section \ref{ch:chapter03_04} and some evaluations specific of the current application. The second section evaluates the quality of the ego-motion estimation. Finally, the last two sections are related to the detection quality and the performance shown by the method itself.
+In this section, we want to evaluate the behavior of the algorithm described in chapter \ref{ch:chapter05}. As we saw there, this method is able to simplify the detection and tracking of objects thanks to the use of a grid of voxels. Each voxel is associated to a set of particles from a particle filter, which allows us the detection of obstacles and their direction through a flood-fill based algorithm,  combined with the use of spherical histograms for the final speed vectors computation.
+
+As said, this method has been implemented as modular as possible. This is the reason for which we performed two types of tests divided in four groups. The first two correspond to tests thought to asses which is the best way to compute the modules in charge of the computation of the input of the main method. Thus, in the first test, we evaluate the best choice for the generation of the input point cloud, taking into account some of the results obtained in section \ref{ch:chapter03_04} and some other evaluations specific of the current application. The second group of tests evaluate the quality of the ego-motion estimation. 
+
+Last two tests are related to the detection quality and the performance shown by the method itself.
 
 \subsection{Input point cloud}\label{ch:chapter05_02_01}
 
-In this section, we show the results of the tests performed in order to choose the best algorithm that will be used later for the generation of the input point cloud. As previously said, we only considered for this application the use of the \emph{BT-SGM} and \emph{ELAS} methods, as we had no access to the implementation of \emph{Census-SGM} methods used for the evaluation presented in section \ref{ch:chapter03_04}. If we look again to the charts in that section, the response is similar for both algorithms in the chart at \ref{fig:cp03_algorithms_LGT_dens}, where the density of the algorithms is compared using the \ac{LGT} based evaluation. The same happens in figure \ref{fig:cp03_algorithms_NCC}. In chart \ref{fig:cp03_algorithms_NFC} the difference between both algorithms becomes bigger, with better results for the \emph{BT-SGM} approach if it is compared to \emph{ELAS}. Anyway, results for this last method are not so bad, and they are quite better if we attend to the average error computed using the \ac{LGT} (See chart at figure \ref{fig:cp03_algorithms_LGT_avg}). This last measure is quite decisive, as too much noise can affect negatively to the results. If we look at figure \ref{fig:cp05_comparison_bt_sgm_vs_elas}, it is possible to observe that the noise generated by \emph{BT-SGM} is much more than that by \emph{ELAS}. One of the reasons for which this noise is not so strong is that the triangulation-based reconstruction of the disparity map used in \emph{ELAS} filters a lot of this noise. If we look at the street light, we can see that it is fully reconstructed in the right image (\emph{ELAS}), while the \emph{BT-SGM} method is just able to do the reconstruction of its top. Of course, there is some depth imprecisions for the \emph{ELAS} example, but it is inside the range our algorithm is able to deal with. Variation is not bigger than the size of the base of our voxels, so the problem is minimized by this factor. Moreover, the use of the conditional probability of the measurement computed with the equation \ref{eq:cp05_conditional_prob} as the basis for the weight computation for each voxel also reduces the problems associated to this kind of noise.
+In this section, we show some results from the tests performed in order to choose the best algorithm that will be used later for the generation of the input point cloud. As previously said, we only considered for this application the use of the \emph{BT-SGM} and \emph{ELAS} methods, as we had no access to the implementation of \emph{Census-SGM} methods used for the evaluation presented in section \ref{ch:chapter03_04}. If we look again to the charts in that section, the response is similar for both algorithms in the chart at \ref{fig:cp03_algorithms_LGT_dens}, where the density of the algorithms is compared using the \ac{LGT} based evaluation. The same happens in figure \ref{fig:cp03_algorithms_NCC}. In chart \ref{fig:cp03_algorithms_NFC} the difference between both algorithms becomes bigger, with better results for the \emph{BT-SGM} approach if it is compared to \emph{ELAS}. Anyway, results for this last method are not so bad, and they are quite better if we attend to the average error computed using the \ac{LGT} (See chart at figure \ref{fig:cp03_algorithms_LGT_avg}). This last measure is quite decisive, as too much noise can affect negatively to the results. If we look at figure \ref{fig:cp05_comparison_bt_sgm_vs_elas}, it is possible to observe that the error generated by \emph{BT-SGM} is much more than that of \emph{ELAS}. The reason is that piecewise reconstruction performed by \emph{ELAS} is able to filter a lot of the noise. In instance, if we look at the street light, we can see that it is fully reconstructed in the right image (\emph{ELAS}), while the \emph{BT-SGM} method is just able to do the reconstruction of its top. Of course, there is some depth imprecisions for the \emph{ELAS} example, but it is inside the range our algorithm is able to deal with. Variation is not bigger than the size of the base of our voxels, so the problem is minimized by this factor. Moreover, the use of the conditional probability of the measurement computed with the equation \ref{eq:cp05_conditional_prob} as the basis for the weight computation for each voxel also reduces the problems associated to this kind of noise.
 
 \begin{figure*}[t]
         \centering
@@ -1052,7 +1060,7 @@ In this section, we show the results of the tests performed in order to choose t
         \caption{Comparison of a resulting point cloud obtained using both \emph{BT-SGM} and \emph{ELAS}.}\label{fig:cp05_comparison_bt_sgm_vs_elas}
 \end{figure*}
 
-If we look at figure \ref{fig:cp05_times_elas_btsgm}, we have represented the times obtained for each frame along a long sequence, where it is possible to appreciate that \emph{ELAS} is much faster than \emph{BT-SGM}. In this test, the average frequency obtained by the former is about $17\,Hz$, while the second is just able to work at an average below $5\,Hz$ with the implementation used. For the application described, we require a fast algorithm in order to complete the whole pipeline in real time. Considering the fact that the differences in reconstruction quality are not so big between them (with some good results for \emph{ELAS}), and the big differences in time performance, we chose to use the \emph{ELAS} algorithm as the base for the point cloud reconstruction step.
+If we look at figure \ref{fig:cp05_times_elas_btsgm}, we have represented the times obtained for each frame along a long sequence, where it is possible to appreciate that \emph{ELAS} is much faster than \emph{BT-SGM}. In this test, the average frequency obtained by the first one is about $17\,Hz$, while the second is just able to work at an average below $5\,Hz$ with the implementation used. For the application described, we require a fast algorithm in order to complete the whole pipeline in real time. Considering the fact that the differences in reconstruction quality are not so big between them (with some good results for \emph{ELAS}), and the big differences in time performance, we chose to use the \emph{ELAS} algorithm as the base for the point cloud reconstruction step.
 
  \begin{figure}[t]
   \centering
@@ -1062,23 +1070,23 @@ If we look at figure \ref{fig:cp05_times_elas_btsgm}, we have represented the ti
 
 \subsection{Ego-motion}\label{ch:chapter05_02_02}
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
         \centering
         \begin{subfigure}[b]{\textwidth}
                 \centering
-                \includegraphics[width=\textwidth,height=0.5\textwidth,trim=50 50 90 60, clip]{yaw}
+                \includegraphics[width=\textwidth,height=0.4\textheight,trim=50 50 90 60, clip]{yaw}
                 \caption{Yaw comparison}\label{fig:cp05_ego_yaw}
         \end{subfigure}
         
         \begin{subfigure}[b]{\textwidth}
                 \centering
-                \includegraphics[width=\textwidth,height=0.5\textwidth,trim=50 50 90 60, clip]{speed}
+                \includegraphics[width=\textwidth,height=0.4\textheight,trim=50 50 90 60, clip]{speed}
                 \caption{Speed comparison}\label{fig:cp05_ego_speed}
         \end{subfigure}%
         \caption{Comparison between the yaw and speed values obtained through visual odometry compared to mechanical odometry.}\label{fig:cp05_comparison_ego_yaw_speed}
 \end{figure*}
 
-In this section, we want to know if the differences in the localization provided by the use of visual or mechanical odometry could affect to the rest of the pipeline. To do that, we have chose one of the sequences in the Karlsruhe KITTI Dataset \citep{geiger2013vision}, in which a sequence of stereo pair of images is free to use. For each of these images, the mechanical odometry information is available, as well as the time in which these images were captured.
+In this section, we want to know if the differences in the localization provided by the use of visual or mechanical odometry could affect to the rest of the pipeline. To do that, we have chosen one of the sequences in the Karlsruhe KITTI Dataset \citep{geiger2013vision}, in which many sets of stereo images are available. For each of these images, the mechanical odometry information is available, as well as the time in which these images were captured.
 
 With this information, we computed the yaw increment between frames, as well as an estimation of the speed on each frame (by computing the distance to the previous frame and dividing it by the time between frames), which is known. We computed the visual odometry using the method of \cite{geiger2011stereoscan}, and the same process was performed. Results of both methods are shown in figures \ref{fig:cp05_ego_yaw} and \ref{fig:cp05_ego_speed}.
 
@@ -1126,7 +1134,7 @@ After analyzing the results provided by the tests, we have concluded that result
         \caption{Detection rate obtained by our method, compared with our implementation of the method of \cite{danescu2012particle}.}\label{fig:cp05_detection_rate}
 \end{figure*}
 
-In this section, we want to compare our results with those obtained by our implementation of the method developed by \cite{danescu2012particle}, referenced from now as \emph{Cell based PF tracking}. For this purpose, we have used a base a dataset of stereo pairs in which the localization of the obstacles is provided \citep{geiger2013vision}. For each frame, once we have detected and segmented the obstacles, we reproject the obstacle back to the left image. Around this reprojected obstacle, we define a \ac{ROI} that represents the area covered by this obstacle. In the dataset used, there is information of bounding boxes around the obstacles (pedestrian, vehicles, etc...), that can be used as input for the computation of the \emph{true positives}, \emph{true negatives} and \emph{false negatives} using the standard intersection-over-union criterion (superior to 0.5). Unfortunately, we did not found any dataset that allow us to evaluate the segmentation limits quality (as we are using voxels, we can segment more accurately that with a simple cuboid detection, as discussed before), but we think that a solution like that described is fair enough to have an idea of the goodness of our method. 
+In this section, we want to compare results of our method (from now, \emph{Voxel based PF tracking})with those obtained by our implementation of the method developed by \cite{danescu2012particle}, referenced from now as \emph{Cell based PF tracking}. For this purpose, we have used as base a dataset of stereo pairs in which the localization of the obstacles is provided \citep{geiger2013vision}. For each frame, once we have detected and segmented the obstacles, we reproject the obstacle back to the left image. Around this reprojected obstacle, we define a \ac{ROI} that represents the area covered by this obstacle. In the dataset used, there is information of bounding boxes around the obstacles (pedestrian, vehicles, etc...), that can be used as input for the computation of the \emph{true positives}, \emph{true negatives} and \emph{false negatives} using the standard intersection-over-union criterion (superior to 0.5). Unfortunately, we did not found any dataset that allow us to evaluate the segmentation limits quality (as we are using voxels, we can segment more accurately that with a simple cuboid detection, as discussed before), but we think that a solution like this is good enough to have an idea of the goodness of the \emph{Voxel based PF tracking} method.
 
 With the computed \emph{true positives}, \emph{true negatives} and \emph{false negatives}, the \emph{recall}, \emph{precision}, \emph{$f_1$} measure and \emph{similarity} values are calculated using the same method described in \ref{ch:chapter02_02_01}. From these values, we obtained the curves shown at figure \ref{fig:cp05_detection_rate}, which relate each of theses values with the percentage of frames under them. In this sense, the faster a curve grows in the $y-axis$ when the value of the $x-axis$ is incremented, the better.
 
@@ -1138,7 +1146,7 @@ The other two charts, representing the $F_1$ and $similarity$ values, allow know
 
 \subsection{Performance}\label{ch:chapter05_02_04}
 
-One of the parameters that affect the most to the final results of the method is the number of particles. With a bigger number of particles, we will have a better representation of the probability distribution of the hypotheses, but the time needed for computation is increased. In this section, we describe the computation time tests performed in order to know which is the best number of particles configuration, and to determine the real frequency at which our method is able to work.
+One of the parameters that affect the most to the final results of the method is the number of particles. With a bigger number of particles, we will have a better representation of the probability distribution of the hypotheses, but the time needed for computation increases. In this section, we describe the computation time tests performed in order to know which is the best number of particles configuration, and to determine the real frequency at which our method is able to work.
 In figure \ref{fig:cp05_time_vs_particles}, we show the results of these tests. There, a chart represents the computation time needed by the method for each frame of a given sequence. Each of the lines represent a certain number of particles.
 
 \begin{figure}[t]
@@ -1147,7 +1155,11 @@ In figure \ref{fig:cp05_time_vs_particles}, we show the results of these tests. 
   \caption{Comparison of the time needed for the each iteration when the number of particles increases.}\label{fig:cp05_time_vs_particles}
 \end{figure}
 
-As expected, the more particles we use, the more time the method needs to work. We considered that at least a maximal time of 0.2 s (5\,$Hz$) is reasonable for this application. If we look at the chart, we can see that with 1000 particles, the maximal time reached is 0.2\,s. Also, for 2500 particles the average is around this value, but we are more interested in the maximal peak, as we do not want to loose frames. Some peaks reach more than 0.4\,s. Because of that, we finally decided to use 1000 particles in our tests. Results previously shown were obtained for this number of them. With this configuration, the method is able to work at an average between 6-7\,$Hz$ in an computer equipped with an Intel\textregistered\,i7 2.4\,$GHz$.
+As expected, the more particles we use, the more time the method needs to work. We considered that at least a maximal time of 0.2 s (5\,$Hz$) is reasonable for this application. If we look at the chart, we can see that with 1000 particles, the maximal time reached is 0.2\,s. Also, for 2500 particles the average is around this value, but we are more interested in the maximal peak, as we do not want to loose frames. Some peaks reach more than 0.4\,s. Because of that, we finally decided to use 1000 particles in our tests. In fact, tests performed in the previous section were made using this number of them. With this configuration, the method is able to work at an average between 6-7\,$Hz$ in an computer equipped with an Intel\textregistered\,i7 2.4\,$GHz$.
+
+As seen in these tests, the method described in chapter \ref{ch:chapter05} is able to completely fulfill the requirements of our system. It is able to detect the obstacles with a reasonable recall and at a good frame rate, being even able to know in which direction they are moving to. As the implementation presented is quite modular, we can think on using different sources of odometry, depending on the time requirements and/or the availability of the needed sensors. From tests presented in this chapter, we know that we can use both visual or mechanical odometry, obtaining similar results. We can also use several sources of information about the environment, being even able to combine them. In our tests, we used information provided from stereo pair images. For that, we evaluated some of the algorithms being compared in section \ref{ch:chapter03_04}, but focusing the evaluation to this very specific application.
+
+Next tests are oriented to the evaluation of the methods described in the second part of the thesis. In section \ref{ch:chapter08_08}, we will see the results of combining this method with the local planner algorithm presented in chapter \ref{ch:chapter07}. We also will comment some of the differences between the voxel and stixel based methods and their suitability for the objectives of this work.
  
 \FloatBarrier
  
@@ -1226,7 +1238,7 @@ In our tests, we have launched a execution in which a robot, in a certain locati
 \subsection{Comparison with other related methods}\label{ch:chapter06_02_02}
 
 In order to demonstrate the good behavior of our method, we have compared it with other related methods that use \ac{SVM} for path planning. In particular, we have implemented the method of \cite{miura2006support}, which will be referenced from now as \textit{Single \ac{SVM}}. As said in section \ref{ch:chapter00_02_06}, this method uses a single \ac{SVM} which is calculated by testing several labeling patterns of the obstacles, incorporating them into one or another class randomly; also, we have implemented the method of \cite{yang2012safe}, which will be referred as \textit{Voronoi+\ac{SVM}}, that pre-generates a path using a Voronoi diagram, which is smoothed using a \ac{SVM}. We have not considered other methods like \cite{sarkar2008mobile} or \cite{qingyang2012local} as they do not analyze the whole map of the environment of the robot but a local window inside it, so results are not comparable. As an example of a classic method, we have included the path planning based Voronoi algorithm, too.
-For both \textit{Single \ac{SVM}} and \textit{Voronoi+\ac{SVM}} algorithms, we have performed similar tests to those described in section \ref{ch:chapter06_02_01}. After that, we chose the parameters $C=300$ and $\gamma=200$ for the former, and $C=500$ and $\gamma=750$ for the later.
+For both \textit{Single \ac{SVM}} and \textit{Voronoi+\ac{SVM}} algorithms, we have performed similar tests to those described in section \ref{ch:chapter06_02_01}. After that, we chose the parameters $C=300$ and $\gamma=200$ for the \textit{Single \ac{SVM}} approach, and $C=500$ and $\gamma=750$ for the \textit{Voronoi+\ac{SVM}} algorithm.
 
 \begin{figure*}[h!]
   \centering
@@ -1260,7 +1272,7 @@ For both \textit{Single \ac{SVM}} and \textit{Voronoi+\ac{SVM}} algorithms, we h
 
 \subsubsection{Average distance to obstacles}\label{ch:chapter06_02_02_01}
 
-In the chart of the figure \ref{fig:cp06_avg_dist_all}, we can see that worst results were obtained by the \textit{Single \ac{SVM}} method. This method shows also a big variance. This is due to the fact that results depend on the patterns analyzed, as well as that using a single \ac{SVM} for a lot of obstacles with hidden corners, curves, etc. can give an unpredictable result. It is easy to deal with these difficulties if you separate the obstacles, as done with our method, or as done by \textit{Voronoi}, which shows a good behavior in this measure. In fact, results obtained by \textit{Voronoi} are better than those shown by our method, but this is because \textit{Voronoi} diagram always find the central point between each pair of points. However, as shown later, in other tests, this will become a disadvantage as it does not take into account other variables, like smoothness or length. Same applies to \textit{Voronoi+\ac{SVM}}, which shows a good behavior, as it takes as base the path given by the \textit{Voronoi} method.
+In the chart of the figure \ref{fig:cp06_avg_dist_all}, we can see that worst results were obtained by the \textit{Single \ac{SVM}} method. This method shows also a big variance. This is due to the fact that results depend on the patterns analyzed, as well as using a single \ac{SVM} for a lot of obstacles with hidden corners, curves, etc. can give an unpredictable result. It is easy to deal with these difficulties if you separate the obstacles, as done with our method, or as done by \textit{Voronoi}, which shows a good behavior in this measure. In fact, results obtained by \textit{Voronoi} are better than those shown by our method, but this is because \textit{Voronoi} diagram always find the central point between each pair of points. However, as shown later, in other tests, this will become a disadvantage as it does not take into account other variables, like smoothness or length. Same applies to \textit{Voronoi+\ac{SVM}}, which shows a good behavior, as it takes as base the path given by the \textit{Voronoi} method.
 Our method, despite of not having so good results, presents a good average distance to the obstacles, with an acceptable variance.
 
 \subsubsection{Smoothness}\label{ch:chapter06_02_02_02}
@@ -1271,7 +1283,7 @@ As shown in the charts in figure \ref{fig:cp06_smoothness_all}, our method compl
 
 About length, figure \ref{fig:cp06_length_all} shows the evolution of the path lengths for the four analyzed methods. The peaks of the \textit{Single \ac{SVM}} method stand out. These are due to the change in the patterns, so depending on the random pattern finally chosen, the path could change, avoiding the obstacles randomly by their right or left, producing changes in the measured length, as can be appreciated in the chart. This effect can be seen better in the video available at \url{http://youtu.be/qyqLH1huePw}. Also, it is possible to see that there are not results until a few iterations later than the other methods, due to the fact that in the conditions existing in these instants, the method was unable to find a feasible path.
 
-Both \textit{Voronoi} and \textit{Voronoi+\ac{SVM}} methods reduce their length monotonically as expected, except at the end of the route because the vehicle is too near to the goal and the diagram generated by Voronoi makes the car to do a turn. Despite of this particular effect, results of both methods are good, but we think that our method is better balanced if all factors are considered together. Moreover, it always find the shortest path because, unlike Voronoi does, our method is able to avoid doing extra turns when finding the path by approaching a little more to the obstacles, when possible. This allows finding shorter and smoother paths, which are distant enough to the obstacles. However, this is the reason for which the average distance to obstacles is slightly lower in our method.
+Both \textit{Voronoi} and \textit{Voronoi+\ac{SVM}} methods reduce their length monotonically as expected, except at the end of the route because the vehicle is too near to the goal and the diagram generated by Voronoi makes the car to do a turn. Despite of this particular effect, results of both methods are good, but we think that our method is better balanced if all factors are considered together. Moreover, it always find the shortest path because, unlike Voronoi does, our method is able to avoid doing extra turns when finding the path by approaching a little more to the obstacles, when possible. This allows finding shorter and smoother paths, which are distant enough to the obstacles. This is the reason for which the average distance to obstacles is slightly lower in our method.
 
 \begin{figure*}[h!]
   \centering
@@ -1317,9 +1329,9 @@ In this section, some results of the evaluation tests carried on in order to kno
 
 In this section, we will see a comparison of a generated global path with the trajectory finally followed by the vehicle using this method, in absence of obstacles. Results of this experiment are shown in figure \ref{fig:cp07_localization_diff}.
 
-In our tests, global planner computes a unique path at the beginning of the execution, in order to avoid biases due to the generation of a new trajectory.
+% In our tests, global planner computes a unique path at the beginning of the execution, in order to avoid biases due to the generation of a new trajectory.
 
-Results are shown into two charts corresponding to each of the axis in the euclidean space. In red, the initially generated global path is shown, while in blue we represent the vehicle position. As can be seen, just some minor bias is shown when the tangent of the curve changes in any of the axis, with an average difference of $7\,cm$, which is a good result.
+Results are shown into a charts in which the movement corresponding of the vehicle along the $X$ and $Y$ axis is compared to the global plan provided. In red, the initially generated global path is shown, while in blue we represent the vehicle position. As can be seen, just some minor bias is shown when the tangent of the curve changes in any of the axis, with an average difference of $7\,cm$, which is a good result. In the global path, we can see some small jumps. These were produced because, at certain points, we decided to change the goal point in order to get more complicated trajectories.
 
 \begin{figure}[h!]
   \centering
@@ -1425,7 +1437,7 @@ In figure \ref{fig:cp07_times}, execution times obtained for a test example are 
 
 \section{Putting all together}\label{ch:chapter08_08}
 
-\begin{figure*}[h]
+\begin{figure*}[p]
 \centering
   \begin{subfigure}[b]{\textwidth}
     \centering
@@ -1441,13 +1453,10 @@ In figure \ref{fig:cp07_times}, execution times obtained for a test example are 
   \caption{Integration of the full pipeline of the application described in this thesis. Frames have been extracted from the videos available at \url{http://youtu.be/08mAOD6bT9w}, \url{http://youtu.be/SCQ6_GYjbJs} and \url{http://youtu.be/rn4iIafBFZc}.}\label{fig:cp07_whole_pipeline}
 \end{figure*}
 
-\comment{No tengo muy claro si esto debería ir aquí o en el capítulo 7}
-
 Using the methods described in this thesis, we are now able to detect the obstacles existing in the environment and track them along the frames. Also, we are able to generate trajectories that can be followed by our vehicle in order to reach a certain point, and we know how to compute the commands that the vehicle need to follow these trajectories. Now it is time to put everything together.
 
-In the images shown at figure \ref{fig:cp07_whole_pipeline}, we can see an integration of some of the methods described in this thesis. These images have been extracted from the videos available at \url{http://youtu.be/08mAOD6bT9w} (for the Stixels based example); and \url{http://youtu.be/SCQ6_GYjbJs} and \url{http://youtu.be/rn4iIafBFZc} (for the Particle Filter based one). In these methods, we have included the obstacles detected using the methods described in chapters \ref{ch:chapter04} and \ref{ch:chapter05}, which are incorporated to the costmap described in section \ref{ch:chapter07_01_01}. Unfortunately, at this time the described implementation of the costmap do not accept temporal information, so we can just include the detected obstacles, but not the information about their future movement, that could be obtained thanks to the tracks detected. Also, as we said before, the global planner described in chapter \ref{ch:chapter06} was discarded as it is not longer needed in this form, but we think on it as a solution for the fast generation of \acp{RNDF}.
+In the images shown at figure \ref{fig:cp07_whole_pipeline}, we can see an integration of some of the methods described in this thesis. These images have been extracted from the videos available at \url{http://youtu.be/08mAOD6bT9w} (for the Stixels based example); and \url{http://youtu.be/SCQ6_GYjbJs} and \url{http://youtu.be/rn4iIafBFZc} (for the Particle Filter based one). In these methods, we have included the obstacles detected using the methods described in chapters \ref{ch:chapter04} and \ref{ch:chapter05}, which are incorporated to the costmap described in section \ref{ch:chapter07_01_01}. Unfortunately, at this time the described implementation of the costmap do not accept temporal information, so we can just include the detected obstacles, but not the information about their future movement, that could be obtained thanks to the tracks detected.
 
-
-Anyway, the integration of the method with the planner described in this chapter is quite good. We can see in both images that the planner reacts properly to the objects detected and that, given a pair images, both methods are able to detect the obstacles, allowing a safe trip. In general, both methods are suitable for the evaluated scenarios, being the most limiting features those inherent to the methods, which were described in chapters \ref{ch:chapter04} and \ref{ch:chapter05}.
+Anyway, integration of the method with the planner described in this chapter is quite good. We can see how the planner reacts properly to the objects detected, and is able to travel between obstacles if space is big enough. In general, both stixel and particle filter based methods are suitable for the proposed application. Both are able to detect the obstacles using a pair of calibrated onboard cameras, they are able to track the obstacles, and this detection is not dependent on a previous preparation of the area in which the vehicle is navigating. The only limiting features are those inherent to the methods (i.e., the need of a planar surface for stixels reconstruction), which can not be thought as problems if we consider the areas in which Verdino will work in the future.
 
 \FloatBarrier

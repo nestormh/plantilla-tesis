@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.1.3
-lastDocument=conclusions.tex
+lastDocument=chapter06.tex
 masterDocument=
 name=Thesis
 pkg_extIsRegExp=false
@@ -44,7 +44,7 @@ Indentation Mode=normal
 Mode=LaTeX
 
 [document-settings,item:acronyms.tex]
-Bookmarks=
+Bookmarks=16
 Encoding=UTF-8
 FoldedColumns=
 FoldedLines=
@@ -107,7 +107,7 @@ Indentation Mode=normal
 Mode=LaTeX
 
 [document-settings,item:chapter02.tex]
-Bookmarks=63
+Bookmarks=65
 Encoding=UTF-8
 FoldedColumns=
 FoldedLines=
@@ -134,7 +134,7 @@ Indentation Mode=normal
 Mode=LaTeX
 
 [document-settings,item:chapter05.tex]
-Bookmarks=506
+Bookmarks=492
 Encoding=UTF-8
 FoldedColumns=
 FoldedLines=
@@ -217,8 +217,8 @@ Mode=BibTeX
 [document-settings,item:results.tex]
 Bookmarks=
 Encoding=UTF-8
-FoldedColumns=
-FoldedLines=
+FoldedColumns=0
+FoldedLines=210
 Highlighting=LaTeX
 Indentation Mode=normal
 Mode=LaTeX
@@ -264,13 +264,13 @@ order=-1
 
 [item:acronyms.tex]
 archive=true
-column=43
+column=22
 encoding=UTF-8
 highlight=LaTeX
-line=17
+line=14
 mode=LaTeX
 open=true
-order=3
+order=4
 
 [item:appendixA.tex]
 archive=true
@@ -294,60 +294,60 @@ order=5
 
 [item:appendixSVM.tex]
 archive=true
-column=192
+column=86
 encoding=UTF-8
 highlight=LaTeX
-line=99
+line=13
 mode=LaTeX
 open=false
 order=1
 
 [item:certificate.tex]
 archive=true
-column=0
+column=76
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=5
 mode=LaTeX
 open=false
 order=-1
 
 [item:chapter00.tex]
 archive=true
-column=791
+column=67
 encoding=UTF-8
 highlight=LaTeX
-line=77
+line=87
 mode=LaTeX
 open=false
 order=4
 
 [item:chapter01.tex]
 archive=true
-column=577
+column=13
 encoding=UTF-8
 highlight=LaTeX
-line=29
+line=165
 mode=LaTeX
 open=false
-order=5
+order=1
 
 [item:chapter02.tex]
 archive=true
-column=26
+column=169
 encoding=UTF-8
 highlight=LaTeX
-line=278
+line=315
 mode=LaTeX
 open=false
 order=6
 
 [item:chapter03.tex]
 archive=true
-column=41
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=288
+line=0
 mode=LaTeX
 open=false
 order=1
@@ -357,17 +357,17 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=405
 mode=LaTeX
 open=false
-order=4
+order=7
 
 [item:chapter05.tex]
 archive=true
-column=557
+column=811
 encoding=UTF-8
 highlight=LaTeX
-line=122
+line=513
 mode=LaTeX
 open=false
 order=1
@@ -377,30 +377,30 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=239
+line=0
+mode=LaTeX
+open=true
+order=5
+
+[item:chapter07.tex]
+archive=true
+column=9
+encoding=UTF-8
+highlight=LaTeX
+line=15
 mode=LaTeX
 open=false
 order=4
 
-[item:chapter07.tex]
-archive=true
-column=132
-encoding=UTF-8
-highlight=LaTeX
-line=397
-mode=LaTeX
-open=true
-order=4
-
 [item:conclusions.tex]
 archive=true
-column=447
+column=434
 encoding=UTF-8
 highlight=LaTeX
-line=73
+line=28
 mode=LaTeX
 open=true
-order=1
+order=2
 
 [item:dedicatory.tex]
 archive=true
@@ -424,10 +424,10 @@ order=-1
 
 [item:local.sty]
 archive=true
-column=40
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=173
+line=0
 mode=LaTeX
 open=false
 order=6
@@ -444,22 +444,22 @@ order=6
 
 [item:references.bib]
 archive=true
-column=25
+column=19
 encoding=UTF-8
 highlight=BibTeX
-line=351
+line=1785
 mode=BibTeX
 open=true
-order=2
+order=3
 
 [item:results.tex]
 archive=true
-column=174
+column=142
 encoding=UTF-8
 highlight=LaTeX
-line=856
+line=1432
 mode=LaTeX
-open=false
+open=true
 order=1
 
 [item:thesis.kilepr]
@@ -474,10 +474,10 @@ order=-1
 
 [item:thesis.tex]
 archive=true
-column=16
+column=17
 encoding=UTF-8
 highlight=LaTeX
-line=261
+line=255
 mode=LaTeX
 open=true
 order=0
@@ -501,10 +501,10 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:acronyms.tex]
-CursorColumn=43
-CursorLine=17
+CursorColumn=22
+CursorLine=14
 JumpList=
-ViMarks=
+ViMarks=a,16,0
 
 [view-settings,view=0,item:appendixA.tex]
 CursorColumn=0
@@ -519,68 +519,68 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:appendixSVM.tex]
-CursorColumn=192
-CursorLine=99
+CursorColumn=86
+CursorLine=13
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:certificate.tex]
-CursorColumn=0
-CursorLine=0
+CursorColumn=76
+CursorLine=5
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter00.tex]
-CursorColumn=791
-CursorLine=77
+CursorColumn=67
+CursorLine=87
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter01.tex]
-CursorColumn=577
-CursorLine=29
+CursorColumn=13
+CursorLine=165
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter02.tex]
-CursorColumn=26
-CursorLine=278
+CursorColumn=169
+CursorLine=315
 JumpList=
-ViMarks=a,63,0
+ViMarks=a,65,0
 
 [view-settings,view=0,item:chapter03.tex]
-CursorColumn=41
-CursorLine=288
+CursorColumn=0
+CursorLine=0
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter04.tex]
 CursorColumn=0
-CursorLine=0
+CursorLine=405
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter05.tex]
-CursorColumn=557
-CursorLine=122
+CursorColumn=811
+CursorLine=513
 JumpList=
-ViMarks=a,506,0
+ViMarks=a,492,0
 
 [view-settings,view=0,item:chapter06.tex]
 CursorColumn=0
-CursorLine=239
+CursorLine=0
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter07.tex]
-CursorColumn=132
-CursorLine=397
+CursorColumn=9
+CursorLine=15
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:conclusions.tex]
-CursorColumn=447
-CursorLine=73
+CursorColumn=434
+CursorLine=28
 JumpList=
 ViMarks=
 
@@ -597,8 +597,8 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:local.sty]
-CursorColumn=40
-CursorLine=173
+CursorColumn=0
+CursorLine=0
 JumpList=
 ViMarks=
 
@@ -609,19 +609,19 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:references.bib]
-CursorColumn=25
-CursorLine=351
+CursorColumn=19
+CursorLine=1785
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:results.tex]
-CursorColumn=174
-CursorLine=856
+CursorColumn=142
+CursorLine=1432
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:thesis.tex]
-CursorColumn=16
-CursorLine=261
+CursorColumn=17
+CursorLine=255
 JumpList=
 ViMarks=

@@ -10,23 +10,23 @@
 
 \chapter{Particle Filter Based Object Tracking}\label{ch:chapter05}
 
-In the previous chapter, we saw a method able to simplify the world reconstructed from a stereo pair, in an attempt to save computational time. However, this implies loosing information, which means that there could be certain situations in which we need more information than that provided by the stixels. Furthermore, we can not always ensure that we will find the assumptions (for example, the supposition of having a planar road). For that reason, we also explored some strategies in which a full reconstruction is used.
+In the previous chapter, we saw a method able to simplify the world reconstructed from a stereo pair, in an attempt to save computational time. However, this implies loosing information, which means that there could be certain situations in which we need more information than that provided by stixels. Furthermore, we can not always ensure that we will find a situation in which the assumptions are valid (for example, the supposition of having a planar road). For that reason, we also explored some strategies in which a full reconstruction is used.
 
-In this chapter, we will describe a method that is able to detect obstacles from a point cloud generated from a pair of moving stereo cameras, and model them as a set of voxels. From them, it predicts the direction in which objects are moving to. We define a voxel as the minimal volume in the three-dimensional space, from which we will build the detected objects. The method is inspired in the work of \cite{danescu2012particle}, since we take their idea of using a particle filter over an occupancy grid in order to detect the obstacles and their directions. However, in their method they use a two-dimensional grid which is then converted to polar coordinates, with the inconvenient that just the top-view information of the input clouds is used for the segmentation of the scene. As said in section \ref{ch:chapter00_02_05}, this approach falls inside the so named 2.5D methods. The main disadvantages of this kind of methods is that they consider all the obstacles as if they were lying on the ground, and are represented as a convex cuboid that doesn't take into account the complexities of certain obstacles.
+In this chapter, we will describe a method able to detect obstacles from a point cloud generated from a pair of moving stereo cameras, and model them as a set of voxels. From these voxels, we predict the direction in which objects are moving to. We define a voxel as the minimal volume in the three-dimensional space, from which we will build the detected objects. The method is inspired in the work of \cite{danescu2012particle}, since we take their idea of using a particle filter over an occupancy grid in order to detect the obstacles and their directions. However, in their method they use a two-dimensional grid which is then converted to polar coordinates, with the inconvenient that just the top-view information of the input clouds is used for the segmentation of the scene. As said in section \ref{ch:chapter00_02_05} of the \emph{Introduction} chapter, this approach falls inside the so named 2.5D methods. The main disadvantages of this kind of methods is that they consider all the obstacles as if they were lying on the ground, and are represented as a convex cuboid that doesn't take into account the complexities of certain obstacles.
 
 As commented in previous sections, Verdino is thought to work in crowded areas, like pedestrian streets or touristic complexes, in which an overestimation of the size of the obstacles can lead to an inefficient behavior. So we decided to extend the original method of \cite{danescu2012particle} in order to make it fully three-dimensional, by using a voxelized grid instead of the original cartesian/polar grid, and including some improvements, most of them with the aim of reducing the number of fake positives.
 
 An implementation of the method described in this chapter is available at \url{https://github.com/nestormh/PolarGridTracking}.
 
-\section{The Method}\label{ch:chapter05_01}
+\section{Method}\label{ch:chapter05_01}
 
-In general terms, the method starts with the generation of a voxelized occupancy grid in which the world surrounding the vehicle is divided into a discrete number of voxels of the same size. For each voxel, an occupancy probability is assigned, based on the number of points inside it and its neighborhood. Also, during the process, a set of particles will be assigned dynamically during the execution to each voxel, based on a 3D generalization of the weighting and resampling mechanism described in \cite{isard1998condensation}. These particles will have a double function:
+In general terms, the method starts with the generation of a voxelized occupancy grid in which the world surrounding the vehicle is divided into a discrete number of voxels of the same size. For each voxel, an occupancy probability is assigned, based on the number of points inside it and its neighborhood. Also, during the process, a set of particles will be assigned dynamically to each voxel during the execution, based on a 3D generalization of the weighting and resampling mechanism described in \cite{isard1998condensation}. These particles will have a double function:
 \begin{enumerate}
  \item Denoting hypotheses (as happens with classical particle filters).
  \item Being used as the building blocks of the world model.
 \end{enumerate}
 
-At each frame, the set of particles obtained in the previous frame (each of these with a certain pose ${(x, y, z)}$ and speed ${(vx, vy, vz)}$) will be evolved using their movement model and assigned to the corresponding voxel, attending to the time passed between frames and the ego-motion. Then, the particles are re-weighted and resampled.
+At each frame, the set of particles obtained in the previous frame (each of these with a certain pose ${(x, y, z)}$ and speed ${(vx, vy, vz)}$) will be evolved using their movement model and assigned to the corresponding voxel, attending to the time passed between frames and the ego-motion. Then, particles are re-weighted and resampled.
 
 Particles that survived to the resampling process are used to construct the objects that model the environment, by joining all these voxels that share a similar orientation and speed. This object reconstruction is done by using a flood fill approach, following a similar process to that described in \cite{broggi2013}, but using the vectors of each voxel, instead of color information, as done in their work.
 
@@ -45,7 +45,7 @@ Also, we added some new advantages in our approach:
  \item \emph{Collaborative update of the grid.} The usage of a voxel grid also allows combining several input sources at the same time. Due to some decisions taken during the implementation of the method, it is ready for such collaborative update.
 \end{itemize}
 
-The method pipeline is based on six different steps, depicted in figure \ref{fig:cp05_pipeline_general}:
+Method pipeline is based on six different steps, depicted in figure \ref{fig:cp05_pipeline_general}:
 
 
 \begin{figure}[h!]
@@ -57,11 +57,11 @@ The method pipeline is based on six different steps, depicted in figure \ref{fig
 
 
 \begin{enumerate}
- \item \emph{3D point cloud generation.} Our implementation is able to work from data coming from any kind of sensor. Anyway, in our tests we have used the point clouds obtained from stereo cameras. In this step we obtain the set of 3D points that will be the input for our algorithm. At implementation level, this process is done in a separate process, so the point cloud can be used for other tasks in the system, or even be computed in a different computer or device in the future. More details of this process are given at section \ref{ch:chapter05_01_01}.
+ \item \emph{3D point cloud generation.} Our implementation is able to work from data coming from any kind of sensor. Anyway, in our tests we have used point clouds obtained from stereo cameras. In this step we obtain the 3D point set that will be the input for our algorithm. At implementation level, this step is done in a separate process, so the point cloud can be used for other tasks in the system, or even be computed in a different computer or device in the future. More details are given at section \ref{ch:chapter05_01_01}.
  \item \emph{Ego-motion.} As the car is moving, the orientation and speeds computed for the different objects is biased by the speed of the own vehicle. To compensate the ego-motion, we need to compute our own movement. In section \ref{ch:chapter05_01_02}, this process is better explained.
- \item \emph{Voxelization.} Each of the 3D points obtained in the first step is assigned to a certain voxel. Each voxel has a certain resolution, which covers a parameterized section of the world. In our tests, we have used voxels of a resolution of $(0.25\times0.25\times0.25\,m)$ in the $X$, $Y$ and $Z$ dimensions, respectively, covering a volume going from $-4$\,m to $+4$\,m in the $X$ axis; $0$ to $+24$\,m in the $Y$ axis; and $0$\,m to $3.5$\,m in the $Z$ axis. This process, and how probabilities are assigned to each voxel is explained at section \ref{ch:chapter05_01_03}.
+ \item \emph{Voxelization.} Each of the 3D points obtained in the first step is assigned to a certain voxel. Each voxel has a certain resolution, which covers a parameterized section of the world. In our tests, we have used voxels of a resolution of $(0.25\times0.25\times0.25\,m)$ in the $X$, $Y$ and $Z$ dimensions, respectively, covering a volume going from $-4$\,m to $+4$\,m in the $X$ axis; $0$ to $+24$\,m in the $Y$ axis; and $0$ to $3.5$\,m in the $Z$ axis. This process, and how probabilities are assigned to each voxel is explained at section \ref{ch:chapter05_01_03}.
  \item \emph{Voxel pose and speed computation.} Based on a \ac{PF} and in the probabilities assigned in the previous step, we calculate the pose and speed of each of the voxels in the grid, as explained in section \ref{ch:chapter05_01_04}.
- \item \emph{Object reconstruction.} Once we know the pose and speed of each voxel, and based on a flood fill procedure inspired in the work by \cite{broggi2013}, together with the vectors already obtained, similar voxels are assigned to a common final obstacle. For each segmented object, orientation and speed is computed based on the vectors belonging to each of the associated voxels (See section \ref{ch:chapter05_01_05}).
+ \item \emph{Object reconstruction.} Once we know the pose and speed of each voxel, and based on a flood fill procedure inspired in the work of \cite{broggi2013}, together with the vectors already obtained, similar voxels are assigned to a common final obstacle. For each segmented object, orientation and speed is computed based on the vectors belonging to each of the associated voxels (See section \ref{ch:chapter05_01_05}).
 %  \item \emph{Planning and obstacle avoidance.} Once we know the exact position of the vehicles, and their future movement, we can integrate the results into the rest of the system and use it for the calculation of safe and smooth paths. This process will be described in more depth in the following chapters, in sections \ref{ch:chapter05_01_06}.
 \end{enumerate}
 
@@ -69,9 +69,9 @@ In the following sections, all these steps will be explained in a bigger detail.
 
 \subsection{3D point cloud generation}\label{ch:chapter05_01_01}
 
-As we have seen, in this stage a pair of calibrated images is received and transformed into a disparity map, that will allow us to get the corresponding 3D point cloud. Using the methods described in \ref{ch:chapter03}, we evaluated a set of algorithms, including some pre- and post-processing filters, in order to know which of these is the most suitable for outdoor autonomous navigation applications. From this evaluation, we concluded that best results were given by the configuration we named as \emph{Census-SGM Conf 2} \citep{Hirschmuller2005}. Unfortunately, we had not access to the optimized version of this configuration at the moment of developing the method explained in this chapter. In the other hand, in the same comparison, we saw that both \emph{BT-SGM} and \emph{ELAS} algorithms had also a good response, and we had an implementation of both of them. The question is: what is the most suitable algorithm for our approach? 
+As we have seen, in this stage a pair of calibrated images is received and transformed into a disparity map, that will allow us to get the corresponding 3D point cloud. Using the methods described in chapter \ref{ch:chapter03}, we evaluated a set of algorithms, including some pre- and post-processing filters, in order to know which of these is the most suitable for outdoor autonomous navigation applications. From this evaluation, we concluded that best results were given by the configuration we named as \emph{Census-SGM Conf 2} \citep{Hirschmuller2005}. Unfortunately, we had not access to the optimized version of this configuration at the moment of developing the method explained in this chapter. In the other hand, in the same comparison, we saw that both \emph{BT-SGM} and \emph{ELAS} algorithms had also a good response, and we had an implementation of both of them. The question is: what is the most suitable algorithm for our approach? 
 
-In section \ref{ch:chapter05_02_01}, a comparison between both \emph{BT-SGM} and \emph{ELAS} algorithms is performed. After this evaluation, we concluded that for the method presented in this chapter, ELAS is the most suitable. If we attend to the average error shown in the \ac{LGT} tests in section \ref{ch:chapter03_04}, the values obtained are reasonable; but specially, its performance is quite better, as shown in the chart at figure \ref{fig:cp05_comparison_bt_sgm_vs_elas}, 
+In section \ref{ch:chapter05_02_01}, a comparison between both \emph{BT-SGM} and \emph{ELAS} algorithms is performed. After this evaluation, we concluded that for the method presented in this chapter, ELAS is the most suitable. If we attend to the average error shown in the \ac{LGT} tests in section \ref{ch:chapter03_04}, the values obtained are reasonable; but specially, its performance is quite better, as shown in the chart at figure \ref{fig:cp05_comparison_bt_sgm_vs_elas}.
 
 \begin{figure*}[h!]
         \centering
@@ -109,17 +109,17 @@ H = (I_{max}(Z) - I_{min}(Z)) / {DZ}
 \end{cases}
 \end{equation}
 
-Here, $W$, $L$ and $H$ are the width, length and height of the voxel grid. $DX$, $DY$ and $DZ$, are the parameterized resolutions of each voxel at dimensions $X$, $Y$ and $Z$, respectively. $I_{max}(d)$ and $I_{max}(d)$ represent the maximal and minimal value of the interval taken in consideration at each dimension $d$. As depicted in the diagram at figure \ref{fig:cp05_intervals}, the left camera is in the center of the grid in the $X$ and $Z$ dimensions, and at the minimal depth in the dimension $Y$.
+Here, $W$, $L$ and $H$ are the width, length and height of the voxel grid. $DX$, $DY$ and $DZ$, are the parameterized resolutions of each voxel at dimensions $X$, $Y$ and $Z$, respectively. $I_{min}(d)$ and $I_{max}(d)$ represent the minimal and maximal values of the interval taken in consideration at each dimension $d$. As depicted in the diagram at figure \ref{fig:cp05_intervals}, the left camera is in the center of the grid in the $X$ and $Z$ dimensions, and at the minimal depth in the dimension $Y$.
 
 At the end of this process, we will have the filtered point cloud $\mathcal{P}$, which will be the input for the 3D reconstruction stage.
 
 \subsubsection{Using other sensors}\label{ch:chapter05_01_01_02}
 
-As already said, despite we have oriented this work to the usage of a stereo camera as input device, the point cloud generation step and filter step have been implemented as separate processes and, as we will see later, no color information is used. So other sources providing a 3D point cloud stream are acceptable for our algorithm. Also several sensors can provide data simultaneously.
+As already said, although we have oriented this work to the usage of a stereo camera as input device, the point cloud generation and filter steps have been implemented as separate processes and, as we will see later, no color information is used. So other sources providing a 3D point cloud stream are acceptable for our algorithm. Also several sensors can provide data simultaneously.
 
 \subsection{Ego-motion}\label{ch:chapter05_01_02}
 
-By using a point cloud referred to the left camera (or a given sensor), speeds and orientations are biased by the movement of the vehicle between frames. This movement must be compensated, so we need to get the ego-motion. This can be done, in one hand, using the localization method used by Verdino (\cite{Perea2013mcl}), based on the information obtained from an odometric sensor, which combined with the \ac{GPS} signal and an \ac{IMU} device, gives a precise localization. Other way to do this is by using a visual odometry system, like that proposed by \cite{geiger2011stereoscan}. In section \ref{ch:chapter05_02_02}, a comparison between a sensor-based odometric system and a image-based odometry system is performed, concluding that both approaches can be used indistintly without affecting to the results of our method. As some datasets available in the network do not include this odometry information, we have had to use the visual odometry method in our evaluation tests.
+By using a point cloud referred to the left camera (or a given sensor), speeds and orientations are biased by the movement of the vehicle between frames. This movement must be compensated, so we need to get the ego-motion. This can be done, in one hand, using the localization method used by Verdino (\cite{Perea2013mcl}), based on the information obtained from an odometric sensor, which combined with the \acs{GPS} signal and an \ac{IMU} device, gives a precise localization. Other way to do this is by using a visual odometry system, like that proposed by \cite{geiger2011stereoscan}. In section \ref{ch:chapter05_02_02}, a comparison between a sensor-based odometric system and a vision-based odometry system is performed, concluding that both approaches can be indistinctly used without affecting to the results of our method. As some datasets available in the network do not include this odometry information, we have had to use the visual odometry method in our evaluation tests.
 
 In figure \ref{fig:cp05_tfs}, an historic of the positions of the vehicle in previous frames is shown.
 
@@ -131,7 +131,7 @@ In figure \ref{fig:cp05_tfs}, an historic of the positions of the vehicle in pre
 
 \subsection{Voxelization}\label{ch:chapter05_01_03}
 
-This is the first stage of the object reconstruction process. As said, we have implemented our application using four different and independent processes, able to run in separate threads, making it more modular. Three of them have been already described in the previous sections (See \ref{ch:chapter05_01_01}, 3D point cloud generation, and Point cloud filtering; and \ref{ch:chapter05_01_02}, Ego-motion). This is the fourth.
+This is the first stage of the object reconstruction process. As said, we have implemented our application using four different and independent processes, able to run in separate threads, making it more modular. Three of them have been already described in the previous sections (See \ref{ch:chapter05_01_01}, 3D point cloud generation and Point cloud filtering; and \ref{ch:chapter05_01_02}, Ego-motion). This is the fourth.
 
 As input, we receive the odometry information obtained from the process described in \ref{ch:chapter05_01_02}, and the point cloud $\mathcal{P}$ obtained in section \ref{ch:chapter05_01_01_01} (See figure \ref{fig:cp05_pipeline_general}). This point cloud is processed, assigning each point $p_i = (p_x, p_y, p_z), i=1..N_p$ to the corresponding voxel $g_j=(g_w, g_l, g_h), j=1..N_g$, through the expression:
 
@@ -161,7 +161,7 @@ On each voxel, we store information related to:
 
 Both posterior and conditional probabilities of the received measurement are obtained a method similar to that described in \cite{isard1998condensation}, but extended for the three-dimensional case. Probabilities are directly related to the existence or absence of 3D points in each of the voxels. These probabilities will help us, in the next stages, to weight the particles.
 
-For each voxel, we need to know the conditional probability of the associated measurements, under the occupied $p(m(w,l,h)|occupied)$ or free $p(m(w,l,h)|occupied)$ assumption. For that, we must take into account the specificities of each sensor. In our case, we have based our tests on a stereo camera. In this kind of sensors, uncertainties grow as depth increases. So we need to compute the uncertainty for the centroid $c=(c_x, c_y, c_z)$ associated to each voxel. This uncertainty is given by:
+For each voxel, we need to know the conditional probability of the associated measurements, under the occupied $p(m(w,l,h)~|~occupied)$ or free $p(m(w,l,h)~|~free)$ assumption. For that, we must take into account the specificities of each sensor. In our case, we have based our tests on a stereo camera. In this kind of sensors, uncertainties grow as depth increases. So we need to compute the uncertainty for the centroid $c=(c_x, c_y, c_z)$ associated to each voxel. This uncertainty is given by:
 
 \begin{equation}\label{eq:cp05_uncertainty_distance_reconstruction}
 \sigma_{c_y}={{{c_y}^2 \cdot \sigma_d} \over {b \cdot f}}
@@ -191,7 +191,7 @@ Errors must be mapped into voxel errors. This is just done by dividing them by t
 Based on these errors, we find an approximation for the conditional probabilities of the measurement voxels under the occupied/free assumption. For that, we count the occupied neighbor voxels in the grid. The distance for which we consider a voxel as neighbor comes from the values of $\sigma_w$, $\sigma_l$ and $\sigma_h$. The total number of occupied neighbors is divided by the total number of voxels explored, obtaining the final value of the conditional probability.
 
 \begin{equation}\label{eq:cp05_conditional_prob}
-p(m(w,l,h)|occupied) = {
+p(m(w,l,h)~|~occupied) = {
 {\sum \limits_{w'=w-\sigma_w}^{w+\sigma_w} \sum \limits_{l'=l-\sigma_l}^{l+\sigma_l} \sum \limits_{h'=h-\sigma_h}^{h+\sigma_h} O(w',l',h')} 
 \over 
 {(2 \cdot \sigma_w + 1) \cdot (2 \cdot \sigma_l + 1) \cdot (2 \cdot \sigma_h + 1)}}
@@ -214,8 +214,8 @@ p(m(w,l,h)|occupied) = {
 
 The conditional probability of the measurement given the “free” assumption is
 
-\begin{equation}\label{eq:cp05_conditional_prob}
-p(m(w,l,h)|occupied) = 1 - p(m(w,l,h)|free)
+\begin{equation}\label{eq:cp05_conditional_prob_2}
+p(m(w,l,h)~|~occupied) = 1 - p(m(w,l,h)~|~free)
 \end{equation}
 
 In figure \ref{fig:cp05_voxelization} the obtained voxels are represented. The occupation probability is represented through the alpha channel of each of them, so the opacity is directly related to this probability, being the most transparent those with a low value.
@@ -238,15 +238,15 @@ The pipeline of this step is represented in figure \ref{fig:cp05_voxel_pose_spee
 
 \subsubsection{Prediction}\label{ch:chapter05_01_04_01}
 
-In this step, we compute the present particle distribution by taking into account each particle motion model and the time passed between frames. With this new distribution, data will be ready for the next task. In the method developed by \cite{danescu2012particle}, they updated the particle set in a step quite close to this one. However, in their work, prediction equations used odometric information in order to compensate the ego-motion. In our approach, we do not perform this compensation at this point. This doesn't means that we do not care about our the bias introduced by the vehicle movement. Instead, this movement will be compensated at the end of the process, once we have the whole orientation and speed of each obstacle. This give us some advantages:
+In this step, we compute the present particle distribution by taking into account each particle motion model and the time passed between frames. With this new distribution, data will be ready for the next task. In the method developed by \cite{danescu2012particle}, they updated the particle set in a step quite close to this one. However, in their work, prediction equations used odometric information in order to compensate the ego-motion. In our approach, we do not perform this compensation at this point. This doesn't means that we do not care about the bias introduced by the vehicle movement. Instead, this movement will be compensated at the end of the process, once we have the whole orientation and speed of each obstacle. This give us some advantages:
 \begin{itemize}
  \item We do not need to rotate and translate the whole grid between iterations.
- \item We just need to apply the motion equations in order to update the particles set.
+ \item We just need to apply the motion equations in order to update the particle set.
 \end{itemize}
 
-These advantages allows saving a lot of resources. This is the most computationally expensive of the tasks in the method, which is highly dependent on the parameter $N_g$, that controls the number of particles. If we speed up this step, the system will be able to deal with a larger number of particles, improving the results.
+These advantages allow saving a lot of resources. This is the most computationally expensive of the tasks in the method, which is highly dependent on the parameter $N_g$, that controls the number of particles. If we speed up this step, the system will be able to deal with a larger number of particles, improving results.
 
-Each particle $q_i = (x, y, z, v_x, v_y, v_z) \in \mathcal{Q}$ is updated as follows. First, we need a motion model that allows to transform the particles based on the increment of time $\Delta t$ and the parameters of position and speed of the particle. For this purpose, we introduce the state transition matrix $S$:
+Each particle $q_i = (x, y, z, v_x, v_y, v_z) \in \mathcal{Q}$ is updated as follows. First, we need a motion model that allows to transform the particles based on the increment of time $\Delta t$ and the position and speed parameters of the particle. For this purpose, we introduce the state transition matrix $S$:
 
 \begin{equation}\label{eq:cp05_state_transition_matrix}
 S =
@@ -255,7 +255,7 @@ I_{3\times3} & \Delta t \cdot I_{3\times3} \\
 0_{3x3} & I_{3\times3} \end{array} \right)
 \end{equation}
 
-We also introduce the matrix $\Delta$, which models the stochastic diffusion caused by the uncertainties in the motion model.
+There, $0_{3x3}$ is a $3 \times 3$ matrix of $0s$. We also introduce the matrix $\Delta$, which models the stochastic diffusion caused by the uncertainties in the motion model.
 
 \begin{equation}\label{eq:cp05_state_motion_model_uncertainties}
 \Delta =
@@ -278,7 +278,7 @@ q_{t + 1} = S \cdot q_{t} + \Delta
 
 This step is quite similar to the homonym stage described in \cite{danescu2012particle}, with some minor differences, mainly related to the addition of a new dimension. For optimization purposes, in this stage we also perform the calculation of the main orientation and speed vectors associated to each voxel.
 
-As said before, particles are the base of our system. They are used both as hypotheses and as building blocks of the different obstacles. From these particles, we will calculate the main vectors of each voxel, which will be used in later steps for reconstruction and segmentation of final obstacles.
+As said before, particles are the base of our system. They are used both as hypotheses and as building blocks of the different obstacles. From these particles, we will calculate the main vectors of each voxel, which will be used in later steps for the reconstruction and segmentation of final obstacles.
 
 \begin{figure}[h!]
   \centering
@@ -302,15 +302,15 @@ Once we have computed the survival particles falling inside an occupied voxel, m
   \includegraphics{obstacleSpeed}
   \caption{Main vectors computed.}\label{fig:cp05_main_vectors_per_voxel}
 \end{figure}
- \item The speed and orientation will be given by the bin with the biggest number of related particles.
+ \item Speed and orientation will be given by the bin with the biggest number of related particles.
 \end{itemize}
 
-After this process, each voxel will know their estimated speed and direction. These must be obtained using just the surviving particles after the prediction process. The reason for this is that weighting and resampling is an stochastic process, results could be biased by wrongly duplicated or eliminated particles. In figure \ref{fig:cp05_main_vectors_per_voxel} we can view the main vectors obtained for the surviving voxels after the segmentation process.
+After this process, each voxel will know their estimated speed and direction. These must be obtained using just the surviving particles after the prediction process. The reason for this is that since weighting and resampling is an stochastic process, results could be biased by wrongly duplicated or eliminated particles. In figure \ref{fig:cp05_main_vectors_per_voxel} we can view the main vectors obtained for the surviving voxels after the segmentation process.
 
 
 \paragraph{Weighting}\label{ch:chapter05_01_04_02_02}
 
-\begin{algorithm}[p]
+\begin{algorithm}[h!]
 \caption{Weighting and Resampling}
 \label{alg:cp05_weighting_resampling}
 \begin{algorithmic}
@@ -327,8 +327,7 @@ After this process, each voxel will know their estimated speed and direction. Th
       \State \indent $N_{rg} \gets P_{og} \cdot N_g$
       \State \indent $f_g \gets {{N_{rg}} \over {N_{og}}}$
     \For {\textbf{each} particle $p$ belonging to $g$}
-      \State \Comment { The number of particles will be increased.}
-      \If { $f_g > 1$ } 
+      \If { $f_g > 1$ } \Comment { The number of particles will be increased.}
 	\State {$F_n \gets \lfloor f_g\rfloor$} \Comment {Integer part}
 	\State {$F_f \gets f_g - \lfloor f_g\rfloor$} \Comment {Fractional part}
 	\For {$k = 1$ to $F_n - 1$}
@@ -338,8 +337,7 @@ After this process, each voxel will know their estimated speed and direction. Th
 	\If {$r < F_f$}
 	  \State {$g$.makeCopy($p$)}
 	\EndIf
-      \State \Comment {$f_g < 1$, the number of particles will be decreased.}
-      \Else 
+      \Else \Comment {$f_g < 1$, the number of particles will be decreased.}
 	\State $r \gets \text{random value in the range [0 \ldots 1]}$
 	\If {$r > F_g$}
 	  \State {$g$.remove($p$)}
@@ -403,7 +401,7 @@ After finishing this process, we can proceed to the initialization stage.
 
 \subsubsection{Initialization}\label{ch:chapter05_01_04_03}
 
-In this stage, empty voxels are initialized with a new random set with a number of particles proportional to the occupancy probability. This situation can happen due to three different reasons:
+In this stage, empty voxels are initialized with a number of random particles proportional to the occupancy probability. This situation can happen due to three different reasons:
 \begin{itemize}
  \item It is the first iteration, so none of the voxels has been initialized already.
  \item After the weighting and resampling process, none of the particles survived.
@@ -414,7 +412,7 @@ This stage is in charge of ensuring that the number of particles never becomes z
 
 Given the voxel $g \in \mathcal{G}$, each particle is initialized with the position $(x, y, z) = (g.c_x, g.c_y, g.c_z)$, and a random speed $(v_x, v_y, v_z)$ in the range $[0\dots v_{max}(d)]$, being $v_{max}(d)$ an user defined parameter that determines the maximal speed at each dimension $d \in \{ X, Y, Z\}$ expected for each voxel. 
 
-In this implementation, we allow vertical motion, which is controlled by the parameter $v_{max}(Z)$. However, in certain situations (like planar grounds) this movement is not relevant, so it is possible to set it to $0$, so the particles can restrict their movement to the $XY$ plane, simplifying the problem.
+In this implementation, we allow vertical motion, which is controlled by the parameter $v_{max}(Z)$. However, in certain situations (like planar grounds) this movement is not relevant, so it is possible to set it to $0$, in the way that particles can restrict their movement to the $XY$ plane, simplifying the problem.
 
 \FloatBarrier
 
@@ -422,7 +420,7 @@ In this implementation, we allow vertical motion, which is controlled by the par
 
 Based on the main vectors obtained for each voxel, we can assume that all adjacent voxels with a similar direction and speed belong to the same obstacle, or at least to the same group of obstacles (for example, a group of people walking together. As they walk in the same direction and without traversable gaps between them, they are considered as a single obstacle).
 
-In this sense, we have developed a method inspired in the color-based clustering described by \cite{broggi2013}. However, in our case, the similarity function is not based on color information due to the reasons explained before, so we split the similarity function into three parts:
+In this sense, we have developed a method inspired in the color-based clustering described by \cite{broggi2013}. However, in our case, the similarity function is not based in color information due to the reasons explained before, so we split the similarity function into three parts:
 
 \begin{equation}\label{eq:cp05_similarity_functions}
 \begin{array}{l}
@@ -435,16 +433,6 @@ f_3(o,g)=\| \theta_o - \theta_g \|
 , where $|\vec{v}|_o$ and $|\vec{v}|_g$ are the magnitudes of the speeds obtained for an obstacle $o \in \mathcal{O}$ and for a voxel $g \in \mathcal{G}$, respectively. Same applies for the yaw $\psi_o$ and $\psi_g$, and the pitch $\theta_o$ and $\theta_g$ measurements.
 
 The use of these similarity functions has several advantages. The main is that we can get the point cloud from a sensor different from a stereo pair, as we are not using color information. In fact, we could even combine them. The employed flood-fill based clustering algorithm is described in algorithm \ref{alg:cp05_clustering}.
-
-The neighborhood of a voxel $g$ represented by the function $N(g)$ is performed using the Chebyshev distance \citep{broggi2013}. When a new voxel $g''$ is added to an obstacle $o$, the voxel identifier is updated. From the obstacle point of view, we just add the voxel to a list associated to each obstacle. Once an obstacle is about to be added to the final set of obstacles, this list will be used for updating the information related to the obstacle centroid, speed and limits on each dimension (See section \ref{ch:chapter05_01_05_01}).
-
-Before adding an obstacle to the final list of obstacles $\mathcal{O}$, we perform a filtering stage in which, for optimization reasons, the segmentation process is also integrated. This filtering procedure is based on a set of assumptions about the obstacles expected size and their position regarding to the ground. An obstacle is accepted in the final list if:
-
-\begin{itemize}
- \item It is big enough. That is, if the number of voxels (which is directly proportional to its volume) is over the user-defined parameter $\tau_{min\_voxels\_per\_obstacle}$.
- \item It is tall enough. The minimal height is controlled by the parameter\\ $\tau_{min\_obstacle\_height}$
- \item The obstacle is on the ground. This helps to remove flying obstacles like traffic lights or the top of some trees, in which we are not interested.
-\end{itemize}
 
 \begin{algorithm*}[h!]
 \caption{Clustering algorithm}
@@ -476,7 +464,15 @@ Before adding an obstacle to the final list of obstacles $\mathcal{O}$, we perfo
 \end{algorithmic}
 \end{algorithm*}
 
-% \FloatBarrier
+The neighborhood of a voxel $g$ represented by the function $N(g)$ is performed using the Chebyshev distance \citep{broggi2013}. When a new voxel $g''$ is added to an obstacle $o$, the voxel identifier is updated. From the obstacle point of view, we just add the voxel to a list associated to each obstacle. Once an obstacle is about to be added to the final set of obstacles, this list will be used for updating the information related to the obstacle centroid, speed and limits on each dimension (See section \ref{ch:chapter05_01_05_01}).
+
+Before adding an obstacle to the final list of obstacles $\mathcal{O}$, we perform a filtering stage in which, for optimization reasons, the segmentation process is also integrated. This filtering procedure is based on a set of assumptions about the obstacles expected size and their position regarding to the ground. An obstacle is accepted in the final list if:
+
+\begin{itemize}
+ \item It is big enough. That is, if the number of voxels (which is directly proportional to its volume) is over the user-defined parameter $\tau_{min\_voxels\_per\_obstacle}$.
+ \item It is tall enough. The minimal height is controlled by the parameter\\ $\tau_{min\_obstacle\_height}$
+ \item The obstacle is on the ground. This helps to remove flying obstacles like traffic lights or the top of some trees, in which we are not interested.
+\end{itemize}
 
 \subsubsection{Obstacle vectors computation}\label{ch:chapter05_01_05_01}
 
@@ -490,7 +486,7 @@ o_{vz} = {{\sum\limits_{g \in \mathcal{G}_o} g_{vz}} \over {|\mathcal{G}_o|}} + 
 \end{cases}
 \end{equation}
 
-Here, $\mathcal{G}_o$ is the list of voxels associated to the obstacle $o$. In figure \ref{fig:cp05_obstacle_vectors_computation}, we have shown a simulation of which will be the future movement of the obstacles if the obstacle speed computed in this stage is considered for a group of people.
+Here, $\mathcal{G}_o$ is the list of voxels associated to the obstacle $o$. In figure \ref{fig:cp05_obstacle_vectors_computation}, we  show a simulation of the future movement of a group of people based on the obstacle speed computed in this stage.
 
 Examples of the output of the method are shown at the end of the pipelines described in the videos at \url{http://youtu.be/7A0kyc8jW64} and \url{http://youtu.be/DDv3xWnl7Jo}. Moreover, an implementation of this method is available at \url{https://github.com/nestormh/PolarGridTracking}.
 
@@ -513,9 +509,9 @@ In this chapter, we have introduced a valid method we used for the detection and
 
 
 
-The method comes with some advantages in comparison with other methods. Through the use of a particle filter based approach, the method is able to avoid complex probabilities-related calculations that can be simplified through the use of this tool. It is also able to work in three-dimensions without increasing the complexity, thanks to the use of a voxel grid. This allows also a more specific knowledge of the obstacle, which is not limited just to the most external boundaries of the obstacle, as would happen if we used cuboids. Finally, our implementation is quite modular, allowing to use as input any kind of point cloud, as no color information is used. This implementation is also fast, being able to work at 6-7\,$Hz$.
+The method comes with some advantages in comparison with other methods. Through the use of a particle filter based approach, the method is able to avoid complex probabilities-related calculations that can be simplified through the use of this tool. It is also able to work in three-dimensions without increasing the complexity, thanks to the use of a voxel grid. This allows also a more specific knowledge of the obstacle, which is not just limited to the most external boundaries of the obstacle, as would happen if we used cuboids. Finally, our implementation is quite modular, allowing to use as input any kind of point cloud, as no color information is used. This implementation is also fast, being able to work at 6-7\,$Hz$.
 
-In the future, we plan to do further research in order to improve the results given by the method. Some ideas are related to the use of color ( despite it would affect to the modularity of our system) as using more information should improve the output. We also think that using a polar voxel grid instead of a cartesian one would improve some results. Also, it would be a good idea to keep an historic of the voxels motion, allowing to know the past movement of the obstacles. That would improve the detection of their movement by applying, for example, a Kalman filter \citep{kalman1960new}. Finally, we could take advantage of the fact that most of operations are done individually for each voxel, and carry on a parallelized implementation. This will allow improving the algorithm frequency or the use of bigger number of particles.
+In the future, we plan to do further research in order to improve the results given by the method. Some ideas are related to the use of color (although it would affect to the modularity of our system) as using more information should improve the output. We also think that using a polar voxel grid instead of a cartesian one would improve some results. Also, it would be a good idea to keep an historic of the voxels motion, allowing to know the past movement of the obstacles. That would improve the detection of their movement by applying, for example, a Kalman filter \citep{kalman1960new}. Finally, we could take advantage of the fact that most of operations are done individually for each voxel, and carry on a parallelized implementation. This will allow improving the algorithm frequency or the use of a bigger number of particles.
 
 In the next part of the thesis, we will introduce the way in which we command the vehicle in order to get the desired motion behavior. In the next chapter, we will see a \ac{SVM} based method used to compute an efficient and smooth trajectory, that will allow the vehicle to reach a certain point. Then, we will describe the path planning algorithm used by the vehicle to follow that trajectory. We will also see how the obstacles detected using the methods described in the first part of this document are integrated into the path planning scheme.
  

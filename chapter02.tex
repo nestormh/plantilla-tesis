@@ -10,27 +10,29 @@
 
 \chapter{Non-Rigid Contour Tracking}\label{ch:chapter02}
 
-In the previous chapter, we saw a method that was able to detect obstacles as the changes between the images obtained from the onboard cameras and a set of images stored in a database. We also saw that it had several drawbacks, mainly related to the localization and tracking of the obstacles in world coordinates. In order to solve some of these problems, we decided to try a different solution based on a set of static monocular cameras installed all around the testing area. By doing so, we can isolate the tracking problem from the rest of the problems by doing the tracking of a set of obstacles that are detected through foreground extraction methods.
-The idea behind this method is having complete information of the trajectory followed by each point belonging to the contour of these obstacles. The peculiarity of our method is that the tracking is done in a non-rigid way, so we can have information not just about the moving of a certain obstacle but also about the local movement of each part of its body.
+In the previous chapter, we saw a method that was able to detect obstacles as changes between the images obtained from the onboard cameras and a set of images stored in a database. We also saw that it had several drawbacks, mainly related to the localization and tracking of obstacles in world coordinates. In order to solve some of these problems, we decided to try a different solution based on a set of static monocular cameras installed all around the testing area. 
+By using static cameras we can isolate the tracking problem, so other problems related to the use of onboard cameras will be left for the future. Furthermore, the obstacle detection problem becomes a foreground extraction problem, for which, as we will see next, there are many efficient solutions. 
+% By doing so, we can isolate the tracking problem from the rest of problems by tracking a set of obstacles that are detected through foreground extraction methods.
+Once the silhouettes of the obstacles are detected, the idea behind this method is having complete information of the trajectory followed by each point belonging to the obstacle contours. The peculiarity of our method is that the tracking is done in a non-rigid way, so we can have information about not just the moving of a certain obstacle but also about the local movement of each part of its body.
 Also, as cameras are static and point to a planar surface, we assume that all obstacles lie on the ground, so their localization is quite simple. Thanks to that, we have solved some of the problems found for the method described in the previous chapter assuming an scenario in which static cameras are available. 
-
-The pipeline of the method described in this chapter is shown at figure \ref{fig:cp02_pipeline}. First, we use a method for foreground extraction in which the moving objects are segmented from the background. From these objects we get the points that belong to its contour in the image. Then, a nonrigid point set registration algorithm is used to match the point pairs between each pair of frames. Concatenating these matches, it is quite easy to keep an structure in which the trajectory followed by each point in the current frame is represented. Finally, obstacles and tracks are located in world coordinates.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics{pipeline}
+  \includegraphics[width=\textwidth,height=\textwidth]{pipeline}
   \caption{Pipeline of the tracking method described in this chapter.}\label{fig:cp02_pipeline}
 \end{figure}
 
+Pipeline of the method described in this chapter is shown at figure \ref{fig:cp02_pipeline}. First, we use a method for foreground extraction in which moving objects are segmented from the background. From these objects we get the points that belong to its contour in the image. Then, a nonrigid point set registration algorithm is used to match the point pairs between each pair of frames. Concatenating these matches, it is quite easy to keep an structure in which the trajectory followed by each point in the current frame is represented. Finally, obstacles and tracks are located in world coordinates.
+
 \section{Method}\label{ch:chapter02_01}
 
-As seen, the method pipeline can be divided into two main steps: generation of the point sets and contour flow detection. In the first one, we try to segment the foreground of the scene in order to extract the moving objects. Then, boundaries of the silhouettes of these objects are obtained and a non-rigid point set registration method is used to align the borders of the objects along the sequence. Finally, we obtain the trajectory followed by each part of the contour of the object through the time.
+As seen, method pipeline can be divided into two main steps: point sets generation and contour flow detection. In the first one, we try to segment the foreground of the scene in order to extract the moving objects. Then, boundaries of the silhouettes of these objects are obtained and a non-rigid point set registration method is used to align the borders of the objects along the sequence. Finally, we obtain the trajectory followed by each part of the object contour through the time.
 
-In the following subsections, the different stages of the algorithm are described in detail, as well as the different methods that we considered as candidates to perform these steps.
+In the following subsections, the different stages of the algorithm are described in detail, as well as different methods we considered as candidates to perform these steps.
 
-\subsection{Generation of the point sets}\label{ch:chapter02_01_01}
+\subsection{Point sets generation}\label{ch:chapter02_01_01}
 
-The objective of this step is the segmentation of those parts of the image that do not belong to the background. This stage is critical: the silhouettes must be similar enough between frames to ensure that the matches between contours are correct and to help the method to converge in just a few iterations. Also, despite some of the nonrigid point set registration techniques described later are able to deal with noise, it is desirable to get silhouettes as clean as possible. From these silhouettes, the point sets belonging to the contour are extracted. That is, from the current image, we obtain the point set $Y$, which will be registered with the point set obtained from the previous frame, $X$.
+The objective of this step is the segmentation of those parts of the image that do not belong to the background. This stage is critical: the silhouettes must be similar enough between frames to ensure that matches between contours are correct and to help the method to converge in just a few iterations. Also, although some of the nonrigid point set registration techniques described later are able to deal with noise, it is desirable to get silhouettes as clean as possible. From these silhouettes, sets of points belonging to the contour are extracted. That is, from the current image, we obtain the point set $Y$, which will be registered with the point set obtained from the previous frame, $X$.
 
 \subsubsection{Foreground extraction algorithms}\label{ch:chapter02_01_01_01}
 
@@ -59,7 +61,7 @@ suboptimal solutions based on the correlation measurement is also used.
 hierarchical scheme supported by block-based and pixel-based codebooks. Block Truncation Coding (BTC) scheme (a 
 traditional compression scheme) is extended,by dividing the image into non-overlapping blocks and representing them with 
 a set of 12 intensity values. With the block-based background modeling, foreground is efficiently detected, but with a 
-low precision. The pixel-based codebook strategy enhances this accuracy, with a low computational cost. Also, 
+low precision. The pixel-based codebook strategy enhances this accuracy, at a low computational cost. Also, 
 this hierarchical structure allows a good performance even if the background is not completely still.
 
 All this solves the problem of non-stationary background and global illumination changes, while obtaining good 
@@ -72,7 +74,7 @@ Finally, a short-term information model is used to overcome the non-stationary b
 With this method, silhouettes are extracted. As said, the method is able to detect foreground, highlights and shadows. Just the foreground mask is needed.
 \item \textit{Block-based Classifier Cascade with Probabilistic Decision Integration (BCCPDI)}: The last method 
 considered is based on the work of \cite{reddy2012improved}. In the HierFG approach, we introduced a hierarchical 
-algorithm in which data is analyzed from two different viewpoints (region and pixel levels) was used. This methodology 
+algorithm in which data is analyzed from two different viewpoints (region and pixel levels). This methodology 
 tackles frames as composed by a number of overlapping blocks.
 
 The method is composed by four main stages:
@@ -106,17 +108,15 @@ This method also presents some advantages that make it very suitable for our app
  
 \end{itemize}
 
-In the final version of the application, and after performing the tests described at section 
-\ref{ch:chapter02_02_01}, the algorithm chosen for the foreground detection was BCCPDI. It was not an 
-clear decision, and in fact, some of the other methods, like FSOM, could be used instead.
+In the final version of the application, and after performing the tests described at section \ref{ch:chapter02_02_01}, the algorithm chosen for the foreground detection was BCCPDI. It was not a clear decision, and in fact, some of the other methods, like FSOM, could be used instead.
 
 \subsubsection{Point set extraction}\label{ch:chapter02_01_01_02}
 
-The next step in this stage is obtaining the points that compose the contour of the objects represented in the mask. This is done by using the method described at \cite{suzuki1985topological}. With this method, a new point cloud is obtained, so we have now two point sets. The first one, obtained in the previous frame, is $X$; the second one is the set $Y$. In the next step, an algorithm will be used to perform a non-rigid registration between $X$ and $Y$, which will allow matching each point $x \in X$ to its corresponding point $y \in Y$. After this registration, a matching process will be performed. The results of this matching, through the frames, will return the trajectory followed by each point in the contour of the tracked objects.
+The next step in this stage is obtaining the points that compose the contour of the objects represented in the mask. This is done by using the method described at \cite{suzuki1985topological}. With this method, a new point cloud is obtained, so we now have two point sets. The first one, obtained in the previous frame, is $X$; the second one is the set $Y$. In the next step, an algorithm will be used to perform a non-rigid registration between $X$ and $Y$, which will allow matching each point $x \in X$ to its corresponding point $y \in Y$. After this registration, a matching process will be performed. Results of this matching, through the frames, will return the trajectory followed by each point in the contour of the tracked objects.
 
 \subsection{Contour flow detection}\label{ch:chapter02_01_02}
 
-At this point, at each frame, a pair of point sets is available. Both sets, obtained in the previous step represent a pair of shapes (or a pair of shape sets, in case there is more than one object in the scene). Also, assuming that the frame rate is high, these shapes will be similar enough to be able to find correspondences between the different points that belong to the contours by using just their spatial configuration. 
+At this point, at each frame, a pair of point sets is available. Both sets, obtained in the previous step, represent a pair of shapes (or a pair of shape sets, in case there are more than one object in the scene). Also, assuming that the frame rate is high, these shapes will be similar enough to be able to find correspondences between the different points that belong to the contours by using just their spatial configuration. 
 
 Assuming that there will not be a big change between frames, it is permissible to think that this condition will be fulfilled, and that it is possible to match the contour points by using a non-rigid point set registration based method, without the need of visual information.
 
@@ -127,7 +127,7 @@ In the literature, some non-rigid point set registration methods are described. 
 \begin{itemize}
  \item \textit{Iterated Closest Point (ICP) \citep{besl1992method, feldmar1996rigid}}: The method tested 
 is not the original ICP algorithm, but an improved version of it. This version is thought to allow non-rigid surface 
-registration. The method is divided by three different steps: in the first step, the best rigid displacement is searched 
+registration. Method is divided in three different steps: in the first step, the best rigid displacement is searched 
 in order to superpose both point sets; then, the best affine transformation is obtained. In this step, a global 
 criterion minimized by extended Kalman filtering is used in order to ensure the convergence of the algorithm.; finally, 
 each point is attached to a local affine transformation with the purpose of deforming the point set at a local level. 
@@ -141,7 +141,7 @@ points in the contours are being used in order to not to increase too much the n
 performance is much more constant than that obtained by the other algorithms, as shown in figure 
 \ref{fig:cp02_chartsRegistration}.
   \item The estimation of the \ac{GMM} width reduces the number of free parameters while reducing the number of iterations and the processing time. As situations can change, it is not desirable to use a parameter dependent algorithm. This also makes it easier to tune the whole application.
-  \item It is able to simultaneously find both the transformation and the correspondences between two point sets without a previous assumption of the non-rigid transformation model except that of motion coherence. This makes unnecessary the use model of the objects that are expected to appear in the surveyed area.
+  \item It is able to simultaneously find both the transformation and the correspondences between two point sets without a previous assumption of the non-rigid transformation model except that of motion coherence. This makes unnecessary the use of a model of the objects that are expected to appear in the surveyed area.
   \item Compared to the other methods, it shows a more robust and accurate performance with respect to noise, outliers, 
 and missing points. In section \ref{ch:chapter02_02_02}, it showed to have the best compromise between error, 
 number of mismatches and computing time stability.
@@ -149,8 +149,8 @@ number of mismatches and computing time stability.
  However, \ac{CPD} assumes no specific point correspondences other than those derived from the euclidean distances between 
 points. Therefore, there are some situations in which its performance can be reduced, because the likelihood function may 
 not have a well-defined maximum. Also, sometimes the use of a \ac{GMM} may be a bad choice when  
-data is imperfect (i.e., the presence of outliers or missing data), leading to fake global maximum (a local maximum) in the likelihood function. Because of that, the 
-algorithm can be weak in these circumstances. For example, we could find outliers in case of a bad foreground segmentation. In this case, two masks related to the same object in consecutive frames are two different so it is difficult for the algorithm to match both contours. However, in practice, as the time between frames is small, the segmentation methods give similar masks in consecutive frames. Moreover, the small mismatches we could find are corrected in the next frame, so experimentally it does not seem to be a big deal. About missing points, this effect is more common. For example, think on an arm that disappears behind the body of a person. In this case, we will not be able to match the points belonging to this arm. Anyway, this situation will be normalized in the next frames.
+data is imperfect (i.e., the presence of outliers or missing data), leading to a fake global maximum (a local maximum) in the likelihood function. Because of that, the 
+algorithm can be weak in these circumstances. For example, we could find outliers in case of a bad foreground segmentation. In this case, two masks related to the same object in consecutive frames are too different so it is difficult for the algorithm to match both contours. However, in practice, as the time between frames is small, the segmentation methods give similar masks in consecutive frames. Moreover, the small mismatches we could find are corrected in the next frame, so experimentally it does not seem to be a big deal. About missing points, this effect is more common. For example, think on an arm that disappears behind the body of a person. In this case, we will not be able to match the points belonging to this arm. Anyway, this situation will be normalized in the next frames.
 
  \item \textit{Robust Point Matching for Non-Rigid Shapes (RPM-NRS) \citep{zheng2006robust}}: In this solution, each 
 point is considered as a node in a graph. Two nodes are connected by an edge only if they are neighbors. Based on this, 
@@ -162,7 +162,7 @@ disturbances, which proves to be a useful feature for this kind of methods. A gr
 constructed from a point set. Edges in this graph are used to determine the orientations of SCs. Similar to lengths or 
 directions, oriented SCs constructed this way can be regarded as the attributes of edges. By doing that, rotation 
 invariance can be achieved by matching the edges between the two point sets. As happened with the RPM-NRS, the point set 
-matching problem becomes a graph matching problem. This makes easier the use of dynamic programming for optimization.
+matching problem becomes a graph matching problem. This simplifies the use of dynamic programming for optimization.
  The key is on how the graphs are constructed for both datasets. For the data point set, a complete graph is used, in 
 the way that any two points are adjacent in the graph. In the case of the model point set, two different approaches are 
 explored:
@@ -195,9 +195,9 @@ and $\mathcal{C_Y} = \{ Y_j ~|~ i=j \dots N \}$.
   \delta (Rx_i, Ry_j) = \alpha_1 \varDelta x + \alpha_2 \varDelta y + \alpha_3 \varDelta w + \alpha_4 \varDelta h.
  \end{equation}
  As done in \cite{siebel2003design}, the values used for the parameters were $\alpha_1 = \alpha_1 = \alpha_3 = 1$ and $\alpha_4 = 1.5$. The weight used for the height of the tracked objects is slightly bigger because it is usually more invariant to changes in orientation.
- \item Using the score of equation \ref{eq:matching_regions}, we look for each region $Ry_j$ the nearest region $Rx_i$. 
+ \item Using the score of equation \ref{eq:matching_regions}, we look for each region $Ry_j$ its nearest region $Rx_i$. 
 If the score is below a threshold $\delta_{max}$, $Y_j$ will be labeled with the label $\mathcal{L}(i) = j$.
- \item Once we have all regions labeled, we reject the pairs $\phi(x,y)$ in which the label of the cluster containing 
+ \item Once all regions are labeled, we reject the pairs $\phi(x,y)$ in which the label of the cluster containing 
 $x$ is not the same of the cluster containing $y$. In figure \ref{fig:cp02_clusterization_output}, it is possible to see a 
 pair of objects crossing each other in a sequence. Each color represents a different cluster. In that sequence, two 
 clusters are joined and, once the people in the image are separated again, the cluster is split into two 
@@ -242,7 +242,7 @@ Pairs must be added to a structure that represents the current set of trajectori
 \end{figure*}
 
 At this point, we have all the trajectories generated and stored in a structure. This information can be used as 
-an input for other algorithms, i.e. for human behavior recognition, video surveillance tasks or human-computer 
+input by other algorithms, i.e. in human behavior recognition, video surveillance tasks or human-computer 
 interaction applications. In figure \ref{fig:cp02_videoCaptures} we show a set of frames extracted from the video available at \url{http://youtu.be/QqE_cBTM1jo}, in which it is possible to see a representation of the output obtained by our 
 algorithm, as well as an explanation of the pipeline followed. For the sake of clarity, each trajectory is represented by a random different color, and not all of them 
 are depicted. Images are part of the dataset used in \cite{berclaz2011multiple}, available on the 
@@ -284,7 +284,7 @@ web\footnote{\url{http://cvlab.epfl.ch/data/pom}}.
 
 \subsection{Localization}\label{ch:chapter02_01_03}
 
-As we are just using a single camera for the detection and tracking of the obstacles, it is not possible to know the exact location in which the obstacle is in the real world. Fortunately, the used cameras are static, and it is possible to take advantage of this fact. As the area covered by each camera is known and it is assumed to be planar, a set of four virtual points can be defined over the road, for which the coordinates in the map are well known.
+As we are just using a single camera for the detection and tracking of the obstacles, it is not possible to know the exact location in which the obstacle is in the real world. Fortunately, used cameras are static, and it is possible to take advantage of this fact. As the area covered by each camera is known and it is assumed to be planar, a set of four virtual points can be defined over the road, for which the coordinates in the map are well known.
 Having this, these points can be selected on the image. By doing a perspective projection, the objects in the image can be localized on the map. This is possible because we assume that every object is lying on the ground, touching it.
 
 \section{Summary}\label{ch:chapter02_03}
@@ -293,35 +293,37 @@ In this chapter we have presented a method for the estimation of the trajectory 
 \begin{itemize}
  \item It is able to work both indoors and outdoors
  \item It does not need any previous model of the tracked object
- \item It can track each part of the body, separately, without any previous assumption.
+ \item It can track each part of the body, separately, without any previous assumptions.
 \end{itemize}
 
-With this contribution, we have demonstrated that it is possible to perform the tracking of the contour with the use of just geometrical information. In our tests, we showed that our method works even better than optical flow in certain situations. 
+With this approach, we have demonstrated that it is possible to perform the tracking of the contour with the use of just geometrical information. In our tests (see section \ref{ch:chapter02_02}), we will show that our method works even better than optical flow in certain situations. 
 
 As future work, we plan to study the inclusion of visual information to improve the results given by the current method.
 
 We have studied the performance of several state-of-the-art foreground extraction algorithms, shedding light on the 
-benefits and drawbacks of each one of them. BCCPDI has proved to be the one which fulfilled the most our needs. 
+benefits and drawbacks of each of them. Among all, BCCPDI is the one which fulfills the most of our needs, as we will see in section \ref{ch:chapter02_02}. 
 
-We also have performed some tests in order to select the best of the existing state-of-the-art nonrigid point set registration methods, demonstrating that \ac{CPD} is the most stable of all them. Final tests demonstrated the good behavior of the algorithm, showing that it is possible to obtain a local tracking of nonrigid objects by just using static cameras. All these tests are described and their results shown at section \ref{ch:chapter02_02} of chapter \ref{ch:chapter08}.
+We also have performed some tests in order to select the best of the existing state-of-the-art nonrigid point set registration methods, demonstrating that \ac{CPD} is the most stable of all them. Final tests demonstrate the good behavior of the algorithm, showing that it is possible to obtain a local tracking of nonrigid objects by just using static cameras. All these tests are described, and their results shown, at section \ref{ch:chapter02_02} of chapter \ref{ch:chapter08}.
 
 However, the application has some unsolved challenges that must be tackled in future, mainly related to the 
 limitation of using just the contours of $2D$ masks. The first of them is that if a  $2D$ mask is used, we lost any 
 depth information, so it is impossible to find the contours of a first-plane object if in the image there is more than 
 one object touching each other. 
 
-Another limitation we have noticed is that it is impossible to track the movement of a hand, for example if it 
+Another limitation we noticed is that it is impossible to track the movement of a hand, for example, if it 
 passes in front or behind of the body of a person. 
 
-All these problems can be overcome with the use of $3D$ point clouds as input for the nonrigid point set registration 
-algorithms obtained with an stereo pair. This can be achieved easily, as most of the presented methods are able to work 
-with $3D$ data. In particular, \ac{CPD} claims to be able to work perfectly with $N$-dimensional data. Plus, we could also 
-use it to locate objects in the scene.
+In the following chapters, we will see some approaches that make use of 3D information for the detection and tracking of the obstacles, but in a different way than that presented in this chapter. But, before that, we will see an study of the existing techniques available for stereo reconstruction oriented to \ac{ADAS} applications.
 
-Therefore, as future work, we plan to develop a framework which uses $3D$ data obtained trough stereo vision and 
-combines the named nonrigid point set registration algorithms with visual information. This would allow to avoid some limitations inherent to the method, as the need of an static background and static cameras. Moreover, the inclusion of visual information will help to improve the registration results. An idea of how to include this new information could be in the form of new dimensions associated to the input points.
+% All these problems can be overcome with the use of $3D$ point clouds as input for the nonrigid point set registration 
+% algorithms obtained with an stereo pair. This can be achieved easily, as most of the presented methods are able to work 
+% with $3D$ data. In particular, \ac{CPD} claims to be able to work perfectly with $N$-dimensional data. Plus, we could also 
+% use it to locate objects in the scene.
 
-In the following chapters, we will see some approaches that, in this sense, use 3D information for the detection and tracking of the obstacles, but in a different way than that followed by the method presented in this chapter. But, before that, we will see an study of the existing techniques available for stereo reconstruction oriented to \ac{ADAS} applications.
+% Therefore, as future work, we plan to develop a framework which uses $3D$ data obtained trough stereo vision and 
+% combines the named nonrigid point set registration algorithms with visual information. This would allow to avoid some limitations inherent to the method, as the need of an static background and static cameras. Moreover, the inclusion of visual information will help to improve the registration results. An idea of how to include this new information could be in the form of new dimensions associated to the input points.
+
+% In the following chapters, we will see some approaches that, in this sense, use 3D information for the detection and tracking of the obstacles, but in a different way than that followed by the method presented in this chapter. But, before that, we will see an study of the existing techniques available for stereo reconstruction oriented to \ac{ADAS} applications.
 
 
 

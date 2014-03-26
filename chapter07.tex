@@ -13,20 +13,20 @@
 By using the methods described in previous chapters, the vehicle is able to detect the obstacles in the surrounding area, and knows how to reach a certain point in the map given its current position. Now we want the vehicle to drive by itself along a trajectory, avoiding the obstacles in the way.
 Despite the global path tell us the safest and shortest path to the goal, we can not use it to directly compute the commands that the vehicle needs to start driving, as this global path does not model the long term unpredictability of the environment. Due to the presence of dynamic obstacles, this environment is constantly changing. So we need to follow the trajectory using an intermediate mechanism that introduces this short-term information.
 
-\section{The Method}\label{ch:chapter07_01}
+\section{Method}\label{ch:chapter07_01}
 
-The way in which we solved this problem is based on the method described in \cite{chu2012local} and by \cite{thrun2006stanley}, modified in order to adapt it to our system's requirements and the specific characteristics of Verdino. Other changes have been introduced with the aim of improving the behavior of the whole system. Based on these methods, we first transform the current euclidean coordinate system to a new system based on the Frenét space, which is computed as follows: we consider the global path obtained in chapter \ref{ch:chapter06} as the base frame of a curvilinear coordinates system, which will be the path generation space. The directional information of the path is included, so:
+The way in which we solved this problem is based on the method described in \cite{chu2012local} and also some ideas are taken from \cite{thrun2006stanley}, modified in order to adapt it to our system requirements and the specific characteristics of Verdino. Other changes have been introduced with the aim of improving the behavior of the whole system. Based on these methods, we first transform the current euclidean coordinate system to a new system based on the Frenét space, which is computed as follows: we consider the global path  as the base frame of a curvilinear coordinate system, which will be the path generation space. The directional information of the path is included, so:
 \begin{itemize}
- \item The nearest point (where the distance is computed perpendicular to the global path) to the main trajectory will be the origin of the curvilinear coordinates system.
+ \item The nearest point (where the distance is computed perpendicular to the global path) to the main trajectory will be the origin of the curvilinear coordinate system.
  \item The horizontal axis will be represented by the distance over global path, in its direction.
  \item The vertical axis is represented by the vector perpendicular to the origin point, which is pointing to the left respect to the path direction.
 \end{itemize}
 With this schema, we can compute easily the trajectories in the curvilinear space (that is, maneuvering information is generated). These are then transformed to the original euclidean space, in which the obstacles information is added by assigning costs to each path.
 
-From \cite{thrun2006stanley}, we adopted the way in which the distance to the center of the path is used as part of the cost function. However, as explained in the previous section, our path calculation is different to adapt the costs to the environments in which Verdino will travel. As in \cite{chu2012local}, we also based our cost function in the path smoothness and in the cost of the collision with the obstacles (computed as a function of the distance). This cost is computed by blurring the binary map of the obstacles. For that, we use a exponential function relative to the distance to the obstacles and the footprint of the car (See section \ref{ch:chapter07_01_01}).
-We also use as cost functions the length and the curvature of the path. These cost functions will be explained in more detail in section \ref{ch:chapter07_01_04}. Both approaches \citep{chu2012local, thrun2006stanley} use a base frame relative to the global path as tool for an easy and efficient computation of the paths.
+Inspired in \cite{chu2012local}, we based our cost function in the path smoothness and in the cost of the collision with the obstacles (computed as a function of the distance). This cost is computed by blurring the binary map of the obstacles. For that, we use a exponential function relative to the distance to obstacles and the footprint of the car (See section \ref{ch:chapter07_01_01}).
+We also use length and path curvatures as cost functions. Distance to the center of the path is also used, based on the work of \cite{thrun2006stanley}, so we can ensure that the car is able to return to the center of the trajectory. However, as explained in the previous section, our path calculation is different to adapt the costs to the environments in which Verdino will travel. Cost functions will be explained in more detail in section \ref{ch:chapter07_01_04}. Both approaches \citep{chu2012local, thrun2006stanley} use a base frame relative to the global path as tool for an easy and efficient computation of the paths.
 
-The method has been successfully tested on Verdino. At the end of this chapter, some experimental results are shown. Also, there are a set of videos showing the proper behavior of the vehicle in real situations, which can be seen at \url{http://verdino.webs.ull.es/node/109}, \url{http://verdino.webs.ull.es/node/103}, \url{http://verdino.webs.ull.es/node/105}, \url{http://verdino.webs.ull.es/node/102} and \url{http://verdino.webs.ull.es/node/108}. This last example is from a preliminar version of this method, but it stills uses some of the approaches described in this chapter, despite the path generation strategy is not similar. \comment{¿Tiene sentido este vídeo, si no es del método?} Furthermore, the code used for the implementation of the described method will be made available in the future at \url{https://github.com/ull-isaatc/grull_ackermann_base_local_planner}. \comment{¿Tiene sentido si aún no se ha liberado ni se sabe si se hará?}
+The method has been successfully tested on Verdino. In section \ref{ch:chapter07_02}, some experimental results are shown. Also, there are a set of videos showing the proper behavior of the vehicle in real situations, which can be seen at \url{http://verdino.webs.ull.es/node/109}, \url{http://verdino.webs.ull.es/node/103}, \url{http://verdino.webs.ull.es/node/105}, and \url{http://verdino.webs.ull.es/node/102}.
 
 The path generation method can be divided in five stages, shown at figure \ref{fig:cp07_pipeline}.
 \begin{enumerate}
@@ -45,7 +45,7 @@ The path generation method can be divided in five stages, shown at figure \ref{f
 
 \subsection{Generation of the costmap}\label{ch:chapter07_01_01}
 
-The costmap maintains information about occupied/free areas in the map in the form of an occupancy grid. It uses sensor data and information from the static map to store and update information about obstacles in the world. In the tests shown in this chapter, information is obtained through the \acp{LIDAR}. Some tests including the information obtained from the methods described in previous sections will be shown at section \ref{ch:chapter08_08}. Each sensor is used to mark obstacles in the map, or clear them if they are no longer available (That is, if we find an obstacle that is clearly behind a previously detected obstacle, or the laser do not detect anything in this direction inside a given range, we assume that the obstacle disappeared).
+The costmap maintains information about occupied/free areas in the map in the form of an occupancy grid. It uses sensor data and information from the static map to store and update information about obstacles in the world. In the tests shown in chapter \ref{ch:chapter08}, information is obtained through the sensorial system of the robot. Some tests including the information obtained from the methods described in previous sections will be shown at section \ref{ch:chapter08_08}. Obstacles are marked in the map, or cleared when they are no longer available.
 
 Each cell in the map can have $255$ different cost values:
 \begin{itemize}
@@ -84,9 +84,9 @@ In this expression, which is the same we used in section \ref{ch:chapter06_01_01
 Despite all of them are free cells, we define four different distance thresholds in order to set different danger levels in the map, depicted in figure \ref{fig:cp07_costmap_concepts}:
 
 \begin{itemize}
- \item $\tau_{lethal}$: There is a obstacle in this cell, marked by the sensor. Corresponds to the cost level $254$. The vehicle is in collision.
- \item $\tau_{inscribed}$: The cell distance to the nearest obstacle is below the value $\rho_{inscribed}$. If the center of the vehicle is in this cell, it is also in collision, so the areas below this distance threshold should be avoided. The cost level is always $253$.
- \item $\tau_{circumscribed}$: If the vehicle center is on this cell, it is very likely that the car is in collision with an obstacle, depending on its orientation. A cell with a distance to an obstacle below this threshold should be avoided, but there still are chances of being in one of them without colliding an obstacle. 
+ \item $\tau_{lethal}$: There is a obstacle in this cell, so the vehicle is in collision. It is represented by the cost level $254$.
+ \item $\tau_{inscribed}$: Cell distance to the nearest obstacle is below $\rho_{inscribed}$. If the center of the vehicle is in this cell, it is also in collision, so areas below this distance threshold should be avoided. Cost level is always $253$.
+ \item $\tau_{circumscribed}$: If the vehicle center is on this cell, it is very likely that the car collided with an obstacle, depending on its orientation. A cell with a distance to an obstacle below this threshold should be avoided, but there still are chances of being in one of them without colliding an obstacle. 
  \item The rest of cells are assumed to be safe (except from those with \emph{unknown} cost, for which we do not know if they are occupied or not, so we think on them as if they were lethal).
 \end{itemize}
 
@@ -94,13 +94,13 @@ In our approach, we just consider those paths passing through cells with a cost 
 
 For optimization reasons, we do not compute the costmap for the whole map at each iteration. Instead, we just compute the cells in a $40 \times 40\,m$ area centered into the current car position. 
 
-In the development of this method, we used the \ROS plugin \program{costmap\_2d}\footnote{\url{http://wiki.ros.org/costmap\_2d}}, which implements the functionalities described in this section. \comment{¿Quitar?}
+For the computation of the costmap and the computation of the costs associated to each cell, we used the \ROS plugin \program{costmap\_2d}\footnote{\url{http://wiki.ros.org/costmap\_2d}}, which implements the functionalities described in this section.
 
 \subsection{Base frame construction}\label{ch:chapter07_01_02}
 
-Before the construction of the base frame, we must find the point we want to use as origin of coordinates. At each iteration,  we prune the global plan up to its nearest point to the car location. The origin of the base frame will be the first point in the pruned global plan. If the pruned plan is valid and its size is different from zero, we start the base frame construction stage.
+In this stage, we will define the base frame of the curvilinear coordinate system, so the algorithm will be able to compute the trajectories in this space as if the global plan were a rectilinear trajectory. In this stage we just consider the generation of trajectories, but at this point we will not consider the presence of obstacles or the restrictions associated to the vehicle's motion model. The geometric relationship between the path in euclidean and curvilinear coordinates is shown at figure \ref{fig:cp07_euclidean_frenet_conversion}.
 
-In this stage, we will define the base frame of the curvilinear coordinate system, so the algorithm will be able to compute the trajectories in this space as if the global plan were a rectilinear trajectory. The geometric relationship between the path in euclidean and curvilinear coordinates is shown at figure \ref{fig:cp07_euclidean_frenet_conversion}.
+Before the construction of the base frame, we must find the point we want to use as origin of coordinates. For this purpose, we iterate over the points of the trajectory until we reach the point which is the nearest to the current position of the vehicle. This will be the origin of coordinates of the base frame. If the trajectory is valid (that is, it is different from zero), we can start with the base frame construction.
 
 \begin{figure}[h!]
 \centering
@@ -121,9 +121,9 @@ In this stage, we will define the base frame of the curvilinear coordinate syste
 \caption{Conversion of a trajectory between the Cartesian and Frenét spaces.}\label{fig:cp07_euclidean_frenet_conversion}
 \end{figure}
 
-There, the longitude of the arc of the base frame ($s$, on the right image) is the distance along the global plan, which is represented as a green line. This distance is represented by the horizontal axis of the curvilinear system. The vertical axis, $q$, represents the perpendicular lateral distance respect to the path. Left side is represented by positive values and the right by the negatives.
+Base frame's arc length ($s$, on the right image) is obtained as the distance of each point along the global plan (represented as a green line) to the origin of coordinates. This distance is represented in the \emph{x-axis} of the curvilinear system. \emph{y-axis}, $q$, represents the perpendicular lateral distance respect to the path. Left side is represented by positive values and the right by the negatives.
 
-For the computation of the transformation between the euclidean coordinate system and the curvilinear, we need to compute $\kappa$, that represents the path curvature. This value is computed as follows \citep{chu2012local, werling2010optimal, barfoot2004motion}:
+For the computation of the transformation between the euclidean and the curvilinear coordinate system, we need to compute path curvature $\kappa$. This value is computed as follows \citep{chu2012local, werling2010optimal, barfoot2004motion}:
 
 \begin{equation}\label{eq:cp07_path_curvature}
  \kappa = {S \over Q} \cdot \left ( \kappa_b \cdot { 
@@ -142,14 +142,9 @@ Q=\sqrt{\left ( { {\partial q} \over {\partial s}} \right ) ^2+ (1 - q \cdot \ka
 \end{cases}
 \end{equation}
 
-A generated path will be rejected in the following cases:
+A generated path will be rejected if $q > {1 \over \kappa_b}$. In this case, the generated path curvature and sense is opposed to that of the base frame. The path violates the non-holonomic condition of the movement of the vehicle, so it is discarded.
 
-\begin{itemize}
- \item The lateral offset $q$ is similar to the curvature radius of the base frame $1 / \kappa_b$. In this case, the path passes through the center of curvature of the base frame.
- \item $q > {1 \over \kappa_b}$. In this case, the generated path curvature and sense is opposed to that of the base frame. The path violates the non-holonomic condition of the movement of the vehicle, so it is discarded.
-\end{itemize}
-
-Also, the maximal curvature a path can have in order to be feasible by the vehicle is limited by the maximal steering angle. If this restriction is violated, the corresponding path is rejected. Curvature is directly related to the movement of the vehicle, which can be described through several models. A simplified version  \citep{chu2012local, barfoot2004motion}, which ignores the related physical effects (like inertia or mass), is:
+We are just able to accept paths in which the lateral offset $q$ is similar or smaller to the curvature radius of the base frame $1 / \kappa_b$. If $q = 1 / \kappa_b$, that means that the path passes through the center of curvature of the base frame. Also, the maximal curvature a path can have in order to be feasible by the vehicle is limited by the maximal steering angle. If this restriction is violated, the corresponding path is rejected. Curvature is directly related to the movement of the vehicle, which can be described through several models. A simplified version  \citep{chu2012local, barfoot2004motion}, which ignores the related physical effects (like inertia or mass), is:
 
 \begin{equation}\label{eq:cp07_simplified_motion_model}
 \begin{cases}
@@ -159,13 +154,13 @@ Also, the maximal curvature a path can have in order to be feasible by the vehic
 \end{cases}
 \end{equation}
 
-As these physical effects do not affect to the geometric shape of the path, we can ignore them in the path generation step. In equation \ref{eq:cp07_simplified_motion_model}, $[\dot{x} ~ \dot{y} ~ \dot{\theta} ]^T$ are the estimated position and orientation of the vehicle and $|\vec{v}|$ is speed magnitude. Considering this simplified model, we assume that the vehicle just have two degrees of freedom, represented by the speed $\vec{v}$ and $\kappa$. As we are just interested into the geometric generation of the path, it is possible to remove the speed of the vehicle $\vec{v}$ from the model. This is done by expressing the movement of the vehicle in terms of the traveled distance. So the following relation is established \citep{chu2012local}:
+As these physical effects do not affect to the geometric shape of the path, we can ignore them in the path generation step. At this point, we are neither considering other physical restrictions like the maximal curvature that the vehicle is able to follow or the maximal speed, since it will be done in the next steps. In equation \ref{eq:cp07_simplified_motion_model}, $[\dot{x} ~ \dot{y} ~ \dot{\theta} ]^T$ are the estimated position and orientation of the vehicle and $|\vec{v}|$ is speed magnitude. Considering this simplified model, we assume that the vehicle just have two degrees of freedom, represented by the speed $\vec{v}$ and $\kappa$. As we are just interested into the geometric generation of the path, it is possible to remove the speed of the vehicle $\vec{v}$ from the model. This is done by expressing the movement of the vehicle in terms of the traveled distance. So the following relation is established \citep{chu2012local}:
 
 \begin{equation}\label{eq:cp07_speed_to_distance}
 |\vec{v}| = S \cdot Q \cdot { {\partial s} \over {\partial t}}
 \end{equation}
 
-If the speed of the vehicle is substituted into the model described in equation \ref{eq:cp07_simplified_motion_model}, the differential equation of the movement can be represented in terms of the base frame's arc length:
+If the speed of the vehicle is substituted into the model described in equation \ref{eq:cp07_simplified_motion_model}, the differential equation of the movement can be represented in terms of the base frame's arc length $s$:
 
 \begin{equation}\label{eq:cp07_motion_model_in_distance_terms}
 \begin{cases}
@@ -215,7 +210,7 @@ In figure \ref{fig:cp07_justOneFrenet45}, the components involved in this proces
  \item The different $q_f$ are computed separately for each path attending to the parameters defined by the user. $s_f$ is also a free parameter.
 \end{itemize}
 
-Parameters $s_i$, $q_i$, and $s_f$ are shared by all the candidate paths. By modifying the value of $q_f$ we get the different tentative trajectories, so the only difference between all them is the lateral offset we want to reach at the end of the paths. This lateral offset will give us flexibility in the the way in which we avoid the obstacles. To do that, we divide the width of the road into as many segments as paths are desired. $q_f$ will be the perpendicular distance between the base frame and the corresponding road width division. Using this technique, the desired number of paths is created. The set of paths should cover the whole road width, ensuring the vehicle is able to avoid the obstacles, if it is possible.
+Parameters $s_i$, $q_i$, and $s_f$ are shared by all the candidate paths. By modifying the value of $q_f$ we get the different tentative trajectories, so the only difference between all them is the lateral offset we want to reach at the end of the paths. This lateral offset will give us flexibility in the the way in which we avoid obstacles. To do that, we divide the width of the road into as many segments as paths are desired. $q_f$ will be the perpendicular distance between the base frame and the corresponding road width division. Using this technique, the desired number of paths is created. The set of paths should cover the whole road width, ensuring the vehicle is able to avoid the obstacles, if it is possible.
 
 In our tests, we have considered a maximal width of 4\,m (a little bit above the width of the roads in our testing area), and an horizon of 10\,m in the direction of the global path. This horizon gives us a prediction of 2\,seconds at the maximal speed of the vehicle. We evaluate a total of 21 paths, with a distance between them ($\Delta q_f$) of 20\,cm.
 
@@ -232,7 +227,7 @@ In figure \ref{fig:cp07_frenet0}, an example in which the vehicle is at a latera
     \centering
     \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{frenet0}
     \caption{Curvilinear space.}
-    \label{fig:cp07_frenet0}
+    \label{fig:cp07_frenet_space0}
   \end{subfigure} &
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
@@ -253,7 +248,7 @@ In figure \ref{fig:cp07_frenet45}, a similar example is shown. The only differen
     \centering
     \includegraphics[width=\textwidth, trim=50 40 80 60,clip]{frenet45}
     \caption{Curvilinear space.}
-    \label{fig:cp07_frenet45}
+    \label{fig:cp07_frenet_space45}
   \end{subfigure} &
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
@@ -265,7 +260,9 @@ In figure \ref{fig:cp07_frenet45}, a similar example is shown. The only differen
 \caption{Example in which the vehicle is rotated with respect to the path.}\label{fig:cp07_frenet45}
 \end{figure}
 
-Now the paths are in euclidean coordinates, we can evaluate which is the maximal distance they can reach individually if obstacles are considered. To do that, we iterate over the points in the trajectory, and check the cost associated to each cell $c_{ij}$ containing the point in the costmap computed in section \ref{ch:chapter07_01_01}. If this cost is over the value associated to the threshold $\tau_{circumscribed}$, the path is truncated at this point, as shown in figure \ref{fig:cp07_path_truncation}, where the generated paths are shown together with a color representation of the costmap, representing in blue the lower values, and in red the higher ones. Yellow and cyan correspond to cells in lethal and inscribed cells, respectively. The points iterated before reaching this cost will be kept, but it is very unlikely that this will be the winner path, as the occlusion cost will be maximal, and the length of the path shorter (see section \ref{ch:chapter07_01_04}). The reason for which we keep these points instead of removing completely the whole path is that, as the car will be traveling in crowded areas with many pedestrians, we want to keep moving even if we see that at this point each of the paths do not reach the maximal distance horizon until we enter in an unsafe cell. Obviously, in this case the speed is reduced according to the winner path length. However, if there is at least one path able to reach the last point in the tentative trajectory, this will be probably the winner one, thanks to the weights configuration described in the next section.
+Now the paths are in euclidean coordinates, we can evaluate which is the maximal distance they can reach individually if obstacles are considered. To do that, we iterate over the points in the trajectory, and check the cost associated to each cell $c_{ij}$ containing the point in the costmap computed in section \ref{ch:chapter07_01_01}. If this cost is over the value associated to the threshold $\tau_{circumscribed}$, the path is truncated at this point, as shown in figure \ref{fig:cp07_path_truncation}, where the generated paths are shown together with a colored costmap representation. There, blue means a low value, while the red color is used for the higher costs. Yellow and cyan correspond to cells in lethal and inscribed cells, respectively. The points iterated before reaching this cost will be kept, but it is very unlikely that this will be the winner path, as the occlusion cost will be maximal, and the length of the path shorter (see section \ref{ch:chapter07_01_04}). 
+As shown, when a path collides with an obstacle, we do not remove the path completely. The reason for that is that there are certain situations in which we can not reach the maximal distance with none of the paths. However, we still want to approach slowly towards the maximal reachable point, with the hope that the obstacles that are blocking the way will disappear in the next iterations. In crowded areas with many pedestrians this is a typical situation: the way is blocked, but when pedestrians see a vehicle that is approaching, they move away. However, if the vehicle reaches a point in which it can not move for a long time, we generate a new trajectory and try to go through a different way.
+The problem with this strategy is that one of the colliding paths could win even if there is a path able to go through a clear area. In order to avoid that, we have implemented a weighted cost functions based schema, explained in the next section, that allows a smart selection of the winner path.
 
 \begin{figure}[h!]
 \centering
@@ -275,7 +272,7 @@ Now the paths are in euclidean coordinates, we can evaluate which is the maximal
 
 \subsection{Selection of the winner path}\label{ch:chapter07_01_04}
 
-The winner path is selected among all the paths based on a cost function which is a linear combination of the values obtained from other cost functions scaled by their associated weighting factors. Occlusion, length, distance to the global path, curvature and consistency of the path is evaluated as follows:
+The winner path is selected through the use of a linear combination $J[i]$ of weighted cost functions, related to the following parameters: occlusion, length, distance to the global path, curvature and consistency of the path. $J[i]$ is evaluated as follows:
 
 \begin{equation}\label{eq:cp07_cost_function}
 J[i] = \omega_o C_o[i] + \omega_l C_l[i] + \omega_d C_d[i] + \omega_{\kappa} C_{\kappa}[i] + \omega_c C_c[i]
@@ -287,7 +284,7 @@ Here, $i$ is the path index, and $C_o$, $C_l$, $C_d$, $C_{\kappa}$ and $C_c$ are
 \sum_{{i \in \{o, l, d, \kappa, c\}}} w_i= 1.0
 \end{equation}
 
-, so it is easy to determine the proportional influence of each of the weights with respect to the others. Based on this, the value of $J[i]$ will be always inside the interval $[0\dots1]$.
+, so it is easy to determine the proportional influence of each weight. Based on this, the value of $J[i]$ will be always inside the interval $[0\dots1]$.
 
 The following costs will be computed for each candidate path independently from the euclidean space.
 
@@ -303,17 +300,17 @@ In this expression, $L$ is the length of the current path being evaluated. $max\
 
 \paragraph{Length}\label{ch:chapter07_01_04_00_02}
 
-This costs represents the length of the current path. By iterating along the points in the path, we accumulate the distance between them, so we know the real distance traveled in euclidean coordinates. The longer that a path is, the better, as we assume that it means that paths are able to travel a longer distance. The expression that calculates this cost is:
+This cost represents the length of the current path. By iterating along the points in the path, we accumulate the distance between them, so we know the real distance traveled in euclidean coordinates. The longer that a path is, the better, as we assume that it means that paths are able to travel a longer distance. However, we are want to minimize the costs, so we must invert the length of each path in the way that longer paths give us smaller values. This is done through the expression:
 
 \begin{equation}\label{eq:cp07_length_cost}
 C_l = 1- {{\sum\limits_{i=1}^{L}\|p_i - p_{i - 1}\|} \over {q_{f_{max}} + s_f}}
 \end{equation}
 
-Here, $p_i$ is a certain point inside the evaluated path. $q_{f_{max}}$ is the maximal value that a $q_f$ can have for a certain path. Lengths are normalized to a value that a path will never reach. In our case, we decided that the sum of the maximal expected offset for $s$ and for $q$ is good enough (lengths will never trespass this value, while being small enough to allow an easy discrimination between paths). We subtract this cost from 1, in order to make it comparable to the rest of costs (lower values are preferred respect to the higher ones).
+Here, $p_i$ is a certain point inside the evaluated path. $q_{f_{max}}$ is the maximal value that a $q_f$ can have for a certain path. Lengths are normalized to a value that a path will never reach. In our case, we decided that the sum of the maximal expected offset for $s$ and for $q$ is good enough (lengths will never trespass this value, while being small enough to allow an easy discrimination between paths). We subtract this cost from $1.0$, in order to make it comparable to the rest of costs (as said, lower values are preferred respect to the higher ones).
 
 \paragraph{Distance to the global path}\label{ch:chapter07_01_04_00_03}
 
-In our implementation, we included information about the average lateral offset respect to the global path. The use of this cost will help give the vehicle a trend to  come back to the global path after an occasional obstacle is avoided. This cost is computed as follows:
+In our implementation, we included information about the average lateral offset respect to the global path. The use of this cost will benefit the choice of those paths that allow coming back to the global path after an occasional obstacle is avoided. It is computed as follows:
 
 \begin{equation}\label{eq:cp07_lateral_cost}
 C_d = {{\sum\limits_{i=1}^{L}\|p_i - nearest(p_i, g)\|} \over {L \cdot q_{f_{max}}}}
@@ -355,11 +352,11 @@ From all the paths, we select that with the smallest cost, which will be the win
 
 If no valid paths were found because the vehicle has a bad orientation respect to the global plan, a recovery behavior process is started.
 
-\subsection{Computation of the vehicle commands}\label{ch:chapter07_01_04}
+\subsection{Computation of the vehicle commands}\label{ch:chapter07_01_05}
 
 The last step required in order to follow the trajectory obtained from the global planner is the computation of the steering angle and speed commands that will be sent to the built-in controller of the vehicle. The way in which this is done is quite simple. Over the winner path, we apply a \ac{PID} controller in which we try to minimize the distance and heading of the vehicle respect to that trajectory. Using this controller and a model of the vehicle, we can compute the proper values, which are finally sent to the vehicle.
 
-\subsection{Recovery behavior}\label{ch:chapter07_01_05}
+\subsection{Recovery behavior}\label{ch:chapter07_01_06}
 
 When the lateral offset of a path is bigger than the radius of curvature of base frame, paths can not be generated using the approach described before. Because of that, we propose to compute the paths in a different way, so the vehicle can advance towards the global plan until this restriction is satisfied again. The way in which we do that is through the use of a model of the behavior of the vehicle. This model is the same Ackerman model used in \cite{espelosin2013path}.
 
@@ -389,13 +386,13 @@ Four paths are evolved in a parameterized time $t$, considering a low speed. Two
 % 
 % Anyway, the integration of the method with the planner described in this chapter is quite good. We can see in both images that the planner reacts properly to the objects detected and that, given a pair images, both methods are able to detect the obstacles, allowing a safe trip. In general, both methods are suitable for the evaluated scenarios, being the most limiting features those inherent to the methods, which were described in chapters \ref{ch:chapter04} and \ref{ch:chapter05}.
 
-\section{Summary}\label{ch:chapter07_04}
+\section{Summary}\label{ch:chapter07_07}
 
-In this chapter, we have seen a method able to follow efficiently a given trajectory, while avoiding the potential obstacles in the way. The use of a curvilinear coordinate system for the generation of a set of candidate trajectories simplifies the calculations while allows creating soft paths that makes the vehicle to converge to the followed track in a way as smooth as possible. Moreover, these paths are generated with different lateral offsets regarding to the global plan, so we are able to avoid an obstacle even if it is in the middle of the path. Finally, as speed is out the model used for the generation of the tracks, it is reduced to the computation of a set of parameters that define a third order polynomial. Speed and steering angle are then computed, using a \ac{PID} controller over the winner path, which is chosen based on a cost function.
+In this chapter, we have seen a method able to follow efficiently a given trajectory, while avoiding the potential obstacles in the way. The use of a curvilinear coordinate system for the generation of a set of candidate trajectories simplifies the calculations while allows creating soft paths that makes the vehicle to converge to the followed track in a way as smooth as possible. Moreover, these paths are generated with different lateral offsets regarding to the global plan, so we are able to avoid an obstacle even if it is in the middle of the path. Finally, as speed is out of the model used for the generation of the tracks, this generation step is reduced to the computation of a set of parameters that define a third order polynomial. Speed and steering angle are then computed, using a \ac{PID} controller over the winner path, which is chosen based on a cost function.
 
-There are some videos in which the good behavior of this method is available, as those in \url{http://verdino.webs.ull.es/node/109}, \url{http://verdino.webs.ull.es/node/103}, \url{http://verdino.webs.ull.es/node/105} and \url{http://verdino.webs.ull.es/node/102}; and an early version of the method in \url{http://verdino.webs.ull.es/node/108}. Also, the videos introduced in section \ref{ch:chapter08_08}, available at \url{http://youtu.be/08mAOD6bT9w}, \url{http://youtu.be/rn4iIafBFZc} and \url{http://youtu.be/SCQ6_GYjbJs}, show how the integration of the method with the algorithm described in chapters \ref{ch:chapter04} and \ref{ch:chapter05} is possible. Finally, in the future, the code related to this part will be available at \url{https://github.com/ull-isaatc/grull_ackermann_base_local_planner}. \comment{¿Tiene sentido poner el vídeo de la versión anterior? (Es que da bastante el pego). ¿Tiene sentido poner la url de dónde estará el código si ni siquiera está claro que lo vayamos a liberar algún día?}
+There are some videos in which the good behavior of this method is available, as those in \url{http://verdino.webs.ull.es/node/109}, \url{http://verdino.webs.ull.es/node/103}, \url{http://verdino.webs.ull.es/node/105} and \url{http://verdino.webs.ull.es/node/102}. Also, the videos introduced in section \ref{ch:chapter08_08}, available at \url{http://youtu.be/08mAOD6bT9w}, \url{http://youtu.be/rn4iIafBFZc} and \url{http://youtu.be/SCQ6_GYjbJs}, show how the integration of the method with the algorithm described in chapters \ref{ch:chapter04} and \ref{ch:chapter05} is possible (This process is better explained at section \ref{ch:chapter08_08}).
 
-As future work, we can study the inclusion of new costs or long-term control strategies, as those used in \cite{werling2010optimal}. Furthermore, the computation of the steering angle based on the winner path could be improved through the use of a predictive controller.
+As future work, we can study the inclusion of new cost functions in order to improve the choice of the right path or long-term control strategies, as those used in \cite{werling2010optimal}. Furthermore, the computation of the steering angle based on the winner path could be improved through the use of a predictive controller.
 
 In the next chapter, we will see the results obtained for all the methods described until now, which will be give us a clear idea of their performance, and the advantages and disadvantages of using such methods.
 

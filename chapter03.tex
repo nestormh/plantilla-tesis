@@ -11,14 +11,14 @@
 
 In the last two chapters, we have seen two different strategies for the detection of obstacles, oriented to their use in \ac{UAV} applications. In none of them, serious attempts have been done in order to locate the obstacles in the map. Furthermore, just one of them is oriented to the use non static cameras, but it is highly dependent on the creation of a well populated image database. Because of that, we thought that the use of stereo vision algorithms for the whole reconstruction of the world could help us to improve our detection mechanisms. This reconstructed world will allow us to detect the harmful objects and track them along the time. But before that, we must decide which stereo reconstruction method is the most suitable for our algorithms. 
 
-Initially, we wanted to use dense stereo reconstruction algorithms, which were used for the method described in chapter \ref{ch:chapter05}. However, as we will see in chapter \ref{ch:chapter04}, we also explored other approaches in which this reconstruction is simplified. But at this point, we wanted to know which was the most suitable algorithm for our application. However, there are very few datasets that allow assessing the performance of a specific method in a real world application. Most datasets have been created in controlled conditions, thus neglecting scenarios that are impossible to reproduce in a laboratory. In this chapter, we present the results of the evaluation of three different dense reconstruction algorithm implementations using a number of well-known strategies that represent different trade-offs in terms of cost, set up time and accuracy. In our tests, we evaluated two variants of the \acf{SGM} algorithm, and the \acf{ELAS} method, as well as different combinations of additional filters in order to assess their influence on the final behavior of the algorithms.
+Initially, we wanted to use dense stereo reconstruction algorithms, which were used for the method described in chapter \ref{ch:chapter05}. However, as we will see in chapter \ref{ch:chapter04}, we also explored other approaches in which this reconstruction is simplified. But at this point, we wanted to know which was the most suitable algorithm for our application. The problem is that there are very few datasets that allow assessing the performance of a specific method in a real world application. Most datasets have been created in controlled conditions, thus neglecting scenarios that are impossible to reproduce in a laboratory. In this chapter, we present the results of the evaluation of three different dense reconstruction algorithm implementations using a number of well-known strategies that represent different trade-offs in terms of cost, set up time and accuracy. In our tests, we evaluated two variants of the \acf{SGM} algorithm, and the \acf{ELAS} method, as well as different combinations of additional filters in order to assess their influence on the final behavior of the algorithms.
 
-In this chapter, we will describe a set of automatized strategies for the comparison of the performance level of some state-of-the-art stereovision-based 3D mapping algorithms in automotive scenarios, using both evaluation sets available in literature and data specifically collected from a dedicated recording platform. One of the algorithms will also be analyzed in greater detail, and a number of variations will be tested in order to determine an improved configuration.
+In this chapter, we will describe a set of automatized strategies for the comparison of the performance level of some state-of-the-art stereovision-based 3D mapping algorithms in automotive scenarios, using both evaluation sets available in literature and data specifically collected from a dedicated recording platform. One of the algorithms will be also analyzed in greater detail, and a number of filters will be tested in order to determine an improved configuration.
 
 \section{Experimental Setup}\label{ch:chapter03_01}
 
-Real world scenarios come with little or no data to use as ground-truth, so one solution \citep{Morales2011, Geiger2012} is to use a high-end \ac{LIDAR} unit\footnote{\url{http://velodynelidar.com/lidar/hdlproducts/hdl64e.aspx}} to directly map the area surrounding the vehicle: depth measurements usually have centimeter-level accuracy over the range 5-100\,m, and produce reasonably dense maps, with up to 64 horizontal scanning planes. Another option is to exploit a prior over the data-set, such as the presence of freespace in front of a manually driven vehicle \cite{Steingrube2009} to detect wrongly reconstructed points (false stereo correspondences) over an extended period of time. Finally, a virtual view synthesized from the reconstructed environment geometry can be compared with the actual data recorded by a third, suitably positioned physical camera \cite{Morales2011, Morales2009}.
-In this evaluation the algorithms have been tested using some of these approaches, in order to get a better understanding of their behavior in real-world applications. Some of the tests have been carried out on data acquired using the vehicle depicted in figure \ref{fig:cp03_VIAC}, which has been equipped with a forward-looking Point Grey Bumblebee® XB3-13S2C color camera with 3.5\,mm optics working at a resolution of 1280$\times$960 pixels. The imaging system is synchronized to a SICK LD-MRS-400001 4-plane LIDAR unit running at 12.5\,Hz, with an angular resolution of 0.125$^\circ$ and a field of view of 85$^\circ$, integrated in the front bull-bar. GPS and INS information are provided by a Topcon AGI-3 unit, and are used to predict the vehicle trajectory.
+Real world scenarios come with little or no data to use as ground-truth, so one solution \citep{Morales2011, Geiger2012} is to use a high-end \ac{LIDAR} unit\footnote{\url{http://velodynelidar.com/lidar/hdlproducts/hdl64e.aspx}} to directly map the area surrounding the vehicle: depth measurements usually have centimeter-level accuracy over the range 5-100\,m, and produce reasonably dense maps, with up to 64 horizontal scanning planes. Another option is to exploit a prior over the data-set, such as the presence of freespace in front of a manually driven vehicle \citep{Steingrube2009} to detect wrongly reconstructed points (false stereo correspondences) over an extended period of time. Finally, a virtual view synthesized from the reconstructed environment geometry can be compared with the actual data recorded by a third, suitably positioned physical camera \citep{Morales2011, Morales2009}.
+In this evaluation algorithms have been tested using some of these approaches, in order to get a better understanding of their behavior in real-world applications. Some of the tests have been carried out on data acquired using the vehicle depicted in figure \ref{fig:cp03_VIAC}, which has been equipped with a forward-looking Point Grey Bumblebee® XB3-13S2C color camera with 3.5\,mm optics working at a resolution of 1280$\times$960 pixels. The imaging system is synchronized to a SICK LD-MRS-400001 4-plane LIDAR unit running at 12.5\,Hz, with an angular resolution of 0.125$^\circ$ and a field of view of 85$^\circ$, integrated in the front bull-bar. GPS and INS information are provided by a Topcon AGI-3 unit, and are used to predict the vehicle trajectory.
 
 \begin{figure}[h]
       \centering
@@ -79,7 +79,7 @@ As a reference, the test data-set available at \footnote{\url{http://www.cvlibs.
 	  \begin{tabular}{c}
 	    \includegraphics[width=\textwidth]{lidarGT}
 	  \end{tabular}
-	  \caption{The LIDAR-generated ground truth disparity map.}\label{fig:cp03_lidarGT}
+	  \caption{The LIDAR-generated ground truth disparity map.}\label{fig:cp03_lidarGT_dispMap}
         \end{subfigure}%       
         
         \begin{subfigure}[b]{\textwidth}
@@ -96,10 +96,10 @@ However, in this work scores are being computed in a slightly different manner, 
 \begin{itemize}
 \item only non-occluded, computed pixels are being considered. The original benchmark also gives statistics after linear interpolation of missing values, with the aim of making sparse and semi-dense methods comparable to dense ones; however, such an approximation is hardly optimal, and this reflects on unfairly worsened error metrics for non-dense algorithms.
 \item average errors have been computed considering only the values below the endpoint error, and not all the values, in order to get a better estimate of the behavior for relevant pixels.
-\item statistics for each frame are being considered, not just their average over an entire sequence. To make the data easier to understand, it will be plotted in a graph with the independent variable (x-axis) representing the measured value, and the dependent one (y-axis) the percentage of frames falling below it. Better-performing algorithms are those with a lower x value for a given frame percentage (e.g. y = 90\%).
+\item statistics for each frame are being considered, not just their average over an entire sequence.
 \end{itemize}
 
-\subsection{False correspondences estimation}\label{ch:chapter03_02}
+\subsection{False correspondences estimation}\label{ch:chapter03_01_02}
 
 This benchmark is an adaptation of one of the techniques described in \cite{Steingrube2009}: when driving manually, a safety distance of about 1\,s is usually kept from a leading vehicle; this means that a (speed-dependent) volume of free space is present at all times in front of the ego-vehicle, and any reconstructed point falling within said area must be considered as an erroneous estimate, as shown in figure \ref{fig:cp03_fc}. This image is a frame extracted from the video available at \url{http://youtu.be/_YEj_gf95Qg}. The false correspondences percentage $m_{fc} = 100 \times N_{fc} / N$ is then the ratio of points inside the object-free volume with respect to the total number of 3D points. 
 
@@ -109,9 +109,9 @@ This benchmark is an adaptation of one of the techniques described in \cite{Stei
 \caption{False correspondences estimation example. In pink, the object-free volume which is present in front of the vehicle and, in red, the points falling within said area, produced by false matches.}\label{fig:cp03_fc}
 \end{figure}
 
-\subsection{\acf{NCC}}\label{ch:chapter03_03}
+\subsection{\acf{NCC}}\label{ch:chapter03_01_03}
 
-The approaches introduced so far have some limitations: LIDAR-based ground truth still takes time to be produced, so it cannot be provided for large data-sets, while leading vehicle measurement can be easily performed even on long sequences, but it is an indirect performance metric, albeit a relevant one. As an alternative, the use of a third camera \citep{Morales2009}, as illustrated in figure \ref{fig:cp03_trinocular_setup}, allows to directly compare a reconstructed view with the actual images without any manual intervention. 
+The approaches introduced so far have some limitations: LIDAR-based ground truth still takes time to be produced, so it cannot be provided for large data-sets, while leading vehicle measurement can be easily performed even on long sequences, but it is an indirect performance metric, albeit a relevant one. As an alternative, the use of a third camera \citep{Morales2009}, as illustrated in figure \ref{fig:cp03_trinocular_setup}, allows a direct comparison of a reconstructed view with the actual images without any manual intervention. 
 
 \begin{figure}[h!]
 \centering
@@ -182,7 +182,7 @@ Let $P_{mw}$ and $P_{ms}$ be two homogeneous disparity points on the right (matc
 & P_{ms} = (u_{rs} - d_{rs}, v_{rs}, -d_{rs}, 1)
 \end{align}
 
-, then there exist a 3D homography matrix H so that $P_{ms} = HHP_{mw}$ , in the form:
+, then there exist a 3D homography matrix H so that $P_{ms} = HP_{mw}$ , in the form:
 
 \begin{equation}\label{eq:cp03_homographyMatrix}
 H = Q_s^{-1} \left[ \begin{array}{cc}
@@ -306,7 +306,7 @@ A number of pre- and post-processing filters, and their combinations, have been 
 \item Gap filter. Constant interpolation along 1D horizontal and vertical paths in the disparity image is performed in order to fill small ($\leq 3$\,px) areas with missing disparity values \citep{Geiger2011}.
 \end{itemize}
 
-Each filter has been tested individually against the Census-SGM baseline configuration, and three promising setups have been selected. Each setup has then been compared against other approaches, which also share some of the same filtering strategies, as detailed in Tab. \ref{table:cp03_algorithms}. For the BT-SGM and ELAS algorithms the setups suggested in \cite{Geiger2012} have been followed.
+Each filter has been tested individually against the Census-SGM baseline configuration, and three promising setups have been selected. Each setup has then been compared against other approaches, which also share some of the same filtering strategies, as detailed in table \ref{table:cp03_algorithms}. For the BT-SGM and ELAS algorithms the setups suggested in \cite{Geiger2012} have been followed.
 
 In section \ref{ch:chapter03_04} of chapter \ref{ch:chapter08}, the results obtained for the algorithms described using the proposed evaluation methods are detailed.
 
@@ -349,6 +349,6 @@ This evaluation also served to validate the strategies employed. While LIDAR-bas
 
 As an alternative, the use of a prior on the vehicle movement (section \ref{ch:chapter03_02}) can be successfully exploited to identify a portion of the wrongly reconstructed points. The advantage of this approach is that it can be effectively used to evaluate the behavior of an algorithm on big data-sets, thus covering a broad range of environmental conditions. On the other hand, the portion of space that can be checked is limited to the area in front of a moving vehicle, which often times is the most critical, but nonetheless can introduce a bias in the resulting statistics.
 
-The use of a third camera for evaluation (section \ref{ch:chapter03_03}) is conceptually appealing, but in practice has shown to produce poor results (see section \ref{ch:chapter03_04}). Further testing will be needed to assess its real effectiveness in real-world scenarios. In the future, we expect to perform more experiments including more sequences with different atmospheric conditions like other hours in a day, as well as the use of different metrics to measure the similarity between the control camera and virtual images.
+The use of a third camera for evaluation (section \ref{ch:chapter03_01_03}) is conceptually appealing, but in practice has shown to produce poor results (see section \ref{ch:chapter03_04}). Further testing will be needed to assess its real effectiveness in real-world scenarios. In the future, we expect to perform more experiments including more sequences with different atmospheric conditions like other hours in a day, as well as the use of different metrics to measure the similarity between the control camera and virtual images.
 
-The algorithms shown here and their associated filters are used for a dense reconstruction of the world. However, in order to save computational costs, there are other approaches for 3D reconstruction of the environment of the vehicle which avoid the full reconstruction of the environment. In the next chapter, we will see one of these approaches, which is based on the Stixel World decribed by \cite{badino2009stixel}.
+The algorithms shown here and their associated filters are used for a dense reconstruction of the world. However, in order to save computational costs, there are other approaches for 3D reconstruction which avoid the full reconstruction of the environment. In the next chapter, we will see one of these approaches, which is based on the Stixel World decribed by \cite{badino2009stixel}.

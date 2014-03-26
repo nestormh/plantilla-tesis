@@ -10,7 +10,7 @@
 
 \chapter{Global Planning}\label{ch:chapter06}
 
-Until now, we have seen methods oriented to the detection and, eventually, the tracking of objects based on computer vision. However, we still need a strategy that allows an intelligent response when an obstacle is found, while allowing reaching a given point in the map efficiently. For this purpose, we implemented a planning schema that, given a map, localization and information about the obstacles in the neighborhood, will allow us to reach a given target safe and efficiently. We divided this schema into global planning, which will be explained in this chapter and local planning, explained in chapter \ref{ch:chapter06}.
+Until now, we have seen methods oriented to the detection and, eventually, the tracking of objects based on computer vision. However, we still need a strategy that allows an intelligent response when an obstacle is found, while allowing reaching a given point in the map efficiently. For this purpose, we implemented a planning schema that, given a map, localization and information about the obstacles in the neighborhood, will allow us to reach a given target safe and efficiently. We divided this schema into global planning, which will be explained in this chapter and local planning, explained in chapter \ref{ch:chapter07}.
 
 In the global planning level, given a goal, the algorithm is able to generate a trajectory, which will be then followed by the local planner. Despite of the fact that this level is aimed to perform a background planning in which we do not need to react to the dynamic obstacles, we have implemented our method in such a way in which it would be able to modify its trajectory if a dynamic obstacle intercepts it.
 
@@ -32,7 +32,7 @@ The method has been implemented and the code\footnote{\url{https://github.com/ne
 
 For optimization purposes, the method shows two different behaviors depending on if it is the first execution or not. In the first execution, an initial map of the world is created, as well as the associated initial graph. This map can have a lower resolution than that to be used in successive iterations, as we do not need so much precision in areas far away from the current robot position. In successive executions, the graph will be extended depending on the obstacles found by the robot.
 
-In figure \ref{fig:cp06_pipeline}, the pipeline followed by the method described in this chapter is represented. There, we distinguish between the initial execution and the successive iterations. In the first execution, we define the base graph, which is based just on the static obstacles shown in the map. Later, the graph is updated with the obstacles and the vehicle itself. The graph generation process is composed by a clustering and obstacle inflation process, from which a set of labeled points corresponding to the contour of the safe area of the obstacles is obtained. Then, we train a Multiclass \ac{SVM}, from which we will extract the decision boundaries, that will be used for the construction of the decision graph. From it, we will get the final path using graph based techniques.
+In figure \ref{fig:cp06_pipeline}, the pipeline followed by the method described in this chapter is represented. There, we distinguish between initial execution and successive iterations. In the first execution, we define the base graph, which is based just on the static obstacles shown in the map. Later, graph is updated with the obstacles and the vehicle itself. The graph generation process is composed by a clustering and obstacle inflation process, from which a set of labeled points corresponding to the contour of the safe area around obstacles are obtained. Then, we train a Multiclass \ac{SVM}, from which we will extract the decision boundaries, that will be used for the construction of the decision graph. From it, we will get the final path using graph based techniques.
 
 \begin{figure}[h!]
       \centering
@@ -41,11 +41,18 @@ In figure \ref{fig:cp06_pipeline}, the pipeline followed by the method described
       \label{fig:cp06_pipeline}
 \end{figure}
 
-In successive iterations, obstacles and the footprint of the vehicle itself will generate a new set of contour points that will be added to the input of the \ac{MSVM}. By doing so, we just compute the boundaries for the affected obstacles, avoiding to repeat the whole process for the whole map.
+In successive iterations, obstacles and the footprint of the vehicle itself will generate a new set of contour points that will be added to the input of the \ac{MSVM}. By doing this, we just compute the boundaries for affected obstacles, avoiding to repeat the whole process for all the map.
 
 \subsection{First execution}\label{ch:chapter06_01_01}
 
 The generation of the initial graph is composed by the following steps:
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth, height=0.75\textwidth]{figure1}
+  \caption{Obstacles inflation.}
+  \label{fig:cp06_obst_inflation}
+\end{figure}    
 
 \subsubsection{Obstacles Inflation}\label{ch:chapter06_01_01_01}
 
@@ -57,16 +64,10 @@ In our implementation, we have considered the world map as a grid of a certain r
 
 , where $\beta$ is a scaling factor that increases/decreases the slope of the cost function, $nearest(c)$ is the position of the nearest cell in the map to the cell $c$ marked as obstacle, and $\rho$ is the circumscribed radius of the robot. The function is scaled to $253$ as 254 and 255 are reserved values. Based on the cost map generated, we mark all values over a threshold $\tau$ as obstacle, so the cost map becomes a binary matrix. From this matrix we extract the boundaries using the method in \cite{suzuki1985topological}. In figure \ref{fig:cp06_obst_inflation}, the output after doing this step is shown.
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=\textwidth, height=0.75\textwidth]{figure1}
-  \caption{Obstacles inflation.}
-  \label{fig:cp06_obst_inflation}
-\end{figure}    
 
 \subsubsection{Obstacles Clustering}\label{ch:chapter06_01_01_02}
 
-The boundaries obtained in the previous step are used as input for the obstacles clustering stage. At this point, we have a cloud of points $\mathcal{P}$ from which we do not know if they belong to the same obstacle or not. This clustering is done using the method described in \cite{rusu2009semantic}. The procedure is the following:
+The boundaries obtained in the previous step are used as input for the obstacles clustering stage. At this point, we have a cloud of points $\mathcal{P}$ from which we do not know if they belong to the same obstacle or not. This clustering is done using the method described in \cite{rusu2009semantic}. The procedure is described at algorithm \ref{alg:obstacles_clustering}.
 
 \begin{algorithm}[h!]
 \caption{Obstacles clustering}
@@ -94,7 +95,7 @@ In this algorithm, $d_{obst}$ is the maximal distance between a pair of points t
 
 \subsubsection{\ac{SVM} Training}\label{ch:chapter06_01_01_03}
 
-Once we have clustered the inflated obstacles into different objects, we want to know which is the best path between them in terms of distance to the obstacles and smoothness. The way in which this is done makes the difference with respect to other \ac{SVM} based path planning algorithms. Unlike the methods seen in section \ref{ch:chapter00_02_06}, our method uses a Multiclass \acs{SVM} in order to obtain the best path between the obstacles. In general, in classification, generation of a solution for the multiclass classification in a single step is usually avoided. Instead of this, a combination of several binary \ac{SVM} classifiers is used. The most known methods for doing that, based on the review in \cite{hsu2002comparison, duan2005best}, are:
+Once we have clustered the inflated obstacles into different objects, we want to know which is the best path between them in terms of distance to the obstacles and smoothness. The way in which this is done makes the difference with respect to other \ac{SVM} based path planning algorithms. Unlike the methods seen at the Introduction of this thesis (section \ref{ch:chapter00_02_06}), our method uses a Multiclass \acs{SVM} in order to obtain the best path between the obstacles. In general, in classification, generation of a solution for the multiclass classification in a single step is usually avoided. Instead of this, a combination of several binary \ac{SVM} classifiers is used. The most known methods for doing that, based on the review in \cite{hsu2002comparison, duan2005best}, are:
 
 \begin{itemize}
  \item One-versus all using winner-takes-all.
@@ -102,7 +103,7 @@ Once we have clustered the inflated obstacles into different objects, we want to
  \item Directed Acyclic Graph SVM (DAGSVM).
 \end{itemize}
 
-In our implementation we used a one-versus-all strategy. That is, for each set of points $C_i$ corresponding to a cluster in the set of clusters $\mathcal{C}$, we create two classes, one formed by the point set $C_i$, and the other composed by the points belonging to the remaining clusters $\{\mathcal{C} - C_i\}$. From these two classes, we train a single \ac{SVM}, which will give us the parameters $\alpha_k$ corresponding to the support vectors $x_k$ and their labels $y_k$, which will be later used by the equation \ref{eq:appendixSVM_soft_discriminative_function}. In our implementation, we used a \acs{GPU} based implementation of the \acp{SVM}, described in \cite{athanasopoulos2011gpu}. The use of this implementation improved notably the time required by our implementation.
+In our implementation we used a one-versus-all strategy. That is, for each set of points $C_i$ corresponding to a cluster in the set of clusters $\mathcal{C}$, we create two classes, one formed by the point set $C_i$, and the other composed by the points belonging to the remaining clusters $\{\mathcal{C} - C_i\}$. From these two classes, we train a single \ac{SVM}, which will give us the parameters $\alpha_k$ corresponding to the support vectors $x_k$ and their labels $y_k$, which will be later used by the equation \ref{eq:appendixSVM_soft_discriminative_function}. In our implementation, we used a \acs{GPU} based implementation of the \ac{SVM}, described in \cite{athanasopoulos2011gpu}. The use of this implementation improved notably the time required by our implementation for the \ac{SVM} training step.
 
 \subsubsection{Boundary extraction}\label{ch:chapter06_01_01_04}
 
@@ -131,7 +132,7 @@ To solve this problem, in our method we propose a combination of a \acf{RNG} bas
 
 \paragraph{\acf{NNG}}\label{ch:chapter06_01_01_05_01}
 
-In order to obtain the \ac{NNG}, we calculate a $kd-tree$ for the points in $\mathcal{B}$. For each point in $\mathcal{B}$, we look for the neighbors inside a given radius circle. Then an edge $e(u,v)$ is added to the graph for each point in the circle, where $u$ is the current point, and $v$ each of its neighbors. By doing this, we allow the robot to go from the path obtained from a class to another in case points are close enough and there are no obstacles in the neighborhood. In figure \ref{fig:cp06_nng}, we can see the graph as it would look like at this point of the execution. As can be seen, there are some boundaries that are not connected, despite that there is a free area between them. This problem is solved with the \acf{RNG}.
+In order to obtain the \ac{NNG}, we calculate a $kd-tree$ for the points in $\mathcal{B}$. For each point in $\mathcal{B}$, we look for the neighbors inside a given radius circle. If there are not obstacles between the point $u$ and a certain neighbor $v$, an edge $e(u,v)$ is added to the graph. By doing this, we allow the robot to go from the path obtained from a class to another in case points are close enough and there are no obstacles in the neighborhood. In figure \ref{fig:cp06_nng}, we can see the graph as it would look like at this point of the execution. As can be seen, there are some boundaries that are not connected, despite that there is a free area between them. This problem is solved with the \acf{RNG}.
 
 \begin{figure}[h!]
   \centering
@@ -142,7 +143,7 @@ In order to obtain the \ac{NNG}, we calculate a $kd-tree$ for the points in $\ma
 
 \paragraph{\acf{RNG}}\label{ch:chapter06_01_01_05_02}
 
-For the generation of the \ac{RNG}, we use the set of labels $l_i \in \mathcal{L}$ described in section \ref{ch:chapter06_01_01_04}. First, we obtain the Delaunay Triangulation \citep{su1997comparison} using the points in $\mathcal{B}$ as input. In our implementation, we used the method in \cite{rong2008computing} for that. Then, we iterate through the edges $e(u,v)$ of the triangles. For each one of these edges, we look for the nearest point belonging to an obstacle. If the point is far enough and $l_u \neq l_v$, we add the edge to our graph. In our implementation, we process all edges simultaneously over the \acs{GPU}, saving a lot of time. Edges obtained by the \ac{NNG} are tested, too. The obtained graph is depicted in figure \ref{fig:cp06_rng}.
+For the generation of the \ac{RNG}, we use the set of labels $l_i \in \mathcal{L}$ described in section \ref{ch:chapter06_01_01_04}. First, we obtain the Delaunay Triangulation \citep{su1997comparison} using the points in $\mathcal{B}$ as input. In our implementation, we used the method in \cite{rong2008computing} for that. Then, we iterate through the edges $e(u,v)$ of the triangles. For each one of these edges, we check that there are not obstacles between $u$ and $v$. If this condition is true, and $l_u \neq l_v$, the edge $e$ is added to our graph. In our implementation, we process all edges simultaneously over the \acs{GPU}, saving a lot of time. Edges obtained by the \ac{NNG} are tested, too. The obtained graph is depicted in figure \ref{fig:cp06_rng}.
 
 \begin{figure}[h!]
   \centering
@@ -194,7 +195,7 @@ Once we have the classes related to the new points given by the sensors of the r
 
 At this point, we have a graph with all the feasible paths in the map completely updated, including the new obstacles. With this graph, it is possible to find a safe and smooth path between the given starting and goal positions and their orientations.
 
-\paragraph{Looking for the starting and goal points into the graph}\label{ch:chapter06_01_02_04_01}
+\paragraph{\underline{Looking for the starting and goal points into the graph:}}\label{ch:chapter06_01_02_04_01}
 
 As said in section \ref{ch:chapter06_01_02_02}, we have limited the robot to start with a given orientation, but at this point we are still not taking its direction into account. To solve this, given the current position of the robot and the goal, $s(x,y)$ and $g(x,y)$, and their orientations, $\theta_s$ and $\theta_g$, we obtain the points
 
@@ -205,7 +206,7 @@ As said in section \ref{ch:chapter06_01_02_02}, we have limited the robot to sta
 \end{array}
 \end{equation}
 
-Then, we use the points $s_1$ and $g_1$ to look for the nearest point in the graph, using the kd-tree previously created in the previous sections. These points, $s_2$ and $g_2$, will be the points used by Dijkstra to find a path. This operation is better described in figure \ref{fig:cp06_findstartgoal}. Using the current position of the robot (starting point $s$), represented in red, and its orientation, we obtain the point $s_1$ (the point in magenta) based on the equation \ref{eq:cp06_start_goal_points}. In the graph, the nearest point to $s_1$ , $s_2$ , is the initial point used by the Dijkstra algorithm.
+Then, we use the points $s_1$ and $g_1$ to look for the nearest point in the graph, using the kd-tree previously created in the previous sections. These points, $s_2$ and $g_2$, will be the ones used by the Dijkstra shortest path algorithm to find a path. This operation is better described in figure \ref{fig:cp06_findstartgoal}. Using the current position of the robot (starting point $s$), represented in red, and its orientation, we obtain the point $s_1$ (the point in magenta) based on the equation \ref{eq:cp06_start_goal_points}. In the graph, the nearest point to $s_1$ , $s_2$ , is the initial point used by the Dijkstra algorithm.
 
 \begin{figure}[h!]
   \centering
@@ -214,7 +215,7 @@ Then, we use the points $s_1$ and $g_1$ to look for the nearest point in the gra
   \label{fig:cp06_findstartgoal}
 \end{figure}
 
-\paragraph{Looking for the shortest path}\label{ch:chapter06_01_02_04_02}
+\paragraph{\underline{Looking for the shortest path:}}\label{ch:chapter06_01_02_04_02}
 
 Before applying Dijkstra, we need to know if the goal is reachable. To do that, we check the connectivity of the graph. If $s_2$ and $g_2$ are in the same connected component, the goal is reachable. This checking is needed because there will be a graph in every place in which there is a hole between the limits obtained in the obstacles inflation step. This is because it is faster making a connectivity checking than testing whether a graph is in a traversable area or not. We suppose that the robot will always start in a valid area.
 Once we have done this verification, Dijkstra is applied and the path is obtained. Points $s$ and $g$ are added to the beginning and the end of the path. The whole implementation of the algorithm has been tested on a PC i7-3630QM with 8GB RAM and a NVIDIA GT 640M, being able to work in a real time navigation application for an autonomous robot.
@@ -234,6 +235,6 @@ In figure \ref{fig:cp06_final_path}, the final path obtained by the algorithm is
 
 In this chapter, we have shown an alternative to classical path planning methods, based on a \acf{MSVM}. Advantages of using this method as a base for our algorithm are that we can generate continuous non-linear separating surfaces between classes that, joined all together, allow the creation of a graph used for the generation of smooth, short and safe paths. The method has been developed taking advantage of the use of a \ac{GPU} in order to reduce the required computational time. 
 
-In this method, we have considered an initial graph, which is extended in the following iterations, allowing the inclusion of new obstacles and the influence of the vehicle itself in the generation of trajectories. This method was thought for an early version of the local planner described in the next chapter, in which we needed the trajectory to start just from the current position of the vehicle. However, as we will see in the next chapter, this restriction is not longer needed, as we started using other strategies based on the Frenét space. This allowed us to move from the method described in this chapter to an implementation of the classical Potential Fields algorithm available on the Internet. 
+In this method, we have considered an initial graph, which is extended in the following iterations, allowing the inclusion of new obstacles and the influence of the vehicle itself in the generation of trajectories. This method was thought for an early version of the local planner described in the next chapter, in which we needed the trajectory to start just from the current position of the vehicle. However, as we will see in the next chapter, this restriction is not longer needed, as we started using other strategies based on the Frenét space. This allowed us to move from the method described in this chapter to an implementation of the classical Potential Fields algorithm. 
 
 Anyway, we still think that the first of this method (the initial graph generation step) would be a good starting point for, given an occupancy map in which an unstructured area is represented, the generation of a full \ac{RNDF} from the scratch.
