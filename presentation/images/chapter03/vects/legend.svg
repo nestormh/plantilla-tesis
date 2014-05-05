@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg4263"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="New document 6">
+  <defs
+     id="defs4265" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="379.81182"
+     inkscape:cy="566.02608"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1366"
+     inkscape:window-height="713"
+     inkscape:window-x="-2"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4268">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g4310">
+      <path
+         d="m 114.36161,125.57647 0,105 405.5625,0 0,-105 -405.5625,0 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+         id="path236"
+         inkscape:connector-curvature="0" />
+      <g
+         transform="matrix(0,1.875,1.875,0,-860.63839,-712.36103)"
+         id="g238">
+        <text
+           transform="matrix(0,1,1,0,458.57,538.006)"
+           id="text240">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 25.676001 32.675999 40.459999 47.459999 52.122002 61.459999 72.351997 84.014 87.905998 97.244003 105.028 112.028 119.812 122.92 126.028 133.812"
+             y="0"
+             sodipodi:role="line"
+             id="tspan242">Census-SGM Baseline</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(0,1.875,1.875,0,-860.63839,-712.36103)"
+         id="g248">
+        <text
+           transform="matrix(0,1,1,0,472.57,643.802)"
+           id="text250">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 9.3380003 17.122 26.459999"
+             y="0"
+             sodipodi:role="line"
+             id="tspan252">ELAS</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(0,1.875,1.875,0,-860.63839,-712.36103)"
+         id="g258">
+        <text
+           transform="matrix(0,1,1,0,486.57,625.155)"
+           id="text260">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 9.3380003 17.892 22.554001 31.892 42.784"
+             y="0"
+             sodipodi:role="line"
+             id="tspan262">BT-SGM</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(0,1.875,1.875,0,-860.63839,-712.36103)"
+         id="g268">
+        <text
+           transform="matrix(0,1,1,0,500.57,550.452)"
+           id="text270">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 25.676001 32.675999 40.459999 47.459999 52.122002 61.459999 72.351997 84.014 87.905998 98.014 105.798 113.582 117.474 121.366"
+             y="0"
+             sodipodi:role="line"
+             id="tspan272">Census-SGM Conf 2</tspan>
+        </text>
+      </g>
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path244-1"
+         d="m 427.68397,138.94548 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#ff0000;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path254-6"
+         d="m 427.68397,165.19548 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#00ff00;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:7.5, 3.75;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path264-6"
+         d="m 427.68397,191.44548 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#0000ff;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:3.75, 5.625;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path274-9"
+         d="m 427.68397,217.69548 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#ff00ff;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:1.875, 2.8125;stroke-dashoffset:0" />
+    </g>
+    <g
+       id="g4424">
+      <path
+         d="m 243.70617,638.22757 0,105 405.5625,0 0,-105 -405.5625,0 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+         id="path236-3"
+         inkscape:connector-curvature="0" />
+      <g
+         transform="matrix(0,1.875,1.875,0,-731.29383,-199.70993)"
+         id="g238-7">
+        <text
+           transform="matrix(0,1,1,0,458.57,538.006)"
+           id="text240-9">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 25.676001 32.675999 40.459999 47.459999 52.122002 61.459999 72.351997 84.014 87.905998 97.244003 105.028 112.028 119.812 122.92 126.028 133.812"
+             y="0"
+             sodipodi:role="line"
+             id="tspan242-4">Census-SGM Baseline</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(0,1.875,1.875,0,-731.29383,-199.70993)"
+         id="g248-8">
+        <text
+           transform="matrix(0,1,1,0,472.57,550.452)"
+           id="text250-4">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 25.676001 32.675999 40.459999 47.459999 52.122002 61.459999 72.351997 84.014 87.905998 98.014 105.798 113.582 117.474 121.366"
+             y="0"
+             sodipodi:role="line"
+             id="tspan252-2">Census-SGM Conf 1</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(0,1.875,1.875,0,-731.29383,-199.70993)"
+         id="g258-9">
+        <text
+           transform="matrix(0,1,1,0,486.57,550.452)"
+           id="text260-2">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 25.676001 32.675999 40.459999 47.459999 52.122002 61.459999 72.351997 84.014 87.905998 98.014 105.798 113.582 117.474 121.366"
+             y="0"
+             sodipodi:role="line"
+             id="tspan262-0">Census-SGM Conf 2</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(0,1.875,1.875,0,-731.29383,-199.70993)"
+         id="g268-2">
+        <text
+           transform="matrix(0,1,1,0,500.57,550.452)"
+           id="text270-1">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 25.676001 32.675999 40.459999 47.459999 52.122002 61.459999 72.351997 84.014 87.905998 98.014 105.798 113.582 117.474 121.366"
+             y="0"
+             sodipodi:role="line"
+             id="tspan272-9">Census-SGM Conf 3</tspan>
+        </text>
+      </g>
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path244-4"
+         d="m 560.64956,651.70013 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#ff0000;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path254-9"
+         d="m 560.64956,677.95013 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#00ff00;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:7.5, 3.75;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path264-7"
+         d="m 560.64956,704.20013 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#0000ff;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:3.75, 5.625;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path274-5"
+         d="m 560.64956,730.45013 c 24.9375,0 49.875,0 74.8125,0"
+         style="fill:none;stroke:#ff00ff;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:1.875, 2.8125;stroke-dashoffset:0" />
+    </g>
+    <g
+       id="g3657-5"
+       transform="matrix(0,1.0125,1.0125,0,-196.74272,-17.96541)">
+      <path
+         d="m 820.25321,357.33297 209.99999,0 0,324.45 -209.99999,0 0,-324.45 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+         id="path236-0"
+         inkscape:connector-curvature="0" />
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g238-9">
+        <text
+           transform="matrix(0,1,1,0,374.57,538.006)"
+           id="text240-4">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 25.676001 32.675999 40.459999 47.459999 52.122002 61.459999 72.351997 84.014 87.905998 97.244003 105.028 112.028 119.812 122.92 126.028 133.812"
+             y="0"
+             sodipodi:role="line"
+             id="tspan242-3">Census-SGM Baseline</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g248-86">
+        <text
+           transform="matrix(0,1,1,0,388.57,590.128)"
+           id="text250-8">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.892 18.676001 26.459999 33.459999 40.459999 43.568001 51.352001 59.136002 63.028 66.919998 70.028 73.136002 77.028 84.811996"
+             y="0"
+             sodipodi:role="line"
+             id="tspan252-6">Gaussian filter</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g258-0">
+        <text
+           transform="matrix(0,1,1,0,402.57,573.761)"
+           id="text260-25">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 9.3380003 17.122 24.906 29.568001 37.352001 45.136002 52.919998 56.812 59.919998 67.704002 75.487999 79.379997 86.379997 90.272003 98.056"
+             y="0"
+             sodipodi:role="line"
+             id="tspan262-4">Aggregation step</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g268-4">
+        <text
+           transform="matrix(0,1,1,0,416.57,587.005)"
+           id="text270-9">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 9.3380003 17.122 24.906 29.568001 36.568001 44.352001 48.243999 55.243999 63.028 70.811996 77.811996 85.596001"
+             y="0"
+             sodipodi:role="line"
+             id="tspan272-5">Sparse census</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g278-3">
+        <text
+           transform="matrix(0,1,1,0,430.57,564.451)"
+           id="text280-5">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 8.5539999 16.337999 21 28.784 36.568001 41.23 44.338001 51.338001 59.122002 66.905998 70.797997 77.797997 85.582001 93.365997 100.366 108.15"
+             y="0"
+             sodipodi:role="line"
+             id="tspan282-8">Ternarized census</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g288-6">
+        <text
+           transform="matrix(0,1,1,0,444.57,586.221)"
+           id="text290-1">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 9.3380003 17.122 24.906 32.689999 36.582001 39.689999 46.689999 54.473999 58.366001 70.028 77.811996 85.596001"
+             y="0"
+             sodipodi:role="line"
+             id="tspan292-5">Adaptive mean</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g298-5">
+        <text
+           transform="matrix(0,1,1,0,458.57,583.912)"
+           id="text300-1">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 24.892 32.675999 40.459999 47.459999 54.459999 57.568001 65.351997 69.244003 73.136002 76.244003 79.351997 83.244003 91.028"
+             y="0"
+             sodipodi:role="line"
+             id="tspan302-8">Despeckle filter</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g308-6">
+        <text
+           transform="matrix(0,1,1,0,472.57,622.804)"
+           id="text310-0">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.892 18.676001 26.459999 30.351999 34.243999 37.352001 40.459999 44.352001 52.136002"
+             y="0"
+             sodipodi:role="line"
+             id="tspan312-3">Gap filter</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g318-1">
+        <text
+           transform="matrix(0,1,1,0,486.57,581.937)"
+           id="text320-2">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 21 28.784 36.568001 44.352001 52.136002 59.919998 66.919998 73.919998 82.096001 89.879997"
+             y="0"
+             sodipodi:role="line"
+             id="tspan322-4">Uniqueness=10</tspan>
+        </text>
+      </g>
+      <g
+         transform="matrix(1.5,0,0,1.5,275.90321,-422.66703)"
+         id="g328-8">
+        <text
+           transform="matrix(0,1,1,0,500.57,581.937)"
+           id="text330-5">
+          <tspan
+             style="font-size:14px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Helvetica;-inkscape-font-specification:Helvetica"
+             x="0 10.108 17.892 21 28.784 36.568001 44.352001 52.136002 59.919998 66.919998 73.919998 82.096001 89.879997"
+             y="0"
+             sodipodi:role="line"
+             id="tspan332-5">Uniqueness=20</tspan>
+        </text>
+      </g>
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path244-9-5"
+         d="m 832.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path254-2-8"
+         d="m 853.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#00ff00;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:6, 3;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path264-7-3"
+         d="m 874.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#0000ff;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:3, 4.5;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path274-6-1"
+         d="m 895.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#ff00ff;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:1.5, 2.25;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path284-6-8"
+         d="m 916.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#00ffff;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:9, 3, 1.5, 3;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path294-0-1"
+         d="m 937.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#ffff00;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.5, 4.5, 1.5, 4.5;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path304-8-3"
+         d="m 958.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:3, 3, 3, 9;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path314-7-2"
+         d="m 979.13522,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#ff4d00;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:1.5, 3, 9, 3, 1.5, 3;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path324-1-8"
+         d="m 1000.1352,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:6, 3;stroke-dashoffset:0" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path334-9-7"
+         d="m 1021.1352,606.60173 c 0,19.95 0,39.9 0,59.85"
+         style="fill:none;stroke:#00ff00;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+  </g>
+</svg>

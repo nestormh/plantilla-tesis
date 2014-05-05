@@ -1,0 +1,266 @@
+\documentclass{beamer}
+% \documentclass[handout]{beamer}
+\usepackage{pgfpages}
+% \setbeameroption{show notes on second screen=right}
+% \setbeameroption{show notes}
+
+\usepackage[english]{babel} 
+\usepackage[utf8]{inputenc} 
+
+% Gráficos
+\usepackage{tikz}
+\usepackage{graphicx}
+\newlength{\figuresheight}
+\setlength{\figuresheight}{7cm}
+\setkeys{Gin}{totalheight=\figuresheight,keepaspectratio=true}
+\graphicspath{{./images/bmps/}{./images/vects/}{./images/}}
+\usepackage{ifpdf}
+\ifpdf
+  \DeclareGraphicsExtensions{.pdf,.mps,.png,.jpg}
+\else
+  \DeclareGraphicsExtensions{.eps,.mps}
+\fi
+\graphicspath{{./images/bmps/}{./images/vects/}{./images/}
+  {./images/presentation/bmps/}{./images/presentation/vects/}{./images/presentation/}
+  {./images/chapter00/bmps/}{./images/chapter00/vects/}{./images/chapter00/}
+  {./images/chapter01/bmps/}{./images/chapter01/vects/}{./images/chapter01/}
+  {./images/chapter02/bmps/}{./images/chapter02/vects/}{./images/chapter02/}
+  {./images/chapter03/bmps/}{./images/chapter03/vects/}{./images/chapter03/}
+  {./images/chapter04/bmps/}{./images/chapter04/vects/}{./images/chapter04/}
+  {./images/chapter05/bmps/}{./images/chapter05/vects/}{./images/chapter05/}
+  {./images/chapter06/bmps/}{./images/chapter06/vects/}{./images/chapter06/}
+  {./images/chapter07/bmps/}{./images/chapter07/vects/}{./images/chapter07/}
+}
+
+\usepackage{epsfig}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pdflscape}
+\usepackage{textpos}
+\usepackage{fancybox}
+
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+\usepackage[style=authoryear,natbib=true]{biblatex}
+\setbeamertemplate{bibliography item}[text]
+\addbibresource{references.bib}
+
+
+% for downsampling large images
+\ifnum\pdfshellescape=1
+% Yes, enabled
+% #2 is the filename - assumed relative
+% IFP - image file path
+% IFN - image filename only
+% here resizing at 800 px wide
+\let\Oldincludegraphics\includegraphics
+\newread\myinput
+% must add default argument [] so typeout works
+\renewcommand\includegraphics[2][\@empty]{%
+% debug - print arguments to stdout:
+\immediate\message{== #1 ==}
+\immediate\typeout{== #2 ==}
+% run downsampling bash script
+\immediate\write18{mkdir -p downsampled; IFP=#2 ; %
+echo "Processing $IFP" ; %
+IFN=$(basename $IFP) ; %
+echo "downsampled/$IFN" > tmpname ; %
+if [ ! -f downsampled/$IFN ]; then %
+echo "File downsampled/$IFN not found! Converting..." ; %
+% convert $IFP -resize 50\% downsampled/$IFN ; %
+convert $IFP -resize 100x downsampled/$IFN ; %
+else %
+echo "Found downsampled/$IFN - reusing." ; %
+fi ; %
+} % end write18
+% here we should have downsampled file
+% retrieve downsample filename first
+\immediate\openin\myinput=tmpname
+% The group localizes the change to \endlinechar
+\bgroup
+  \endlinechar=-1
+  \immediate\read\myinput to \localline
+  % Since everything in the group is local, we have to explicitly make the
+  % assignment global
+  \global\let\myTmpFileName\localline
+\egroup
+\immediate\closein\myinput
+\immediate\typeout{== \myTmpFileName .. #1 ==}
+% Clean up after ourselves
+% \immediate\write18{rm -f -- tmpname}
+% finally, include downsampled image
+\Oldincludegraphics[#1]{\myTmpFileName}
+} % end renewcommand
+\else
+% No, disabled
+\fi
+
+
+\title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
+\author{Néstor Morales Hernández} 
+\institute{Departamento de Ingeniería Informática \\ Universidad de La Laguna}
+\date{June 2014}
+
+\usetheme{Warsaw}
+
+% Berkeley *
+
+% Copenhagen *
+% Hannover
+% Madrid
+% Malmoe
+% PaloAlto
+% Warsaw
+
+\usepackage{BeamerColor}
+\definecolor{mainColor}{rgb}{.125,.7,.25}
+\usecolortheme[named=ForestGreen]{structure}
+
+% NOTE: Background
+% \setbeamertemplate{background canvas}{\begin{tikzpicture}\node[opacity=.2]{\includegraphics[height=\paperheight]{background}};\end{tikzpicture}}
+
+% \setbeamercolor{alerted text}{fg=orange}
+% \setbeamercolor{background canvas}{bg=green}
+% \setbeamercolor{block body alerted}{bg=normal text.bg!90!black}
+% \setbeamercolor{block body}{bg=normal text.bg!90!black}
+% \setbeamercolor{block body example}{bg=normal text.bg!90!black}
+% \setbeamercolor{block title alerted}{use={normal text,alerted text},fg=alerted text.fg!75!normal text.fg,bg=normal text.bg!75!black}
+% \setbeamercolor{block title}{bg=blue}
+% \setbeamercolor{block title example}{use={normal text,example text},fg=example text.fg!75!normal text.fg,bg=normal text.bg!75!black}
+% \setbeamercolor{fine separation line}{}
+% \setbeamercolor{frametitle}{fg=brown}
+% \setbeamercolor{item projected}{fg=black}
+% \setbeamercolor{normal text}{bg=black,fg=yellow}
+% \setbeamercolor{palette sidebar primary}{use=normal text,fg=normal text.fg}
+% \setbeamercolor{palette sidebar quaternary}{use=structure,fg=structure.fg}
+% \setbeamercolor{palette sidebar secondary}{use=structure,fg=structure.fg}
+% \setbeamercolor{palette sidebar tertiary}{use=normal text,fg=normal text.fg}
+% \setbeamercolor{section in sidebar}{fg=brown}
+% \setbeamercolor{section in sidebar shaded}{fg=gray}
+% \setbeamercolor{separation line}{}
+% \setbeamercolor{sidebar}{bg=red}
+% \setbeamercolor{sidebar}{parent=palette primary}
+% \setbeamercolor{structure}{bg=black, fg=green}
+% \setbeamercolor{subsection in sidebar}{fg=brown}
+% \setbeamercolor{subsection in sidebar shaded}{fg=gray}
+% \setbeamercolor{title}{fg=brown}
+% \setbeamercolor{titlelike}{fg=brown}
+
+%% Video stuff
+\usepackage{movie15}
+
+% \AtBeginSubsection[]
+% {
+%   \begin{frame}
+%     \frametitle{Table of Contents}
+%     \tiny
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+\begin{document}
+\addtobeamertemplate{headline}{}{%
+\begin{textblock*}{100mm}(0.02cm,-0.8cm)
+\includegraphics[height=.7cm]{verdino}
+\end{textblock*}}
+
+  \begin{frame}[plain]
+    \centering
+    
+%     \includegraphics[height=0.5cm]{ull} \hspace*{0.5\textwidth}
+%     \includegraphics[height=2cm]{verdino} 
+%     \begin{textblock*}{100mm}(0.02cm,-0.8cm)
+%       \includegraphics[height=.7cm]{verdino}
+%     \end{textblock*}
+
+    \titlepage
+    
+    \tiny
+    \hfill Under the guidance of:\\
+    \scriptsize
+    \hfill Leopoldo Acosta Sánchez\\
+    \hfill Jonay T. Toledo Carrillo
+
+  \end{frame}
+
+% \input{chapter00}
+\section{Obstacle Detection}
+% \input{chapter01}
+% \input{chapter02}
+\input{chapter03}
+
+\subsection{Evaluation of Stereo 3D Reconstruction Algorithms}
+\subsection{Stixel World}
+\subsection{Particle Filter based Object Tracking}
+
+\section{Obstacle Avoidance and Planning}
+  \subsection{Global Planning}
+  \subsection{Local Planning}
+  
+\section{Results}
+  \subsection{Change Detection for Obstacle Localization in Images}
+  \subsection{Non-Rigid Contour Tracking}
+  \subsection{Evaluation of Stereo 3D Reconstruction Algorithms}
+  \subsection{Stixel World}
+  \subsection{Particle Filter based Object Tracking}
+  \subsection{Global Planning}
+  \subsection{Local Planning}
+  
+\section{Conclusions}
+  \subsection{Future work}
+
+% \section{Introducción}
+%   \subsection{Modelos Basados en Adaptación Social}
+%   
+%   \begin{frame}
+%     \frametitle{¿Qué es un modelo basado en adaptación social?}
+%     \begin{definition}
+%       Algoritmos o mecanismos distribuidos de resolución de problemas inspirados en el comportamiento colectivo de colonias de insectos sociales u otras  sociedades de animales.
+%     \end{definition}
+%     \begin{example}
+%       \begin{itemize}
+%       \item <1->Insectos
+%       \item <2->Aves \pause
+%       \item <3->Peces \pause
+%       \item <4->Mamíferos
+%       \end{itemize}
+%     \end{example}
+%   \end{frame}
+%   
+% \section{Algoritmos de ejemplo}
+%   \subsection{Optimización de colonia de hormigas}
+% 
+%   \begin{frame}
+%     Algo de texto
+%   \end{frame}
+% 
+%   \subsection{Difusión estocástica}
+%   \begin{frame}
+%     Algo de texto
+%   \end{frame}
+% 
+%   \section{Aplicaciones}
+%   \begin{frame}
+%     Algo de texto
+%   \end{frame}
+  
+
+%   \begin{frame}
+%   \includemovie[
+%     poster,
+%     text=(/tmp/M2U00318.MPG),
+%     mouse,
+%     repeat
+%     ]{
+%     .5\linewidth
+%     }{
+%     .375\linewidth
+%     }{/tmp/M2U00318.MPG}
+%   \end{frame}
+  
+\end{document}
