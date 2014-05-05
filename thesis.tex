@@ -207,6 +207,9 @@
 % Estructura del documento
 \begin{document}
 
+\cleardoublepage
+\input{certificate}
+
 \frontmatter
 \label{frontpage}\pdfbookmark{Front Page}{frontpage}
 \titlehead{
@@ -221,9 +224,8 @@
 \date{2014}
 \maketitle
 
-% \input{certificate}
-% \input{dedicatory}
-% \input{acknowledges}
+\input{dedicatory}
+\input{acknowledges}
 
 \cleardoublepage
 \pdfbookmark{\contentsname}{tableofcontents}
@@ -256,10 +258,9 @@
 \part{Obstacle avoidance and planning}
 \input{chapter06}
 \input{chapter07}
-\acresetall
-
+% \acresetall
+\part{Results and conclusions}
 \input{results}
-
 \input{conclusions}
 
 \appendix

@@ -117,7 +117,7 @@ The smooth term ($s_s$) forces to respect the left-right occlusion restrictions 
   \end{align*}
 \end{equation}
 
-Here, $\omega$ is a free parameter, chosen by the user, which promotes boundaries with few jumps. At this point, we will have extracted the stixels, obtaining a result similar to that shown at figure \ref{fig:cp04_stixels}, in which the stixels (in green) are superimposed to the left image from which they were extracted. For more information about the process described in sections \ref{ch:chapter04_01_01} and \ref{ch:chapter04_01_02}, please refer to \cite{benenson2012pedestrian}.
+Here, $\omega$ is a free parameter, chosen by the user, which promotes boundaries with few jumps. At this point, we will have extracted the stixels, obtaining a result similar to that shown at figure \ref{fig:cp04_stixels}, in which the stixels (in depth color scale) are superimposed to the left image from which they were extracted. For more information about the process described in sections \ref{ch:chapter04_01_01} and \ref{ch:chapter04_01_02}, please refer to \cite{benenson2012pedestrian}.
 
 \begin{figure}[h!]
   \centering
@@ -192,7 +192,7 @@ As it is very unlikely for a candidate pair of stixels to have the exact same he
 The size of a certain stixel changes slightly between frames. This can happen because the position of the object partially represented by the stixel can change its depth in the scene, or due to noise in the height detection of the stixel. In order to normalize this, we have computed the histogram of each of the stixels being compared. Then, the cost is computed as the Hellinger distance between both histograms:
 
 \begin{equation}\label{eq:cp04_stixel_movement_histograms_cost}
-f_{SAD}(u_i\{t\}, u_j\{t - 1\}) = 2 \cdot \sqrt { 1 - \underset{i=1}{\overset{d}{\sum}}\sqrt{H(u_i\{t\})[i] \cdot H(u_j\{t - 1\})[i]}}
+f_{hist}(u_i\{t\}, u_j\{t - 1\}) = 2 \cdot \sqrt { 1 - \underset{i=1}{\overset{d}{\sum}}\sqrt{H(u_i\{t\})[i] \cdot H(u_j\{t - 1\})[i]}}
 \end{equation}
 
 Here, $H(u)[i]$ is the $i^{th}$ bin of the histogram computed for the stixel $u$, and $d$ is the number of bins in the histogram. In our implementation, $d = 256$.
@@ -202,7 +202,7 @@ Here, $H(u)[i]$ is the $i^{th}$ bin of the histogram computed for the stixel $u$
 This metric is used to complement the other two metrics, as by its own is not enough to do a matching, but it is good enough to help in the decision, in case of very similar scores in two or more possible matches. $f_{height}$ is computed as follows:
 
 \begin{equation}\label{eq:cp04_stixel_movement_height_cost}
-f_{height}(u_i\{t\}, u_j\{t - 1\}) = 1 - |h(u_i\{t\} - h(u_j\{t - 1\})|
+f_{height}(u_i\{t\}, u_j\{t - 1\}) = 1 - |h(u_i\{t\}) - h(u_j\{t - 1\})|
 \end{equation}
 
 , where $h(u)$ is the height in real world coordinates of the stixel in column $u$. 
