@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.1.3
-lastDocument=chapter03.tex
+lastDocument=results.tex
 masterDocument=
 name=Thesis
 pkg_extIsRegExp=false
@@ -303,20 +303,20 @@ order=-1
 
 [item:appendixPolarCalib.tex]
 archive=true
-column=20
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=52
+line=55
 mode=LaTeX
 open=false
 order=5
 
 [item:appendixSVM.tex]
 archive=true
-column=184
+column=1
 encoding=UTF-8
 highlight=LaTeX
-line=99
+line=88
 mode=LaTeX
 open=false
 order=3
@@ -363,53 +363,53 @@ order=6
 
 [item:chapter03.tex]
 archive=true
-column=6
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=24
+line=0
 mode=LaTeX
-open=true
+open=false
 order=1
 
 [item:chapter04.tex]
 archive=true
-column=701
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=254
+line=220
 mode=LaTeX
 open=false
-order=5
+order=1
 
 [item:chapter05.tex]
 archive=true
-column=1
+column=34
 encoding=UTF-8
 highlight=LaTeX
-line=517
+line=498
 mode=LaTeX
 open=false
 order=4
 
 [item:chapter06.tex]
 archive=true
-column=139
+column=63
 encoding=UTF-8
 highlight=LaTeX
-line=23
+line=212
 mode=LaTeX
 open=false
 order=5
 
 [item:chapter07.tex]
 archive=true
-column=179
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=144
+line=335
 mode=LaTeX
 open=false
-order=4
+order=0
 
 [item:conclusions.tex]
 archive=true
@@ -463,23 +463,23 @@ order=6
 
 [item:references.bib]
 archive=true
-column=38
+column=25
 encoding=UTF-8
 highlight=BibTeX
-line=177
+line=219
 mode=BibTeX
-open=false
-order=3
+open=true
+order=2
 
 [item:results.tex]
 archive=true
-column=13
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=1457
+line=448
 mode=LaTeX
-open=false
-order=2
+open=true
+order=0
 
 [item:thesis.kilepr]
 archive=true
@@ -493,13 +493,13 @@ order=-1
 
 [item:thesis.tex]
 archive=true
-column=0
+column=19
 encoding=UTF-8
 highlight=LaTeX
-line=270
+line=190
 mode=LaTeX
 open=true
-order=0
+order=1
 
 [view-settings,view=0,item:README]
 CursorColumn=0
@@ -538,14 +538,14 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:appendixPolarCalib.tex]
-CursorColumn=20
-CursorLine=52
+CursorColumn=0
+CursorLine=55
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:appendixSVM.tex]
-CursorColumn=184
-CursorLine=99
+CursorColumn=1
+CursorLine=88
 JumpList=
 ViMarks=
 
@@ -574,32 +574,32 @@ JumpList=
 ViMarks=a,65,0
 
 [view-settings,view=0,item:chapter03.tex]
-CursorColumn=6
-CursorLine=24
+CursorColumn=0
+CursorLine=0
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter04.tex]
-CursorColumn=701
-CursorLine=254
+CursorColumn=0
+CursorLine=220
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter05.tex]
-CursorColumn=1
-CursorLine=517
+CursorColumn=34
+CursorLine=498
 JumpList=
 ViMarks=a,492,0
 
 [view-settings,view=0,item:chapter06.tex]
-CursorColumn=139
-CursorLine=23
+CursorColumn=63
+CursorLine=212
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:chapter07.tex]
-CursorColumn=179
-CursorLine=144
+CursorColumn=0
+CursorLine=335
 JumpList=
 ViMarks=
 
@@ -634,19 +634,19 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:references.bib]
-CursorColumn=38
-CursorLine=177
+CursorColumn=25
+CursorLine=219
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:results.tex]
-CursorColumn=13
-CursorLine=1457
+CursorColumn=0
+CursorLine=448
 JumpList=
 ViMarks=
 
 [view-settings,view=0,item:thesis.tex]
-CursorColumn=0
-CursorLine=270
+CursorColumn=19
+CursorLine=190
 JumpList=
 ViMarks=

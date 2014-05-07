@@ -11,6 +11,13 @@
 *.toc
 thesis.pdf
 *eps-converted-to.pdf
+presentation/presentation-blx.bib
+presentation/presentation.nav
+presentation/presentation.pdf
+presentation/presentation.run.xml
+presentation/presentation.snm
+thesis-blx.bib
+thesis.run.xml
 
 # Others #
 #########################

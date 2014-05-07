@@ -1,6 +1,7 @@
 \documentclass{beamer}
 % \documentclass[handout]{beamer}
 \usepackage{pgfpages}
+\usepackage{textcomp}
 % \setbeameroption{show notes on second screen=right}
 % \setbeameroption{show notes}
 
@@ -40,6 +41,13 @@
 \usepackage{pdflscape}
 \usepackage{textpos}
 \usepackage{fancybox}
+\usepackage{multirow}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+% \newcommand{\pushcode}[1][1]{\hskip\dimexpr#1\algorithmicindent\relax}
+% \newcommand{\pushcode}[1][1]{\hskip\algorithmicindent\relax}
+
 
 \usepackage{amssymb}% http://ctan.org/pkg/amssymb
 \usepackage{pifont}% http://ctan.org/pkg/pifont
@@ -122,7 +130,8 @@ fi ; %
 \usecolortheme[named=ForestGreen]{structure}
 
 % NOTE: Background
-% \setbeamertemplate{background canvas}{\begin{tikzpicture}\node[opacity=.2]{\includegraphics[height=\paperheight]{background}};\end{tikzpicture}}
+\setbeamertemplate{background canvas}{\hskip-0.2cm\begin{tikzpicture}\node[opacity=.1]{\includegraphics[height=\paperheight]{background}};\end{tikzpicture}}
+
 
 % \setbeamercolor{alerted text}{fg=orange}
 % \setbeamercolor{background canvas}{bg=green}
@@ -154,14 +163,14 @@ fi ; %
 %% Video stuff
 \usepackage{movie15}
 
-% \AtBeginSubsection[]
-% {
-%   \begin{frame}
-%     \frametitle{Table of Contents}
-%     \tiny
-%     \tableofcontents[currentsection]
-%   \end{frame}
-% }
+\AtBeginSubsection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tiny
+    \tableofcontents[currentsection]
+  \end{frame}
+}
 
 \begin{document}
 \addtobeamertemplate{headline}{}{%
@@ -188,30 +197,23 @@ fi ; %
 
   \end{frame}
 
-% \input{chapter00}
+\input{chapter00}
 \section{Obstacle Detection}
-% \input{chapter01}
-% \input{chapter02}
+\input{chapter01}
+\input{chapter02}
 \input{chapter03}
-
-\subsection{Evaluation of Stereo 3D Reconstruction Algorithms}
-\subsection{Stixel World}
-\subsection{Particle Filter based Object Tracking}
+\input{chapter04}
+\input{chapter05}
 
 \section{Obstacle Avoidance and Planning}
-  \subsection{Global Planning}
-  \subsection{Local Planning}
+\input{chapter06}
+\input{chapter07}
   
 \section{Results}
-  \subsection{Change Detection for Obstacle Localization in Images}
-  \subsection{Non-Rigid Contour Tracking}
-  \subsection{Evaluation of Stereo 3D Reconstruction Algorithms}
-  \subsection{Stixel World}
-  \subsection{Particle Filter based Object Tracking}
-  \subsection{Global Planning}
-  \subsection{Local Planning}
-  
+% \input{results}
+
 \section{Conclusions}
+\input{conclusions}
   \subsection{Future work}
 
 % \section{Introducción}
