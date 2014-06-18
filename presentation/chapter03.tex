@@ -10,9 +10,13 @@
   \begin{itemize}
     \item We want to know the best performance algorithms available for environmental mapping.
     \item Very few datasets $\rightarrow$ Most of them in controlled conditions
-    \item Three different dense reconstruction algorithm implementations
     \item Three different and well-known evaluation strategies
+    \item Three different dense reconstruction algorithm implementations
+    \item Work in collaboration with VisLab.
   \end{itemize}
+  \begin{center}
+    \includegraphics[height=0.4\textheight]{vislab_logo}
+  \end{center}
   
   \note {
   \begin{itemize}
@@ -24,40 +28,29 @@
   }
 \end{frame}
 
-\begin{frame}{Introduction}
-  Little o no data available to be used as ground truth.
-  \begin{itemize}
-    \item<1-> Use of a high-end LIDAR (LIgth Detection and Ranging) unit\footnote{\cite{Geiger2012}}.
-    \item<2-> Exploit a prior over the data-set\footnote{\cite{Steingrube2009}}.
-    \item<3-> Synthesize a virtual view\footnote{\cite{Morales2009}}.
-  \end{itemize}
-  \begin{overlayarea}{\textwidth}{0.5\textheight}
-    \only<2>{
-    \begin{exampleblock}{Example}
-      The presence of freespace in front of a manually driven vehicle to detect wrongly reconstructed points.
-    \end{exampleblock}
+\begin{frame}[plain]{Experimental setup}
+  \framesubtitle{Dense LIDAR-based ground truth}
+  \begin{overlayarea}{\textwidth}{\textheight}
+    \begin{itemize}
+      \item KITTI dataset from the Karlsruhe Institute of Technology.
+      \item Only non-occluded computed pixels have been considered
+      \item Average errors have been computed considering only the values below the endpoint error.
+      \item Statistics for each frame are being considered, not just their average over an entire sequence.
+    \end{itemize}
+    
+  \end{overlayarea}
+  \begin{overlayarea}{\textwidth}{\textheight}
+    \only<1> {
+      \vspace{-3.5cm}
+      \includegraphics[width=\textwidth]{lidarGT}
     }
-    \only<3>{
-    \begin{exampleblock}{Example}
-      A virtual view synthesized from the reconstructed environment geometry can be compared with the actual data recorded from a third camera.
-    \end{exampleblock}
+    \only<2> {
+      \vspace{-4.25cm}
+      \begin{center}
+	\includegraphics[height=0.6\textheight]{algo_avg_ee2}
+      \end{center}
     }
   \end{overlayarea}
-  
-  \note {
-  }
-\end{frame}
-
-\begin{frame}{Experimental setup}
-  \framesubtitle{Dense LIDAR-based ground truth}
-  \begin{itemize}
-    \item KITTI dataset from the Karlsruhe Institute of Technology.
-    \item Only non-occluded computed pixels have been considered
-    \item Average errors have been computed considering only the values below the endpoint error.
-    \item Statistics for each frame are being considered, not just their average over an entire sequence.
-  \end{itemize}
-  
-  \includegraphics[width=\textwidth]{lidarGT}
 
   \note {
   \begin{itemize}
@@ -79,12 +72,12 @@
     \item A safety distance of about 1\,s is usually kept from a leading vehicle.
     \item A speed-dependent free volume is present in front of the ego-vehicle. \\
   \end{itemize}
-
+  \vspace{-0.5cm}
   \begin{center}
     \begin{figure}[t]
 	  \centering
 	  \begin{subfigure}[t]{0.5\textwidth}
-	      \includemovie[autoplay, repeat]{\linewidth}{0.5\textheight}{/home/nestor/Seafile/Videos/Tesis/cp03/FC.avi}
+	      \includemovie[autoplay, repeat, controls]{\linewidth}{0.5\textheight}{/home/nestor/Seafile/Videos/Tesis/cp03/FC.avi}
 	  \end{subfigure}% 
 	  ~
 	  \begin{subfigure}[t]{0.5\textwidth}
@@ -129,110 +122,4 @@
      \item In our conf, it is 24 and 12, respectively, as we use a precalibrated trinocular camera.
     \end{itemize}
   }
-\end{frame}
-
-\begin{frame}{Algorithms}
-  Three dense reconstruction algorithms tested:
-  \begin{itemize}
-   \item Census Cost Semi-Global Matching (Census-SGM) \footnote{\cite{Hirschmuller2005, Hirschmuller2009}}
-   \item Birchfield-Tomasi Semi-Global Matching (BT-SGM)\footnote{\cite{Hirschmuller2005, Birchfield1998}, \url{http://opencv.org}}
-   \item Efficient Large-Scale Stereo Matching (ELAS) \footnote{\cite{Geiger2011}}
-  \end{itemize}
-
-
-  \note {
-    \begin{itemize}
-     \item LIDAR-based GT takes time to be produced and FC is an indirect measurement.
-     \item The use of a third camera allows to directly compare a reconstructed view with the actual images w/o manual intervention.
-
-     \item NCC is calculated as described by Morales et al.
-
-     \item It is suggested a configuration of 20 cm btween ref and match, and the ctrol camera is at 50 cm from ref camera
-     \item In our conf, it is 24 and 12, respectively, as we use a precalibrated trinocular camera.
-    \end{itemize}
-  }
-\end{frame}
-
-\begin{frame}{Algorithms}
-  \framesubtitle{Semi-Global Matching}
-  
-  \begin{itemize}
-    \item Disparity search range is reduced
-    \begin{itemize}
-      \item A set of sparse, robustly matched control points is found.
-      \item A 2D mesh is generated via Delaunay triangulation.
-      \item A prior is created from this mesh
-    \end{itemize}
-  \end{itemize}
-
-  \note {
-    By computing a piecewise linear function induced by the support point disparities and the triangulated mesh.
-  }
-\end{frame}
-
-\begin{frame}{Algorithms}
-  \framesubtitle{Efficient Large-Scale Stereo Matching (ELAS)}
-  
-  \begin{itemize}
-    \item Gets the disparity map D by minimizing \\
-    \begin{center} $E(D) = E_{data}(D) + E_{smooth}(D)$ \end{center}
-    \item NP-complete (but tractable using DP).
-    \item Two cost metrics:
-    \begin{enumerate}
-      \item Census cost metric.
-      \begin{itemize}
-	\item Hamming distance of the Census transform of a 5x5 window.
-      \end{itemize}
-      \item  Birchfield-Tomasi cost metric.
-    \end{enumerate}
-  \end{itemize}
-
-  \note {
-    \begin{itemize}
-     \item $E_{data}$ is the pixel-wise matching cost
-     \begin{itemize}
-      \item Sum of all pixels matching costs for the disparities of D
-     \end{itemize}
-     \item $E_{smooth}$ is the smooth constraint.
-     \begin{itemize}
-      \item adds a small penalty P1 to all px in the neighborhood of a pixel p for which the disparity varies by one
-      \item adds a higher penalty P2 if greater
-     \end{itemize}
-     \item SGM is no tractable in real time, unless we use a DP strategy
-     \item each pixel is used as the px-wise matching function, instead of the mutual information, as used in the original implementation.
-     \item Similar results, but reduces the overall processing burden
-     \item Each position C(p, d) of the cost volume is initialized with the number of differing bits btween the corresponding transformed values of left-right images.
-     \item We have used the freely available OpenCV implementation that uses BT pixel dissimilarity as cost metric to initialize the cost
-    \end{itemize}
-  }
-\end{frame}
-
-\begin{frame}{Algorithms}
-\begin{table}[h!]
-\begin{center}
-\resizebox{\columnwidth}{!} {
-\begin{tabular}{|l|c|c|c|c|c|}
- \cline{2-6}
- \multicolumn{1}{ c|}{} & \multicolumn{3}{ c| }{Census-SGM} &
- \multicolumn{1}{ c| }{\multirow{2}{*}{BT-SGM}} &
- \multicolumn{1}{ c| }{\multirow{2}{*}{ELAS}} \\ \cline{2-4}
- \multicolumn{1}{c|}{} & Config 1 & Config 2 & Config 3 & & \\ \cline{2-6}
- \hline \hline
- Gaussian filter & $\surd$ & $\surd$ & $\surd$ & - & - \\
- Sparse Census mask & - & - & - & - & - \\
- Ternarized Census & - & - & - & - & - \\
- Hamming scores aggregation  & - & - & - & - & - \\
- Uniqueness constraint & 10 & 20 & 20 & 10 & 15 \\
- Adaptive mean & $\surd$ & $\surd$ & $\surd$ & - & $\surd$ \\
- Despeckle filter & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ \\
- Gap filter & $\surd$ & $\surd$ & - & - & $\surd$ \\
- \hline \hline
- Other parameters & \multicolumn{3}{ |c }{$P_1=10$, $P_2=50$, L/R check} &
- \multicolumn{1}{ |c }{see \footnote{\url{http://www.cvlibs.net/datasets/kitti/eval\_stereo\_flow.php}}} &
- \multicolumn{1}{ |c| }{see \footnotemark[\value{footnote}]} \\
- \hline
-\end{tabular}
-}
-\end{center}
-\end{table}
 \end{frame}

@@ -1,46 +1,9 @@
-Plantilla de memoria de tesis en LaTeX
-Copyright 2009-2010 Jesús Torres <jmtorres@ull.es>
+Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques
+Copyright 2014 Néstor Morales Hernández <nestor@isaatc.ull.es>
 
-Esta obra está bajo licencia Creative Commons Reconocimiento 3.0 Unported
-<http://creativecommons.org/licenses/by/3.0/>
+This work is licensed under a Creative Commons Attribution 4.0 International License.
 
+In this thesis, we propose different methods which are used for the detection of obstacles in the environment of our prototype, Verdino. In the first part of this document, we describe a set of methods thought for this purpose, each of these making use of different techniques. This allows comparing the advantages and disadvantages of each of them, from the point of view of the proposed application. The requirements for the obstacle detection method are: getting a reasonable obstacle detection rate using as input the images provided by the cameras on board; ability to work with non static cameras; ability to localize the obstacles in the map; real time performance; independence on the environment conditions and tracking capabilities.
+Once obstacles are detected, we need to avoid them. In the second part of the thesis, we describe the method used by the prototype to travel around the map. This method comprises two tasks: the first one computes a trajectory that starts in the position of the vehicle and ends in the target to which we want to move. If we had a Road Network Definition File (RNDF), we would not need to compute this trajectory, but since Verdino travels in an unstructured environment, this step is needed. In the second step, Verdino does the calculations needed to follow the computed trajectory. In this stage, we want the vehicle to be able to follow the track but, at the same time, we also want to have enough flexibility in the commands generated to ensure that it is able to abandon the track if necessary in case we want to avoid an obstacle.
+At the end of the document, some results corresponding to the studied methods are shown, as well as a discussion of the advantages and disadvantages of each of them. Some conclusions are described and future work is proposed.
 
-Descripción
------------
-
-Hace más de un año que defendí mi tesis, antes de lo cual estuve algo más de
-otro año por las noches escogiendo, probado y configurando paquetes de LaTeX,
-buscando y probando tipos de fuentes, etc. Obviamente todo esto es algo muy
-personal que debe ser escogido a gusto de cada uno pero que también puede ser
-útil a otras personas, tanto si quieren utilizar mis preferencias en sus propios
-documentos tal cual como si buscan algunas ideas interesantes que reaprovechar.
-
-Por eso he eliminado todo el contenido de mi tesis para dejar este esqueleto a
-modo de plantilla. Obviamente al sustituir el texto original por el conocido
-"Lorem ipsum" también se han perdido mucho de los casos de uso de las
-características configuradas, por lo que estas no se podrán apreciar en caso de
-compilar el ejemplo.
-
-En todo caso se puede descargar una copia de la tesis desde la dirección
-http://goo.gl/WxPqJ con el objeto de observar un ejemplo del resultado final.
-Si alguien estuviera interesado en algún ejemplo concreto en LaTeX sobre como
-hacer algo en particular, no tiene más que ponerse en contacto conmigo.
-
-
-Requisitos
-----------
-
-Para que la plantilla se pueda utilizar correctamente es necesario disponer los
-siguientes paquetes:
-
- * spanish babel 2009/01/02 v5.0h
- * komascript 2009/04/03 v3.03a
- * listings 2007/02/22 1.4
- * hyperref 2009/08/04 v6.78t
- * uop (fuente) 2009/03/07 
- * acronym 2009/01/25 v1.34
- * oberdiek
- * algorithms
-
-
--- Jesús Torres <jmtorres@ull.es>

@@ -8,22 +8,46 @@
 \subsection{Stixel World}
 
 \begin{frame}{Stixel World}
- \begin{itemize}
-  \item<1-> Proposed by \cite{badino2009stixel}.
-  \item<1-> Representation of the world based on a set of rectangular sticks named \emph{stixels}, defined by:
-  \begin{itemize}
-   \item<1-> Position relative to the camera
-   \item<1-> Height
-  \end{itemize}
-  
-  \item<2->Advantages:
-  \begin{enumerate}
-   \item<3-> Compact
-   \item<4-> Complete
-   \item<5-> Stable
-   \item<6-> Robust   
-  \end{enumerate}
- \end{itemize}
+  \begin{overlayarea}{\textwidth}{\textheight}
+    \begin{itemize}
+      \item<1-> Proposed by \cite{badino2009stixel}.
+      \item<1-> Representation of the world based on a set of rectangular sticks named \emph{stixels}, defined by:
+      \begin{itemize}
+      \item<1-> Position relative to the camera
+      \item<1-> Height
+      \end{itemize}
+      
+      \only<2> {
+	\vspace{1.0cm}
+	\begin{columns}[c] % the "c" option specifies center vertical alignment
+	  \column{.5\textwidth} % column designated by a command
+	    \begin{center}
+	      \includegraphics[width=0.5\textwidth]{psi}
+	    \end{center}
+	  \column{.5\textwidth}
+	\end{columns}
+      }
+      \item<3->Advantages:
+      \begin{enumerate}
+      \item<4-> Compact
+      \item<5-> Complete
+      \item<6-> Stable
+      \item<7-> Robust   
+      \end{enumerate}
+    \end{itemize}
+ \end{overlayarea}
+ \begin{overlayarea}{\textwidth}{\textheight}
+ \only<1-> {
+ \begin{textblock*}{1000mm}(5cm,-5.5cm)
+\includegraphics[height=0.5\textheight]{stixels_over_original}
+\end{textblock*}
+%   \vspace{-5cm}
+%   \begin{center}
+%     \includegraphics[height=0.5\textheight]{stixels_over_original}
+%   \end{center}
+  }
+ \end{overlayarea}
+
 
  \note {
  \begin{itemize}
@@ -60,7 +84,7 @@
       \item No need of a depth map
     \end{itemize}
     \item Improvement of the reconstruction quality obtained by the stixels, specially in terms of the computed depth. Free space computation without the use of a disparity map have some drawbacks. Some of them are related to the fact that precision in the reconstruction of the obstacles is not good enough. Object reconstruction detection scheme proposed in this chapter allows the correction of stixel depths and the removal of some fake obstacles.
-    \item Improvement of results obtained by the method described in \cite{gunyel2012stixels}, in both object and two-level tracking approaches. We modified the method by using a graph-based approach instead of a \ac{DP} based method, as they did. 
+    \item Improvement of results obtained by the method described in \cite{gunyel2012stixels}, in both object and two-level tracking approaches. We modified the method by using a graph-based approach instead of a DP based method, as they did. 
     \item Different cost metrics for the tracking have been tested, with promising results. 
     \item Faster tracking. Speed achieved with our implementation is higher, specially in the object based tracking. The two-level tracking is also a little bit faster, thanks to the usage of a bipartite graph based method for the matching of the stixels between frames.
     \item Our method is slightly more robust after changes between images (for example, in presence of a low framerate), specially in the case of the approach in which just the object level is used.
@@ -68,9 +92,9 @@
   }
 \end{frame}
 
-\begin{frame}{Pipeline}
+\begin{frame}[plain]{Pipeline}
   \begin{center}
-    \includegraphics{pipeline_cp04}
+    \includegraphics[height=1.1\textheight]{pipeline_cp04}
   \end{center}
   
   \note {
@@ -99,37 +123,59 @@
   }
 \end{frame}
 
-\begin{frame}{Stixels-level tracking}
-  \begin{itemize}
-    \item Tracking is performed at stixel level.
-    \item Pair matching problem.
-    \item Bipartite graph:
+\begin{frame}[plain]{Stixels-level tracking}
+  \begin{overlayarea}{\textwidth}{\textheight}
+  \only<1-3>{
     \begin{itemize}
-      \item Nodes are the stixels at frames $t$ and $t-1$.
-      \item Edges are associated to a motion cost $c_m$.
-  \end{itemize}
-%   \begin{center}
-  \vskip 0.2cm
-  \begin{equation}
-  \nonumber
-    c_m(u_i\{t\}, u_j\{t - 1\}) = 
-    \begin{align*}
-      \begin{cases}
-      f_{cost}(u_i\{t\}, u_j\{t - 1\}) & \textbf{if} \text{ applicable} \\
-      \infty & \textbf{otherwise}
-      \end{cases}
-    \end{align*}
-  \end{equation}
-%   \end{center}
-  \item Matching applicable if:
-  \begin{itemize}
-    \item $|X(u_i\{t\}) - X(u_j\{t - 1\})| < \tau_{max\_disp}$.
-    \item $u_i\{t\}$ is not a new stixel.
-    \item $u_i\{t\}$ and $u_j\{t - 1\}$ not occluded.
-    \item $f_{cost}(u_i\{t\}, u_j\{t - 1\}) < \tau_{max\_cost}$.
-  \end{itemize}
-    
-  \end{itemize}
+      \item Tracking is performed at stixel level.
+      \item Pair matching problem.
+      \item Bipartite graph:
+      \begin{itemize}
+	\item Nodes are the stixels at frames $t$ and $t-1$.
+	\item Edges are associated to a motion cost $c_m$.
+    \end{itemize}
+  %   \begin{center}
+    \vskip 0.2cm
+    \begin{equation}
+    \nonumber
+      c_m(u_i\{t\}, u_j\{t - 1\}) = 
+      \begin{align*}
+	\begin{cases}
+	f_{cost}(u_i\{t\}, u_j\{t - 1\}) & \textbf{if} \text{ applicable} \\
+	\infty & \textbf{otherwise}
+	\end{cases}
+      \end{align*}
+    \end{equation}
+  %   \end{center}
+    \item Matching applicable if:
+    \begin{itemize}
+      \item $|X(u_i\{t\}) - X(u_j\{t - 1\})| < \tau_{max\_disp}$.
+      \item $u_i\{t\}$ is not a new stixel.
+      \item $u_i\{t\}$ and $u_j\{t - 1\}$ not occluded.
+      \item $f_{cost}(u_i\{t\}, u_j\{t - 1\}) < \tau_{max\_cost}$.
+    \end{itemize}
+      
+    \end{itemize}
+    }
+  \end{overlayarea}
+  \begin{overlayarea}{\textwidth}{\textheight}
+    \only<1-2> {
+    \vspace{-5.15cm}
+    \begin{block}{}
+      \begin{center}
+	\includegraphics[height=0.7\textheight, trim=80 240 50 50,clip]{bipartite_graph_extended}
+      \end{center}
+    \end{block}
+    }
+    \only<2>{
+    \vspace{-6cm}
+    \begin{block}{Solve}
+      \begin{center}
+	\resizebox{.6\hsize}{!}{$\mathcal{\hat{M}}=\underset{\mathcal{M}}{\arg\min} \underset{(i, j) \in \mathcal{M}}{\sum} \omega_{i,j}, ~~~~\exists! (i, \cdot) \wedge \exists! (\cdot, j)$}
+      \end{center}
+    \end{block}
+  }
+  \end{overlayarea}
   
   \note {
   \begin{itemize}
@@ -146,7 +192,6 @@
 
 \begin{frame}{Cost function}
   \begin{overlayarea}{\textwidth}{0.5\textheight}
-  \only<1> {
   \begin{equation}
     \nonumber \small
     \begin{align*}
@@ -164,19 +209,11 @@
       \item Height difference $\rightarrow f_{height}(u_i\{t\}, u_j\{t - 1\})$
     \end{itemize}
   \end{itemize}
-  }
-  \only<2>{
-  \vskip 1cm
-  \begin{block}{Solve}
-      \begin{center}
-	\resizebox{.6\hsize}{!}{$\mathcal{\hat{M}}=\underset{\mathcal{M}}{\arg\min} \underset{(i, j) \in \mathcal{M}}{\sum} \omega_{i,j}, ~~~~\exists! (i, \cdot) \wedge \exists! (\cdot, j)$}
-      \end{center}
-    \end{block}
-  }
   \end{overlayarea}
   
+  \vskip 1.0cm
   \begin{center}
-    \includegraphics[width=0.75\textwidth]{bipartite_graph}
+    \includegraphics[height=0.2\textheight]{bipartite_graph}
   \end{center}
   
   \note {
@@ -184,7 +221,7 @@
     \begin{itemize}
       \item Sum of Absolute Differences (SAD):
       \begin{itemize}
-       \item Pixel-wise \acl{SAD} over the RGB color scheme between $u_i\{t\}$ and $u_j\{t - 1\}$
+       \item Pixel-wise SAD over the RGB color scheme between $u_i\{t\}$ and $u_j\{t - 1\}$
        \item As it is very unlikely for a candidate pair of stixels to have the exact same height, they are resized to a dimension of $30\,px$.
        \item This metric was originally used in \cite{gunyel2012stixels} for the computation of the movement of the stixels.
       \end{itemize}
@@ -230,16 +267,11 @@
   }
 \end{frame}
 
-\begin{frame}{Obstacle-level tracking}
+\begin{frame}[plain]{Obstacle-level tracking}
   \framesubtitle{Object detection}
-  \begin{itemize}
-    \item<1-> Clustering.
-    \item<2-> Aggregation.
-    \item<3-> Filtering.
-  \end{itemize}
   \begin{overlayarea}{\textwidth}{\textheight}
-    \only<3>{    
-    \vskip-0.75cm
+    \only<1-2>{    
+    \vskip-1.0cm
     \begin{algorithm}[H]
       \begin{algorithmic}[1]
       \footnotesize
@@ -247,25 +279,49 @@
 	\State {$\mathcal{O} \gets \emptyset$}
 	\State {$o \gets \emptyset$}
 	\For {\textbf{each} stixel $q_i \in \mathcal{Q}$, from left to right}
+	  \only<2> {
 	  \If {$|depth(q_i) - depth(q_{i-1})| > \tau_{depth\_dist}$}
-	    \If {$|depth(q_i) - depth(q_{i-1})| > \tau_{depth\_dist}$}
-	      \State {$width(o) > \tau_{min\_width}$}
+	  }
+	  \only<1> {
+	  \If {\textcolor{red}{$|depth(q_i) - depth(q_{i-1})| > \tau_{depth\_dist}$}}
+	  }
+	  \only<1> {
+	  \If {$width(o) > \tau_{min\_width}$}
+	  }
+	  \only<2> {
+	  \If {\textcolor{red}{$width(o) > \tau_{min\_width}$}}
+	  }
+	      \State {$o \gets o \cup q_i$}
 	    \EndIf
 	    \State {$o \gets \emptyset$}
 	  \EndIf
-	  \State {$o \gets o \cup q_i$}
 	\EndFor
       \EndFunction
       \end{algorithmic}
       \end{algorithm}
-    }
-    \only<4>{
-    \begin{figure}
-      \includegraphics[width=0.5\textwidth]{obstaclesBeforeAggregation}
+      \vskip-1.0cm
+      \begin{figure}[t]
+	\centering
+	\begin{subfigure}[t]{0.5\textwidth}
+	  \begin{center}
+	    \includegraphics[height=0.3\textheight]{stixels_over_original}
+	  \end{center}
+	\end{subfigure}% 
+	~
+	\begin{subfigure}[t]{0.5\textwidth}
+	  \begin{center}
+	    \includegraphics[height=0.3\textheight]{obstaclesBeforeAggregation}
+	  \end{center}
+	\end{subfigure}%
     \end{figure}
     }
-    \only<5>{
-    \vskip-0.75cm
+    \only<3>{
+    \begin{figure}
+      \includegraphics[width=0.7\textwidth]{obstaclesBeforeAggregation}
+    \end{figure}
+    }
+    \only<4-5>{
+    \vskip-1.0cm
     \begin{algorithm}[H]
       \begin{algorithmic}[1]
 	\footnotesize
@@ -273,9 +329,17 @@
 	\State {$\mathcal{O'} \gets \emptyset$}
 	\State {$o' \gets \emptyset$}
 	\For {\textbf{each} object $o_i \in \mathcal{O}$, from left to right}
-	  \If {$|X(o_i) - X(o_{i-1})| > \tau_{lateral\_aggregation\_dist}$ \textbf{or}\\ \indent\indent\indent
-	      $|Z(o_i) - Z(o_{i-1})| > \tau_{depth\_dist}$ \indent\indent~}
-
+	  \If {
+	    \only<5> {$|X(o_i) - X(o_{i-1})| > \tau_{lateral\_aggregation\_dist}$}
+	    \only<4> {\textcolor{red}{$|X(o_i) - X(o_{i-1})| > \tau_{lateral\_aggregation\_dist}$}}
+	    \textbf{and}\\ \indent\indent\indent	
+	\only<4> {
+	      $|Z(o_i) - Z(o_{i-1})| > \tau_{depth\_dist}$ \indent\indent~
+	}
+	\only<5> {
+	      \textcolor{red}{$|Z(o_i) - Z(o_{i-1})| > \tau_{depth\_dist}$} \indent\indent~
+	}
+	}
 	    \State {$\mathcal{O} \gets \mathcal{O} \cup o'$}
 	    \State {$o' \gets \emptyset$}
 	  \EndIf
@@ -284,10 +348,25 @@
       \EndFunction
       \end{algorithmic}
       \end{algorithm}
+      \vskip-1.0cm
+      \begin{figure}[t]
+	\centering
+	\begin{subfigure}[t]{0.5\textwidth}
+	  \begin{center}
+	    \includegraphics[height=0.4\textheight]{obstaclesBeforeAggregation}
+	  \end{center}
+	\end{subfigure}% 
+	~
+	\begin{subfigure}[t]{0.5\textwidth}
+	  \begin{center}
+	    \includegraphics[height=0.4\textheight]{obstaclesAggregated}
+	  \end{center}
+	\end{subfigure}%
+      \end{figure}
     }
     \only<6>{
     \begin{figure}
-      \includegraphics[width=0.5\textwidth]{obstaclesAggregated}
+      \includegraphics[width=0.7\textwidth]{obstaclesAggregated}
     \end{figure}
     }
   \end{overlayarea}
@@ -312,63 +391,30 @@
   }
 \end{frame}
 
-\begin{frame}{Obstacle-level tracking}
+\begin{frame}[plain]{Obstacle-level tracking}
   \framesubtitle{Polar rectification}
   \begin{itemize}
-    \item<1-> Correspondences between epipolar lines $\rightarrow$ Matrix $H$.
-    \item<2-> Common region between images.
-    \item<3-> Rectification.
+%     \item<1-> Correspondences between epipolar lines $\rightarrow$ Matrix $H$.
+%     \item<2-> Common region between images.
+    \item<1-> Rectification.
   \end{itemize}
   \begin{overlayarea}{\textwidth}{\textheight}
+%     \only<1>{
+%     \begin{figure}
+%       \includegraphics[height=0.7\textheight]{fundamentalMatrixComputation}
+%     \end{figure}
+%     }
+%     \only<2>{
+%     \begin{figure}
+%       \includegraphics[width=\textwidth]{polar_common_region}
+%     \end{figure}
+%     }
     \only<1>{
-    \begin{figure}
-      \includegraphics[height=0.6\textheight]{fundamentalMatrixComputation}
-    \end{figure}
-    }
-    \only<2>{
-    \begin{figure}
-      \includegraphics[width=\textwidth]{polar_common_region}
-    \end{figure}
-    }
-    \only<3>{
     \begin{figure}
       \centering
       \begin{tabular}{ cc }
-	\includegraphics[height=0.6\textheight]{polarRectification}\label{fig:cp04_polarRectification} &
-	\includegraphics[height=0.6\textheight]{polarDiff}\label{fig:cp04_polarDiff}
-      \end{tabular}
-    \end{figure}
-    }
-    \end{overlayarea}
-  \note {
-  
-  }
-\end{frame}
-
-\begin{frame}{Obstacle-level tracking}
-  \framesubtitle{Polar rectification}
-  \begin{itemize}
-    \item<1-> Correspondences between epipolar lines $\rightarrow$ Matrix $H$.
-    \item<2-> Common region between images.
-    \item<3-> Rectification.
-  \end{itemize}
-  \begin{overlayarea}{\textwidth}{\textheight}
-    \only<1>{
-    \begin{figure}
-      \includegraphics[height=0.6\textheight]{fundamentalMatrixComputation}
-    \end{figure}
-    }
-    \only<2>{
-    \begin{figure}
-      \includegraphics[width=\textwidth]{polar_common_region}
-    \end{figure}
-    }
-    \only<3>{
-    \begin{figure}
-      \centering
-      \begin{tabular}{ cc }
-	\includegraphics[height=0.6\textheight]{polarRectification}\label{fig:cp04_polarRectification} &
-	\includegraphics[height=0.6\textheight]{polarDiff}\label{fig:cp04_polarDiff}
+	\includegraphics[height=0.7\textheight]{polarRectification}\label{fig:cp04_polarRectification} &
+	\includegraphics[height=0.7\textheight]{polarDiff}\label{fig:cp04_polarDiff}
       \end{tabular}
     \end{figure}
     }
@@ -381,11 +427,17 @@
 \begin{frame}{Obstacle-level tracking}
   \framesubtitle{Obstacle filtering}
 
+  \transdissolve<2>
   \begin{figure}
     \begin{minipage}{\textwidth}
       \centering
-      \includegraphics[width=0.5\textwidth]{thresholdedPolar}
-      \end{minipage}\hfill~
+      \only<1>{
+	\includegraphics[width=0.5\textwidth]{thresholdedPolar}
+      }
+      \only<2>{
+	\includegraphics[width=0.5\textwidth]{finalClusters}
+      }
+    \end{minipage}\hfill~
     \begin{minipage}{\textwidth}
       \centering
       \begin{tabular}{ |c|c|c|c|c|c|c|c|c|c|c|}
@@ -423,7 +475,7 @@
    \item Using the aligned images, we get the pixelwise SAD of both images, so we can detect pixels for which there are changes.
    \item Difference image is projected back to the current image coordinates.
    \item Difference is binarized, and noise rejected.
-   \item For each \ac{ROI}, we reject the top half of it, so we just look for movement in the area of the obstacle that is touching the ground. There are two reasons for that: 
+   \item For each ROI, we reject the top half of it, so we just look for movement in the area of the obstacle that is touching the ground. There are two reasons for that: 
    \begin{enumerate}
     \item the first one is that obstacles that move over the ground usually present more movement in their lower half (for instance, legs or wheel movements). In the case of static obstacles, the movement due to the camera change is more or less similar in the whole object, so we are not loosing information. 
     \item The second reason is that the stixels reconstruction assumes a planar ground in front of the camera, and that they are lying on it. As there should not be changes due to perspective over this planar ground, it is easier to do a discrimination in those areas.
@@ -440,25 +492,27 @@
   }
 \end{frame}
 
-\begin{frame}{Obstacle-level tracking}
+\begin{frame}[plain]{Obstacle-level tracking}
   \framesubtitle{Tracking}
+  \begin{itemize}
+   \item <1-> Tracking problem as a pair matching process
+  \end{itemize}
   \begin{enumerate}
-   \item<1-> Two-level tracking
+   \item<2-> Two-level tracking
    \begin{itemize}
-    \item<3-> Tracking problem as a pair matching process
     \item<4-> $C_{|\mathcal{O}\{t\}| \times |\mathcal{O}\{t - 1\}|}$
-    \item<5-> Two objects are associated if:
+    \item<4-> Two objects are associated if:
     \begin{itemize}
-     \item<5-> There is at least one stixel.
-     \item<6-> They are close enough.
+     \item<4-> There is at least one stixel.
+     \item<4-> They are close enough.
     \end{itemize}
    \end{itemize}
-   \item<2-> Object tracking
+   \item<3-> Object tracking
   \end{enumerate}
   \begin{overlayarea}{\textwidth}{\textheight}
-  \only<4> {
-    \vskip-2.0cm
-    \begin{block}{Algorithm}
+  \only<4-5> {
+    \vskip-1.0cm
+    \begin{block}{}
     \vskip-0.4cm
     \begin{algorithm}[H]
     \begin{algorithmic}[1]
@@ -470,7 +524,7 @@
 	  \State {Find correspondence $q\{t - 1\}$ for $q\{t\}$}
 	  \State {Find the object $o\{t - 1\} \in \mathcal{O}\{t - 1\}$ associated to $q\{t - 1\}$}
 	  \If {$o\{t - 1\}$ found \textbf{and} $\|o\{t\} - o\{t - 1\}\| < \tau_{max\_obst\_dist}$}
-	    \State {$C(o\{t\}, o\{t - 1\}) \gets C(o\{t\}, o\{t - 1\}) + 1$}
+	    \State {\textcolor{red}{$C(o\{t\}, o\{t - 1\}) \gets C(o\{t\}, o\{t - 1\}) + 1$}}
 	  \EndIf
 	\EndFor
       \EndFor
@@ -479,15 +533,15 @@
     \end{algorithm}
     \end{block}
   }
-  \only<7> {
-    \vskip-1.0cm
-    \begin{block}{Minimization problem - Two-level tracking}
+  \only<5> {
+    \vskip-2.0cm
+    \begin{block}{Maximization problem - Two-level tracking}
       \begin{center}
 	\resizebox{.6\hsize}{!}{$\mathcal{\hat{C}}=\underset{\mathcal{C}}{\arg\max} \underset{(i, j) \in \mathcal{M}}{\sum} C(i,j), ~~~~\exists! (i, \cdot) \wedge \exists! (\cdot, j)$}
       \end{center}
     \end{block}
   }
-  \only<8> {
+  \only<7> {
 %     \vskip-1.0cm
     \begin{block}{Minimization problem - Object tracking}
       \begin{center}
@@ -502,10 +556,13 @@
   }
 \end{frame}
 
-\begin{frame}{Summary}
- \begin{figure}
-  \includemovie[autoplay, repeat, controls]{\textwidth}{0.8\textheight}{/home/nestor/Seafile/Videos/Tesis/cp03/ncc.avi}
- \end{figure}
+\begin{frame}{Stixel World}
+  \begin{columns}[c] % the "c" option specifies center vertical alignment
+    \column{.5\textwidth} % column designated by a command
+    \includemovie[autoplay, repeat, controls]{\linewidth}{.75\linewidth}{/home/nestor/Seafile/Videos/Tesis/cp04/stixelsPipeline.mp4}
+    \column{.5\textwidth}
+    \includemovie[autoplay, repeat, controls]{\linewidth}{.75\linewidth}{/home/nestor/Seafile/Videos/Tesis/cp04/3dreconstruction.mp4}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Obstacle detection and tracking}

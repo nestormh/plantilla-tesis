@@ -2,7 +2,7 @@
 % \documentclass[handout]{beamer}
 \usepackage{pgfpages}
 \usepackage{textcomp}
-% \setbeameroption{show notes on second screen=right}
+% \setbeameroption{show notes on second screen=left}
 % \setbeameroption{show notes}
 
 \usepackage[english]{babel} 
@@ -42,12 +42,23 @@
 \usepackage{textpos}
 \usepackage{fancybox}
 \usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{xcolor}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 % \newcommand{\pushcode}[1][1]{\hskip\dimexpr#1\algorithmicindent\relax}
 % \newcommand{\pushcode}[1][1]{\hskip\algorithmicindent\relax}
 
+\newenvironment<>{varblock}[2][.9\textwidth]{%
+  \setlength{\textwidth}{#1}
+  \begin{actionenv}#3%
+    \def\insertblocktitle{#2}%
+    \par%
+    \usebeamertemplate{block begin}}
+  {\par%
+    \usebeamertemplate{block end}%
+  \end{actionenv}}
 
 \usepackage{amssymb}% http://ctan.org/pkg/amssymb
 \usepackage{pifont}% http://ctan.org/pkg/pifont
@@ -109,7 +120,7 @@ fi ; %
 \fi
 
 
-\title{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
+\title[Obstacle Detection and Planning]{Obstacle Detection and Planning for Autonomous Vehicles based on Computer Vision Techniques}
 \author{Néstor Morales Hernández} 
 \institute{Departamento de Ingeniería Informática \\ Universidad de La Laguna}
 \date{June 2014}
@@ -160,6 +171,18 @@ fi ; %
 % \setbeamercolor{title}{fg=brown}
 % \setbeamercolor{titlelike}{fg=brown}
 
+\defbeamertemplate*{footline}{shadow theme}
+{%
+  \leavevmode%
+  \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm plus1fil,rightskip=.3cm]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertframenumber\,/\,\inserttotalframenumber\hfill\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle%
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
 %% Video stuff
 \usepackage{movie15}
 
@@ -174,28 +197,51 @@ fi ; %
 
 \begin{document}
 \addtobeamertemplate{headline}{}{%
-\begin{textblock*}{100mm}(0.02cm,-0.8cm)
-\includegraphics[height=.7cm]{verdino}
+\begin{textblock*}{100mm}(0.2cm,-1.4cm)
+\includegraphics[height=1.2cm]{verdino_logo}
 \end{textblock*}}
 
-  \begin{frame}[plain]
-    \centering
-    
-%     \includegraphics[height=0.5cm]{ull} \hspace*{0.5\textwidth}
-%     \includegraphics[height=2cm]{verdino} 
-%     \begin{textblock*}{100mm}(0.02cm,-0.8cm)
-%       \includegraphics[height=.7cm]{verdino}
-%     \end{textblock*}
+\begin{frame}[plain]
+    \begin{overlayarea}{\textwidth}{\textheight}
+      \centering
+      
+  %     \includegraphics[height=0.5cm]{ull} \hspace*{0.5\textwidth}
+  %     \includegraphics[height=2cm]{verdino} 
+  %     \begin{textblock*}{100mm}(0.02cm,-0.8cm)
+  %       \includegraphics[height=.7cm]{verdino}
+  %     \end{textblock*}
 
-    \titlepage
-    
-    \tiny
-    \hfill Under the guidance of:\\
-    \scriptsize
-    \hfill Leopoldo Acosta Sánchez\\
-    \hfill Jonay T. Toledo Carrillo
+      \titlepage
+      
+      \tiny
+      \hfill Under the guidance of:\\
+      \scriptsize
+      \hfill Dr. Leopoldo Acosta Sánchez\\
+      \hfill Dr. Jonay T. Toledo Carrillo
+    \end{overlayarea}
+    \begin{textblock*}{100mm}(-3.4cm,-1.5cm)
+      \includegraphics[height=5cm]{verdino_logo}
+    \end{textblock*}
+\end{frame}
 
-  \end{frame}
+% \section{chapter00} \begin{frame} Lalala \end{frame}
+% \section{Obstacle Detection}
+% \subsection{chapter01} \begin{frame} Lalala \end{frame}
+% \subsection{chapter02} \begin{frame} Lalala \end{frame}
+% \subsection{chapter03} \begin{frame} Lalala \end{frame}
+% \subsection{chapter04} \begin{frame} Lalala \end{frame}
+% \subsection{chapter05} \begin{frame} Lalala \end{frame}
+% \section{Obstacle Avoidance and Planning}
+% \subsection{chapter06} \begin{frame} Lalala \end{frame}
+% \subsection{chapter07} \begin{frame} Lalala \end{frame}
+% \section{Results} \begin{frame} Lalala \end{frame}
+% \subsection{chapter01} \begin{frame} Lalala \end{frame}
+% \subsection{chapter02} \begin{frame} Lalala \end{frame}
+% \subsection{chapter04} \begin{frame} Lalala \end{frame}
+% \subsection{chapter05} \begin{frame} Lalala \end{frame}
+% \subsection{chapter06} \begin{frame} Lalala \end{frame}
+% \subsection{chapter07} \begin{frame} Lalala \end{frame}
+% \section{Conclusions} \begin{frame} Lalala \end{frame}
 
 \input{chapter00}
 \section{Obstacle Detection}
@@ -210,59 +256,10 @@ fi ; %
 \input{chapter07}
   
 \section{Results}
-% \input{results}
+\input{results}
 
 \section{Conclusions}
 \input{conclusions}
-  \subsection{Future work}
 
-% \section{Introducción}
-%   \subsection{Modelos Basados en Adaptación Social}
-%   
-%   \begin{frame}
-%     \frametitle{¿Qué es un modelo basado en adaptación social?}
-%     \begin{definition}
-%       Algoritmos o mecanismos distribuidos de resolución de problemas inspirados en el comportamiento colectivo de colonias de insectos sociales u otras  sociedades de animales.
-%     \end{definition}
-%     \begin{example}
-%       \begin{itemize}
-%       \item <1->Insectos
-%       \item <2->Aves \pause
-%       \item <3->Peces \pause
-%       \item <4->Mamíferos
-%       \end{itemize}
-%     \end{example}
-%   \end{frame}
-%   
-% \section{Algoritmos de ejemplo}
-%   \subsection{Optimización de colonia de hormigas}
-% 
-%   \begin{frame}
-%     Algo de texto
-%   \end{frame}
-% 
-%   \subsection{Difusión estocástica}
-%   \begin{frame}
-%     Algo de texto
-%   \end{frame}
-% 
-%   \section{Aplicaciones}
-%   \begin{frame}
-%     Algo de texto
-%   \end{frame}
-  
-
-%   \begin{frame}
-%   \includemovie[
-%     poster,
-%     text=(/tmp/M2U00318.MPG),
-%     mouse,
-%     repeat
-%     ]{
-%     .5\linewidth
-%     }{
-%     .375\linewidth
-%     }{/tmp/M2U00318.MPG}
-%   \end{frame}
-  
 \end{document}
+

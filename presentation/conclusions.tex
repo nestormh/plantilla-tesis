@@ -1,6 +1,8 @@
 \graphicspath{{./images/bmps/}{./images/vects/}{./images/}
 	      {./images/presentation/bmps/}{./images/presentation/vects/}{./images/presentation/}
-	      {./images/chapter00/bmps/}{./images/chapter00/vects/}{./images/chapter00/}}
+	      {./images/chapter00/bmps/}{./images/chapter00/vects/}{./images/chapter00/}
+	      {./images/chapter04/bmps/}{./images/chapter04/vects/}{./images/chapter04/}
+	      }
 
 \begin{frame}{Conclusions}
   \begin{itemize}
@@ -12,46 +14,101 @@
   \end{itemize}
 \end{frame}
 
+% \begin{frame}{Change Detection for Obstacle Localization in Images}
+%   \begin{itemize}
+%    \item Through this approach, we evaluated the influence of the distance and angle difference between the compared images to the quality of the results. 
+%    \item Conclusions were that the method works properly if distance is below 1\,m and the angle difference is below 10\textdegree. 
+%    \item We also evaluated the influence of illumination difference between images, concluding that best results were obtained when this difference was below 20\%.
+%    \item Limitations:
+%    \begin{enumerate}
+%     \item If we want to be sure that we fulfill the distance and brightness difference limitations established, we need a highly populated database. 
+%     \item We can not locate the obstacles detected in real world coordinates since we are working with monocular images.
+%     \item We can not predict obstacles motion.
+%    \end{enumerate}
+%   \end{itemize}
+% \end{frame}
+
 \begin{frame}{Change Detection for Obstacle Localization in Images}
   \begin{itemize}
-   \item Through this approach, we evaluated the influence of the distance and angle difference between the compared images to the quality of the results. 
-   \item Conclusions were that the method works properly if distance is below 1\,m and the angle difference is below 10\textdegree. 
-   \item We also evaluated the influence of illumination difference between images, concluding that best results were obtained when this difference was below 20\%.
+   \item Best results if distance is below 1\,m and the angle difference is below 10\textdegree. 
+   \item Best results were obtained when illumination difference is below 20\%.
    \item Limitations:
    \begin{enumerate}
-    \item If we want to be sure that we fulfill the distance and brightness difference limitations established, we need a highly populated database. 
+    \item Need of a highly populated database. 
     \item We can not locate the obstacles detected in real world coordinates since we are working with monocular images.
     \item We can not predict obstacles motion.
    \end{enumerate}
   \end{itemize}
 \end{frame}
 
+% \begin{frame}{Non-Rigid Contour Tracking}
+%   \small
+%   \begin{itemize}
+%     \only<1> {
+%     \item With this method, we demonstrated that it is possible to perform contour tracking by using just geometrical information. \item Rhe behavior of four different foreground segmentation methods \citep{lopez2011stochastic, lopez2011foreground, guo2011hierarchical, reddy2012improved} was evaluated, demonstrating that the method presented by \cite{reddy2012improved} is the best for the method requirements.
+%     \item Same was done for six different non rigid point set registration methods, from which the Coherent Point Drift was the one that gave the best results. 
+%     }
+%     \only<2> {
+%     \item This method was compared with a simple optical flow tracker and a OpenNI Kinect based method. From these tests, we concluded that the behavior is comparable, and usually better than a classical optical flow based contour tracker. Respect to the Kinect based method, our results were reasonable and in certain circumstances outperformed those from the OpenNI method.
+%     \item The main limitation is that we are tied to the use of static cameras.
+%     }
+%   \end{itemize}
+% \end{frame}
+
 \begin{frame}{Non-Rigid Contour Tracking}
   \small
   \begin{itemize}
     \only<1> {
-    \item With this method, we demonstrated that it is possible to perform contour tracking by using just geometrical information. \item Rhe behavior of four different foreground segmentation methods \citep{lopez2011stochastic, lopez2011foreground, guo2011hierarchical, reddy2012improved} was evaluated, demonstrating that the method presented by \cite{reddy2012improved} is the best for the method requirements.
-    \item Same was done for six different non rigid point set registration methods, from which the Coherent Point Drift was the one that gave the best results. 
+    \item We demonstrated that it is possible to perform contour tracking by using just geometrical information. 
+    \item Four different foreground segmentation methods \citep{lopez2011stochastic, lopez2011foreground, guo2011hierarchical, reddy2012improved} were evaluated.
+    \begin{itemize}
+     \item The method presented by \cite{reddy2012improved} is the best for our purposes.
+    \end{itemize}
+    \item Six different non rigid point set registration methods \citep{besl1992method, chui2000new, myronenko2010point, zheng2006robust, lian2012rotation} were studied.
+    \begin{itemize}
+     \item Coherent Point Drift \citep{myronenko2010point} was the one that gave the best results. 
+    \end{itemize}
     }
     \only<2> {
-    \item This method was compared with a simple optical flow tracker and a OpenNI Kinect based method. From these tests, we concluded that the behavior is comparable, and usually better than a classical optical flow based contour tracker. Respect to the Kinect based method, our results were reasonable and in certain circumstances outperformed those from the OpenNI method.
-    \item The main limitation is that we are tied to the use of static cameras.
+    \item This method was compared with a simple optical flow tracker and a OpenNI Kinect based method. 
+    \begin{itemize}
+     \item The behavior is comparable, and usually better than a classical optical flow based contour tracker. 
+     \item Respect to the Kinect based method, our results were reasonable and in certain circumstances outperformed those from the OpenNI method.
+    \end{itemize}
+    \item Limitations: we are tied to the use of static cameras.
     }
   \end{itemize}
 \end{frame}
+
+% \begin{frame}{Evaluation of Stereo 3D Reconstruction Algorithms}
+%   \small
+%   \begin{itemize}
+%   \only<1> {
+%     \item Choosing an specific dense reconstruction algorithm or another is, \emph{a priori}, a difficult task. In this thesis, an automatized framework for the evaluation of dense reconstruction algorithms was developed.
+%     \item This framework allows testing algorithms from long sequences of images, at different weather and illumination conditions. This solves the problem existing for other previous evaluations in which testing images are taken in laboratories, under controlled conditions; or are based on too short sequences, where ground truth is edited by hand.
+%     \item We demonstrated that it is possible to do an evaluation on the performance of the methods without the need of a LIDAR-based ground truth (which, despite of the great reliability of the statistics obtained with it, is quite expensive in terms of the required equipment and the time needed for post-processing the captured data). 
+%     }
+%     \only<2> {
+%     \item The use of a prior on the vehicle movement was successfully exploited to identify a portion of the wrongly reconstructed points, making it suitable for evaluation of big data-sets, thus covering a broad range of environmental conditions. 
+%     \item In the other hand, the use of a third camera for evaluation looks feasible, but in practice obtained results were not very discriminative.
+%     \item With these evaluation strategies, we concluded that the use of filtering strategies reduces the number of wrong pixels and enhances the accuracy of the results. 
+%     }
+%   \end{itemize}
+% \end{frame}
 
 \begin{frame}{Evaluation of Stereo 3D Reconstruction Algorithms}
   \small
   \begin{itemize}
   \only<1> {
-    \item Choosing an specific dense reconstruction algorithm or another is, \emph{a priori}, a difficult task. In this thesis, an automatized framework for the evaluation of dense reconstruction algorithms was developed.
-    \item This framework allows testing algorithms from long sequences of images, at different weather and illumination conditions. This solves the problem existing for other previous evaluations in which testing images are taken in laboratories, under controlled conditions; or are based on too short sequences, where ground truth is edited by hand.
-    \item We demonstrated that it is possible to do an evaluation on the performance of the methods without the need of a LIDAR-based ground truth (which, despite of the great reliability of the statistics obtained with it, is quite expensive in terms of the required equipment and the time needed for post-processing the captured data). 
+    \item An automatized framework for the evaluation of dense reconstruction algorithms was developed.
+    \item It allows testing algorithms from long sequences of images, at different weather and illumination conditions.
+    \item We demonstrated that it is possible to do an evaluation on the performance of the methods without the need of a LIDAR-based ground truth.
+%     (which, despite of the great reliability of the statistics obtained with it, is quite expensive in terms of the required equipment and the time needed for post-processing the captured data). 
     }
     \only<2> {
     \item The use of a prior on the vehicle movement was successfully exploited to identify a portion of the wrongly reconstructed points, making it suitable for evaluation of big data-sets, thus covering a broad range of environmental conditions. 
-    \item In the other hand, the use of a third camera for evaluation looks feasible, but in practice obtained results were not very discriminative.
-    \item With these evaluation strategies, we concluded that the use of filtering strategies reduces the number of wrong pixels and enhances the accuracy of the results. 
+    \item The use of a third camera for evaluation looks feasible, but in practice obtained results were not discriminative.
+    \item The use of filtering strategies reduces the number of wrong pixels and enhances the accuracy of the results. 
     }
   \end{itemize}
 \end{frame}
@@ -60,8 +117,10 @@
   \small
   \begin{itemize}
     \item We successfully developed a method for obstacle detection and tracking based on the stixel world described in \cite{badino2009stixel}. 
-    \item With this work, we demonstrated that the use of a two-level tracking outperforms existing stixel based tracking methods. \item Also, we discovered that the use of the Hellinger distance instead of the SAD improves tracking results, and we saw that the effect of factor $\alpha_{height}$ on tracking results is negligible. 
-    \item We showed that if speed is preferred over accuracy, object based tracking is possible, in which objects are obtained through a simple clustering method and then are tracked by using the illumination information between the obstacles.
+    \item We demonstrated that the use of a two-level tracking outperforms previous stixel based tracking methods. 
+    \item The use of the Hellinger distance instead of the SAD improves tracking results.
+    \item The effect of factor $\alpha_{height}$ on tracking results is negligible. 
+    \item When speed is preferred over accuracy, or in applications with a low frame rate, object based tracking is also a good choice.
   \end{itemize}
 \end{frame}
 
@@ -69,14 +128,17 @@
   \small
   \begin{itemize}
   \only<1> {
-    \item We developed a tracking method able to receive a point cloud as input and detect objects and their movement direction and speed, based just on their position in real world coordinates and a particle filter. 
-    \item Although we centered this work on dense stereo reconstruction based point clouds, it is also able to work with point clouds provided by other sensors, like for example LIDARs, as we are not using color information. 
-    \item The use of a particle filter based approach allows avoiding complex calculations associated to the computation of probabilities, and the use of a voxel grid allows working in three dimensions without increasing the complexity. It also allows a more specific knowledge of obstacles, better than other representations of obstacles, like cuboids.
+    \item Using a point cloud as input, it is able to detect objects and their movement direction and speed.
+    \item It is able to work with point clouds provided by sensors other than stereo cameras (i.e. LIDARs), since no color information is being used. 
+    \item The particle filter allows avoiding complex calculations associated to the computation of probabilities.
+    \item The voxel grid allows working in full three dimensions without increasing the complexity. 
+    \item It also allows a more specific knowledge of obstacles, better than other representations, like cuboids.
     }
     \only<2> {
-    \item Our method is compared with the method of \cite{danescu2012particle}, concluding that, despite the obtained recall in the detection is almost similar (being slightly better the values obtained by our implementation), the precision obtained with our method outperforms theirs. 
-    \item We wanted to know which of the available stereoscopic 3D reconstruction methods is the most suitable to be used as input, concluding that ELAS is the best choice from all the available methods.
-    \item Some tests were also done in order to ensure that the localization method described in \cite{geiger2011stereoscan} is a valid substitute of the localization provided by mechanical odometry, concluding that both of them are equally reliable.
+    \item Our method is compared with the method of \cite{danescu2012particle}.
+    \item Despite the obtained recall in the detection is almost similar, precision obtained with our method outperforms their results. 
+    \item From all the available methods, ELAS was the one that gave best results.
+    \item Visual odometry \citep{geiger2011stereoscan} is a valid substitute for localization based on mechanical odometry.
     }
   \end{itemize}
 \end{frame}
@@ -84,90 +146,152 @@
 \begin{frame}{Global Planning}
   \small
   \begin{itemize}
-    \item We developed an innovative strategy for generating trajectories based on a Multiclass Support Vector Machine, in which each obstacle is a class, and the decision borders are the possible paths. 
-    \item Advantages of using this method as a base is that we can generate continuous non-linear border lines that allow the creation of smooth, short and safe paths. The use of the GPU reduces the required computational time.
-    \item This method was compared to other state of the art SVM planners, showing that our method outperforms all of them in terms of average distance to obstacles, smoothness and length of the computed paths. It was also compared to other classical methods, like \emph{Voronoi}, obtaining also better results with our approach.
+    \item Trajectories can be generated based on a Multiclass Support Vector Machine.
+    \begin{itemize}
+     \item Each obstacle is a class.
+     \item Decision borders are the possible paths. 
+    \end{itemize}
+    \item We can generate continuous non-linear border lines that allow the creation of smooth, short and safe paths. The use of the GPU reduces the required computational time.
+    \item When compared to other state of the art SVM planners, our method outperforms all of them in terms of average distance to obstacles, smoothness and length of the computed paths. 
+    \item It was also compared to other classical methods, like \emph{Voronoi}, getting better results with our approach.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Local Planning}
   \small
   \begin{itemize}
-    \item We developed a method that based on the Frenét space, is able to generate smooth paths that allow, at the same time, following the computed trajectory and avoiding obstacles in the way. 
-    \item Generation of tentative paths is simplified as speed is out of the model for the tracks generation, so the problem is reduced to the computation of a set of parameters that define a third order polynomial. We also use different lateral offsets with respect to the global plan, so avoidance of obstacles is considered. Then, the use of a cost function allows selecting the best path.
-    \item In our tests, we demonstrated that the described method is able to accurately follow a given trajectory. We also saw the effect produced by each cost factor independently, and that their integration conducts to a safe and efficient behavior in the trajectory following procedure.
+    \only<1>{
+      \item Using Frenét space as basis, it is possible to generate smooth paths that allow, at the same time, following the computed trajectory and avoiding obstacles in the way. 
+      \item Generation of tentative paths is simplified since speed is out of the model for the tracks generation, so the problem is reduced to the computation of a set of parameters that define a third order polynomial. 
+      \item Different lateral offsets with respect to the global plan allow the consideration of obstacles avoidance.
+      \item A cost function allows selecting the best path.
+    }
+    \only<2>{
+      \item We demonstrated that the described method is able to accurately follow a given trajectory. 
+      \item We evaluated the effect produced by each cost factor independently, and that their integration conducts to a safe and efficient behavior in the trajectory following procedure.
+    }
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Putting all together}
   \footnotesize
   \begin{itemize}
-    \item Local planner was integrated with the stixel and the particle filter based methods. As the implemented costmap is reduced to a bidimensional grid in which no temporal information can be included, we were just able to integrate the top-view projection of the detected obstacles.
-    \item However, integration of obstacles was satisfactory, allowing in our simulations to perform a safe navigation between the obstacles using both KITTI \citep{geiger2013vision} and Bahnhoff \citep{ess2009robust} datasets. 
-    \item Using the stixel or the particle filter based approach, it is a decision that must be taken and that depends on the suitability of the environment to the characteristics of each method, as well as on the requirements of each application. \item Particle filter based method is more generalist, as we do not take special assumptions in this approach; however, if assumptions made for the stixel based approach are fulfilled, this method is much faster, specially if we do not need to perform an accurate tracking (which would allow us to use just the object based tracking method).
+    \only<1>{
+      \item Local planner was integrated with the stixel and the particle filter based methods. 
+      \item Since the implemented costmap is reduced to a bidimensional grid in which no temporal information can be included, we were just able to integrate the top-view projection of the detected obstacles.
+      \item Integration of obstacles was satisfactory, allowing in our simulations to perform a safe navigation between the obstacles using both KITTI \citep{geiger2013vision} and Bahnhoff \citep{ess2009robust} datasets. 
+    }
+    \only<2>{  
+      \item The use of the stixel or the particle filter based approach, is a decision that must be taken and that depends on the suitability of the environment to the characteristics of each method, as well as on the requirements of each application. 
+      \item Particle filter based method is more generalist, since we do not take special assumptions in this approach.
+      \item However, if assumptions made for the stixel based approach are fulfilled, this method is much faster, specially if an accurate tracking is not needed (allowing us to use just the object based tracking method).
+    }
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Future work}
-  \footnotesize
-  \begin{itemize}
-    \only<1> {
-    \tiny
-    \item Change Detection for Obstacle Localization in Images
-    \begin{itemize}
-      \tiny
-      \item Using other methods for the matching of features between images is possible. In fact, we have done some tests in which we used the GPU for the computation and matching of SURF features (\cite{bay2008speeded}), in which times obtained were acceptable for this approach.
-%       \item We could also implement a shadow detector, in order to reduce the similarity on the illumination requirements.
-      \item Some of the techniques used in the image database based method could be also used for other related tasks like the improvement of some of the existing change detection methods for aligned video sequences, as for example those presented in \cite{diego2011video, evangelidis2011slice, evangelidis2011efficient}.
-    \end{itemize}
-    \tiny
-    \item Non-Rigid Contour Tracking
-    \begin{itemize}
-      \tiny
-      \item Output obtained for the non rigid contour tracking method could be used for many applications, not just related to ADAS, but also to motion analysis in videos or HMI systems.
-      \item We would like to go beyond the use of static bidimensional image sequences, and extend the contour tracking method to be used with 3D information. A way to do that could be the segmentation of a disparity map, in which the contours used would be the borders of the segmented regions. These could be easily transformed to real world coordinates, once the tracking step is finished.
-      \item Another way to do that would be through the addition of new dimensions to the points used in the non-rigid point set registration step. Despite the Coherent Point Drift algorithm allows doing that, it would require to optimize the current implementation of this method. This will also allow including color information easily. We started a CUDA based implementation of this method, with promising results.
-      \item We would like to extend the trilateration based motion detector method used in the results section for the evaluation, so it is used for the analysis of an object motion. This would require to generate an initial model of the tracked object, but the analysis of its movement could be done through our method.
-    \end{itemize}
-    }
-    \only<2> {
-    \item Evaluation of Stereo 3D Reconstruction Algorithms
-    \begin{itemize}
-      \item About the evaluation of dense reconstruction methods, the use of a third camera for the comparison with a reconstructed virtual image was promising, but results were not as good as expected. In the future, we could use different metrics to measure the similarity between the control camera and virtual images. 
-      \item More experiments could be performed, including sequences with different weather conditions.
-    \end{itemize}
-    }
-    \only<3> {
-    \tiny
-    \item Stixel World
-    \begin{itemize}
-      \tiny
-      \item We also want to try new methods for stixel computation. A possibility could be using polar rectification for the combination of tracking and reconstruction in a single process. 
-      \item We could use the tracking output as a clue for the clustering process, in which we just consider the stixels for which a correspondence was found.
-    \end{itemize}
-    \item Particle Filter based Object Tracking
-    \begin{itemize}
-      \tiny
-      \item The particle filter could be extended so color information is also used. This would prevent the use of sensors different from stereo cameras, but we could think on an schema in which the information provided by several sensors is combined, being a stereo pair one of them.
-      \item We could track the particles along frames, which would improve results and also would increment the knowledge we have about obstacles.
-      \item Taking advantage of the big amount of operations that are performed independently for each voxel, we think that a parallel implementation of the method is easy to achieve and will reduce drastically the required time.
-    \end{itemize}
-    }
-    \only<4> {
-    \item Global Planning
-    \begin{itemize}
-      \item Regarding to path planning methods, there also some work that could be done. For example, new clustering strategies could be applied for the global planner, and the use of MSVM could be combined with other classical approaches.
-    \end{itemize}
-    \item Local Planning
-    \begin{itemize}
-      \item New cost of long-term control strategies could be applied for the generation and selection of the candidate paths in the local planner, as done in \cite{werling2010optimal}.
-      \item In the local planner, the final selection of applied steering angle and speed could be improved. Some approaches we have considered are based on the use of a predictive controller.
-    \end{itemize}
-    }
-    \only<5> {
-    \item Finally, we would like to improve the costmap computation scheme, so full-3D information (in the form of voxels or other similar approach, for instance) will allow making use of more accurate information about the obstacles. In special, we would like to include temporal information, so we will be able to perform a more intelligent navigation, in which we consider both the present and the future of the environment for a safe and enjoyable trip.
-    }
-  \end{itemize}
+% \begin{frame}{Future work}
+%   \footnotesize
+%   \begin{itemize}
+%     \only<1> {
+%     \tiny
+%     \item Change Detection for Obstacle Localization in Images
+%     \begin{itemize}
+%       \tiny
+%       \item Using other methods for the matching of features between images is possible. 
+% %       In fact, we have done some tests in which we used the GPU for the computation and matching of SURF features (\cite{bay2008speeded}), in which times obtained were acceptable for this approach.
+% %       \item We could also implement a shadow detector, in order to reduce the similarity on the illumination requirements.
+%       \item Some of the techniques used in the image database based method could be also used for other related tasks like the improvement of some of the existing change detection methods for aligned video sequences, as for example those presented in \cite{diego2011video, evangelidis2011slice, evangelidis2011efficient}.
+%     \end{itemize}
+%     \tiny
+%     \item Non-Rigid Contour Tracking
+%     \begin{itemize}
+%       \tiny
+%       \item Output obtained for the non rigid contour tracking method could be used for many applications, not just related to ADAS, but also to motion analysis in videos or HMI systems.
+%       \item We would like to go beyond the use of static bidimensional image sequences, and extend the contour tracking method to be used with 3D information. A way to do that could be the segmentation of a disparity map, in which the contours used would be the borders of the segmented regions. These could be easily transformed to real world coordinates, once the tracking step is finished.
+%       \item Another way to do that would be through the addition of new dimensions to the points used in the non-rigid point set registration step. Despite the Coherent Point Drift algorithm allows doing that, it would require to optimize the current implementation of this method. This will also allow including color information easily. We started a CUDA based implementation of this method, with promising results.
+%       \item We would like to extend the trilateration based motion detector method used in the results section for the evaluation, so it is used for the analysis of an object motion. This would require to generate an initial model of the tracked object, but the analysis of its movement could be done through our method.
+%     \end{itemize}
+%     }
+%     \only<2> {
+%     \item Evaluation of Stereo 3D Reconstruction Algorithms
+%     \begin{itemize}
+%       \item About the evaluation of dense reconstruction methods, the use of a third camera for the comparison with a reconstructed virtual image was promising, but results were not as good as expected. In the future, we could use different metrics to measure the similarity between the control camera and virtual images. 
+%       \item More experiments could be performed, including sequences with different weather conditions.
+%     \end{itemize}
+%     }
+%     \only<3> {
+%     \tiny
+%     \item Stixel World
+%     \begin{itemize}
+%       \tiny
+%       \item We also want to try new methods for stixel computation. A possibility could be using polar rectification for the combination of tracking and reconstruction in a single process. 
+%       \item We could use the tracking output as a clue for the clustering process, in which we just consider the stixels for which a correspondence was found.
+%     \end{itemize}
+%     \item Particle Filter based Object Tracking
+%     \begin{itemize}
+%       \tiny
+%       \item The particle filter could be extended so color information is also used. This would prevent the use of sensors different from stereo cameras, but we could think on an schema in which the information provided by several sensors is combined, being a stereo pair one of them.
+%       \item We could track the particles along frames, which would improve results and also would increment the knowledge we have about obstacles.
+%       \item Taking advantage of the big amount of operations that are performed independently for each voxel, we think that a parallel implementation of the method is easy to achieve and will reduce drastically the required time.
+%     \end{itemize}
+%     }
+%     \only<4> {
+%     \item Global Planning
+%     \begin{itemize}
+%       \item Regarding to path planning methods, there also some work that could be done. For example, new clustering strategies could be applied for the global planner, and the use of MSVM could be combined with other classical approaches.
+%     \end{itemize}
+%     \item Local Planning
+%     \begin{itemize}
+%       \item New cost of long-term control strategies could be applied for the generation and selection of the candidate paths in the local planner, as done in \cite{werling2010optimal}.
+%       \item In the local planner, the final selection of applied steering angle and speed could be improved. Some approaches we have considered are based on the use of a predictive controller.
+%     \end{itemize}
+%     }
+%     \only<5> {
+%     \item Finally, we would like to improve the costmap computation scheme, so full-3D information (in the form of voxels or other similar approach, for instance) will allow making use of more accurate information about the obstacles. In special, we would like to include temporal information, so we will be able to perform a more intelligent navigation, in which we consider both the present and the future of the environment for a safe and enjoyable trip.
+%     }
+%   \end{itemize}
+% \end{frame}
+
+\begin{frame}{Publications}
+\tiny
+\textbf{Journals}
+\begin{itemize}
+ \item Néstor Morales, Jonay T. Toledo, Leopoldo Acosta, Rafael Arnay (2011) Real-Time adaptive obstacle detection based on an image database, Computer Vision and Image Understanding 115, p. 1273-1287.
+\end{itemize}
+\textbf{Conferences}
+\begin{itemize}
+ \item Néstor Morales, Gabriele Camellini, Mirko Felisa, Paolo Grisleri, Paolo Zani (2013) Performance Analysis of Stereo Reconstruction Algorithms, Procs. IEEE Intl. Conf.on Intelligent Transportation Systems, p. 1298-1303.
+ \item Néstor Morales, Jonay Toledo, Leopoldo Acosta (2013) Non-Rigid Contour Flow Detection with Static Cameras for Path Planning Applications, Procs. IEEE Intl. Conf. on Intelligent Transportation Systems, p. 1298-1303.
+ \item L. Acosta, J. Toledo, Rafael Arnay, J. Espelosín, Néstor Morales, D. Perea, L. Moreno (2012) VERDINO, prototipo eléctrico de vehículo autoguiado, XXXIII Jornadas de Automatica, p. 729-736.
+ \item Nestor Morales, Jonay T. Toledo, Leopoldo Acosta (2011) Object detection in non-stationary video surveillance for an autonomous vehicle, 2011 11th International Conference on Intelligent Systems Design and Applications, p. 690-695.
+ \item Leopoldo Acosta, Alberto Hamilton, Nicolás Marichal, Sergio Hernández, José Sigut, Marta Sigut, Evelio González, Jonay Toledo, Jonatán Felipe, Néstor Morales, Rafael Arnay, Jesús Espelosín, Jesús Rodriguez (2009) VERDINO: Un Vehículo Ecológico para la Navegación Autónoma en Entornos no Estructurados, I Semana de Investigación en la Ingeniería, ETSICI, Universidad de La Laguna.
+ \item Jonatán Felipe, Leopoldo Acosta, Marta Sigut, Jonay Toledo, Néstor Morales (2007) Detección de obstáculos Basada en Disparidad-V para un Vehículo Ecológico end Carreteras No Estructuradas, XXVIII Jornadas de Automática.
+ \item J Toledo, N Morales, L Acosta, M Sigut, R Arnay (2007) Telemanipulación de un Vehículo Eléctrico Autónomo, XXVIII Jornadas de Automática.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Internships}
+\begin{itemize}
+ \item Vislab, Università degli Studi di Parma.
+ \begin{center}
+  \includegraphics[height=0.1\textheight,trim=0 20 0 20,clip]{vislab_logo}
+ \end{center}
+ \item PSI/VISICS, ESAT, KU Leuven.
+ \begin{center}
+  \includegraphics[height=0.2\textheight]{psi}
+ \end{center}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Acknowledges}
+ \begin{center}
+\includegraphics[height=2cm]{aciisi_negro}
+\hskip 1cm
+\includegraphics[height=2cm]{fondo_social_europeo_cop_ue}
+ \end{center}
+
 \end{frame}
 
 {
